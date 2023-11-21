@@ -1,0 +1,24 @@
+[package]
+name = "monitor"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib"]
+
+[[test]]
+name = "generate"
+path = "src/lib.rs"
+
+[dependencies]
+candid = "^0.9.6"
+ic-cdk = "^0.11.4"
+ic-cdk-macros = "0.8.1"
+ic-cdk-timers = "^0.5.1"
+ic-stable-structures = "0.6.0"
+serde = "1.0.193"
+serde_bytes = "0.11.12"
+
+ic_scalable_misc = "1.0.1-beta.2"

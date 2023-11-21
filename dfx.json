@@ -1,0 +1,9 @@
+{
+  "canisters": {
+    "monitor": {
+      "candid": "candid/monitor.did",
+      "package": "monitor",
+      "type": "rust"
+    }
+  }
+}

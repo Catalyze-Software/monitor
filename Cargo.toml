@@ -1,0 +1,3 @@
+[workspace]
+members = ["src/monitor"]
+resolver = "2"
