@@ -83,6 +83,7 @@ pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
 
     let summary = STATE.with(|s| s.borrow().get_summary());
 
+    // get cycles for the general sns canisters
     vec.push(CanisterCycles(
         String::from("root"),
         summary
@@ -132,6 +133,32 @@ pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
             .unwrap_or_else(|| trap("Governance canister status not found"))
             .cycles,
     ));
+
+    // iterate over the dapps canisters
+    for (i, canister) in summary.dapps.iter().enumerate() {
+        vec.push(CanisterCycles(
+            format!("dapps {}", i),
+            canister
+                .status
+                .as_ref()
+                .unwrap_or_else(|| trap("Dapps canister status not found"))
+                .cycles
+                .clone(),
+        ));
+    }
+
+    // iterate over the archives canisters
+    for (i, canister) in summary.archives.iter().enumerate() {
+        vec.push(CanisterCycles(
+            format!("archives {}", i),
+            canister
+                .status
+                .as_ref()
+                .unwrap_or_else(|| trap("Archives canister status not found"))
+                .cycles
+                .clone(),
+        ));
+    }
 
     // sort the vec by cycles in ascending order
     vec.sort_by(|a, b| a.1.cmp(&b.1));

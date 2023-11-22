@@ -21,5 +21,6 @@ ic-stable-structures = "0.6.0"
 ic-ledger-types = "0.8.0"
 serde = "1.0.193"
 serde_bytes = "0.11.12"
+time = { version = "0.3.30", features = ["formatting"] }
 
 ic_scalable_misc = "1.0.1-beta.2"
