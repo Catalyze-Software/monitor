@@ -1,7 +1,5 @@
-type Tokens = record { e8s : nat64 };
 service : () -> {
-  get_icp_balance : () -> (Tokens);
   icp_balance : () -> (nat64) query;
   last_poll_time : () -> (nat64) query;
-  ops : () -> ();
+  sorted_canister_cycles : () -> (vec record { text; nat }) query;
 }

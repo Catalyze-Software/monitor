@@ -1,5 +1,4 @@
 use ic_cdk::id;
-use ic_cdk_macros::update;
 use ic_ledger_types::{
     account_balance, AccountBalanceArgs, AccountIdentifier, Tokens, DEFAULT_SUBACCOUNT,
     MAINNET_LEDGER_CANISTER_ID,

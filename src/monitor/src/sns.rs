@@ -1,8 +1,6 @@
-use crate::store::STATE;
-use candid::{CandidType, Deserialize, Principal};
-use ic_cdk::call;
-
-use crate::principals::SNS_ROOT;
+use crate::{principals::SNS_ROOT, store::STATE};
+use candid::{CandidType, Deserialize, Nat, Principal};
+use ic_cdk::{call, trap};
 
 #[derive(CandidType, Deserialize)]
 pub struct GetSnsCanistersSummaryRequest {
@@ -54,26 +52,89 @@ pub struct DefiniteCanisterSettingsArgs {
     pub compute_allocation: candid::Nat,
 }
 
-// pub async fn get_sns_canisters_summary() -> GetSnsCanistersSummaryResponse {
-//     let arg = GetSnsCanistersSummaryRequest {
-//         update_canister_list: None,
-//     };
+pub async fn get_sns_canisters_summary() -> GetSnsCanistersSummaryResponse {
+    let arg = GetSnsCanistersSummaryRequest {
+        update_canister_list: None,
+    };
 
-//     let canister = Principal::from_text(SNS_ROOT).expect("Failed to parse SNS_ROOT");
+    let canister = Principal::from_text(SNS_ROOT).expect("Failed to parse SNS_ROOT");
 
-//     let (summary,): (GetSnsCanistersSummaryResponse,) =
-//         call::<(GetSnsCanistersSummaryRequest,), (GetSnsCanistersSummaryResponse,)>(
-//             canister,
-//             "get_sns_canisters_summary",
-//             (arg,),
-//         )
-//         .await
-//         .expect("Failed to call get_sns_canisters_summary");
+    let (summary,): (GetSnsCanistersSummaryResponse,) =
+        call::<(GetSnsCanistersSummaryRequest,), (GetSnsCanistersSummaryResponse,)>(
+            canister,
+            "get_sns_canisters_summary",
+            (arg,),
+        )
+        .await
+        .expect("Failed to call get_sns_canisters_summary");
 
-//     STATE.with(|s| {
-//         let mut state = s.borrow_mut();
-//         state.summary = summary.clone();
-//     });
+    summary
+}
 
-//     summary
-// }
+/*
+* Select each canister-cycles pair from the stored `GetSnsCanistersSummaryResponse`
+* and return a sorted vector of these pairs
+*/
+#[derive(CandidType, Deserialize)]
+pub struct CanisterCycles(String, Nat);
+
+pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
+    let mut vec = Vec::new();
+
+    let summary = STATE.with(|s| s.borrow().get_summary());
+
+    vec.push(CanisterCycles(
+        String::from("root"),
+        summary
+            .root
+            .unwrap_or_else(|| trap("Root canister not found"))
+            .status
+            .unwrap_or_else(|| trap("Root canister status not found"))
+            .cycles,
+    ));
+
+    vec.push(CanisterCycles(
+        String::from("swap"),
+        summary
+            .swap
+            .unwrap_or_else(|| trap("Swap canister not found"))
+            .status
+            .unwrap_or_else(|| trap("Swap canister status not found"))
+            .cycles,
+    ));
+
+    vec.push(CanisterCycles(
+        String::from("ledger"),
+        summary
+            .ledger
+            .unwrap_or_else(|| trap("Ledger canister not found"))
+            .status
+            .unwrap_or_else(|| trap("Ledger canister status not found"))
+            .cycles,
+    ));
+
+    vec.push(CanisterCycles(
+        String::from("index"),
+        summary
+            .index
+            .unwrap_or_else(|| trap("Index canister not found"))
+            .status
+            .unwrap_or_else(|| trap("Index canister status not found"))
+            .cycles,
+    ));
+
+    vec.push(CanisterCycles(
+        String::from("governance"),
+        summary
+            .governance
+            .unwrap_or_else(|| trap("Governance canister not found"))
+            .status
+            .unwrap_or_else(|| trap("Governance canister status not found"))
+            .cycles,
+    ));
+
+    // sort the vec by cycles in ascending order
+    vec.sort_by(|a, b| a.1.cmp(&b.1));
+
+    vec
+}

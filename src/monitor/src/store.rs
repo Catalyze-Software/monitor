@@ -10,10 +10,10 @@ thread_local! {
 
 #[derive(Default)]
 pub struct State {
-    pub timer_id: Option<TimerId>,
-    pub last_poll_time: Option<u64>,
-    pub icp_balance: Option<Tokens>,
-    pub summary: Option<GetSnsCanistersSummaryResponse>,
+    timer_id: Option<TimerId>,
+    last_poll_time: Option<u64>,
+    icp_balance: Option<Tokens>,
+    summary: Option<GetSnsCanistersSummaryResponse>,
 }
 
 impl State {
@@ -39,5 +39,13 @@ impl State {
 
     pub fn get_icp_balance(&self) -> Tokens {
         self.icp_balance.expect("ICP balance not set")
+    }
+
+    pub fn set_summary(&mut self, summary: GetSnsCanistersSummaryResponse) {
+        self.summary = Some(summary);
+    }
+
+    pub fn get_summary(&self) -> GetSnsCanistersSummaryResponse {
+        self.summary.clone().expect("Summary not set")
     }
 }
