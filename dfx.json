@@ -5,5 +5,32 @@
       "package": "monitor",
       "type": "rust"
     }
+  },
+  "networks": {
+    "local": {
+      "bind": "localhost:8080",
+      "type": "ephemeral",
+      "replica": {
+        "subnet_type": "system"
+      }
+    },
+    "ic": {
+      "providers": [
+        "https://icp0.io"
+      ],
+      "type": "persistent"
+    },
+    "staging": {
+      "providers": [
+        "https://icp0.io"
+      ],
+      "type": "persistent"
+    },
+    "development": {
+      "providers": [
+        "https://icp0.io"
+      ],
+      "type": "persistent"
+    }
   }
 }

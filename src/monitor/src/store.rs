@@ -1,27 +1,43 @@
-use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
-use ic_stable_structures::{DefaultMemoryImpl, StableBTreeMap};
-use std::cell::RefCell;
+use ic_cdk_timers::TimerId;
+use ic_ledger_types::Tokens;
 
 use crate::sns::GetSnsCanistersSummaryResponse;
+use std::cell::RefCell;
 
-type Memory = VirtualMemory<DefaultMemoryImpl>;
+thread_local! {
+    pub static STATE: RefCell<State> = RefCell::new(State::default());
+}
 
 #[derive(Default)]
 pub struct State {
-    pub last_poll_time: u64,
-    pub icp_balance: u64,
-    pub summary: GetSnsCanistersSummaryResponse,
+    pub timer_id: Option<TimerId>,
+    pub last_poll_time: Option<u64>,
+    pub icp_balance: Option<Tokens>,
+    pub summary: Option<GetSnsCanistersSummaryResponse>,
 }
 
-thread_local! {
-    // static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
-    //     RefCell::new(MemoryManager::init(DefaultMemoryImpl::default()));
+impl State {
+    pub fn set_timer_id(&mut self, timer_id: TimerId) {
+        self.timer_id = Some(timer_id);
+    }
 
-    // static MAP: RefCell<StableBTreeMap<u128, u128, Memory>> = RefCell::new(
-    //     StableBTreeMap::init(
-    //         MEMORY_MANAGER.with(|m| m.borrow().get(MemoryId::new(0))),
-    //     )
-    // );
+    pub fn get_timer_id(&self) -> TimerId {
+        self.timer_id.expect("TimerId not set")
+    }
 
-    pub static STATE: RefCell<State> = RefCell::new(State::default());
+    pub fn set_last_poll_time(&mut self, poll_time: u64) {
+        self.last_poll_time = Some(poll_time);
+    }
+
+    pub fn get_last_poll_time(&self) -> u64 {
+        self.last_poll_time.expect("Last poll time not set")
+    }
+
+    pub fn set_icp_balance(&mut self, balance: Tokens) {
+        self.icp_balance = Some(balance);
+    }
+
+    pub fn get_icp_balance(&self) -> Tokens {
+        self.icp_balance.expect("ICP balance not set")
+    }
 }

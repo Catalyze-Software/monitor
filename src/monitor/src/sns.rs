@@ -54,26 +54,26 @@ pub struct DefiniteCanisterSettingsArgs {
     pub compute_allocation: candid::Nat,
 }
 
-pub async fn get_sns_canisters_summary() -> GetSnsCanistersSummaryResponse {
-    let arg = GetSnsCanistersSummaryRequest {
-        update_canister_list: None,
-    };
+// pub async fn get_sns_canisters_summary() -> GetSnsCanistersSummaryResponse {
+//     let arg = GetSnsCanistersSummaryRequest {
+//         update_canister_list: None,
+//     };
 
-    let canister = Principal::from_text(SNS_ROOT).expect("Failed to parse SNS_ROOT");
+//     let canister = Principal::from_text(SNS_ROOT).expect("Failed to parse SNS_ROOT");
 
-    let (summary,): (GetSnsCanistersSummaryResponse,) =
-        call::<(GetSnsCanistersSummaryRequest,), (GetSnsCanistersSummaryResponse,)>(
-            canister,
-            "get_sns_canisters_summary",
-            (arg,),
-        )
-        .await
-        .expect("Failed to call get_sns_canisters_summary");
+//     let (summary,): (GetSnsCanistersSummaryResponse,) =
+//         call::<(GetSnsCanistersSummaryRequest,), (GetSnsCanistersSummaryResponse,)>(
+//             canister,
+//             "get_sns_canisters_summary",
+//             (arg,),
+//         )
+//         .await
+//         .expect("Failed to call get_sns_canisters_summary");
 
-    STATE.with(|s| {
-        let mut state = s.borrow_mut();
-        state.summary = summary.clone();
-    });
+//     STATE.with(|s| {
+//         let mut state = s.borrow_mut();
+//         state.summary = summary.clone();
+//     });
 
-    summary
-}
+//     summary
+// }
