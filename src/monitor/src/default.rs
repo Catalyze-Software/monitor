@@ -1,11 +1,10 @@
 use crate::store::STATE;
 use ic_cdk::api::time;
 use ic_cdk_macros::{init, post_upgrade, pre_upgrade};
-use ic_cdk_timers::{clear_timer, set_timer_interval};
+use ic_cdk_timers::{clear_timer, set_timer, set_timer_interval};
 use std::time::Duration;
 
-// const INTERVAL: u64 = 24 * 60 * 60 * 1_000_000_000; // 1 day
-const INTERVAL: Duration = Duration::from_secs(10);
+const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
 
 /*
 * One global timer is set at each canister upgrade / reinstall.
@@ -15,12 +14,13 @@ const INTERVAL: Duration = Duration::from_secs(10);
 
 #[init]
 fn init() {
-    let timer_id = set_timer_interval(INTERVAL, move || ic_cdk::spawn(operations()));
+    let _ = set_timer(Duration::from_nanos(1), move || ic_cdk::spawn(operations()));
 
+    let timer_id = set_timer_interval(INTERVAL, move || ic_cdk::spawn(operations()));
     STATE.with(|s| s.borrow_mut().set_timer_id(timer_id));
 }
 
-async fn operations() {
+pub async fn operations() {
     let now = time();
     let balance = crate::ledger::icp_balance().await;
     let summary = crate::sns::get_sns_canisters_summary().await;
@@ -38,7 +38,6 @@ async fn operations() {
 fn pre_upgrade() {
     STATE.with(|s| {
         let state = s.borrow();
-
         clear_timer(state.get_timer_id());
     });
 }
