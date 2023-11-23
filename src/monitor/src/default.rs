@@ -10,6 +10,7 @@ const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
 * One global timer is set at each canister upgrade / reinstall.
 * The timer invokes an async fn `operations` from the `init` sync context
 * Timer is cleared at each canister upgrade / reinstall and set again in `post_upgrade`
+* Child ops are seperated because they currently trap (monitor is not controller)
 */
 
 #[init]
@@ -33,6 +34,7 @@ fn init() {
 async fn operations() {
     let now = time();
     let balance = crate::ledger::icp_balance().await;
+    let cycles = crate::ledger::cycle_balance().await;
     let summary = crate::sns::get_sns_canisters_summary().await;
 
     STATE.with(|s| {
@@ -40,6 +42,7 @@ async fn operations() {
 
         state.set_last_poll_time(now);
         state.set_icp_balance(balance);
+        state.set_cycle_balance(cycles);
         state.set_summary(summary);
     });
 }

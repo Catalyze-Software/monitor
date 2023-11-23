@@ -1,6 +1,6 @@
 use time::format_description::well_known::Rfc2822;
 
-use crate::{sns::CanisterCycles, store::STATE};
+use crate::{sort::CanisterCycles, store::STATE};
 use ic_cdk::trap;
 use ic_cdk_macros::query;
 use time::OffsetDateTime;
@@ -24,7 +24,7 @@ fn icp_balance() -> u64 {
 
 #[query]
 fn sorted_canister_cycles() -> Vec<CanisterCycles> {
-    crate::sns::sorted_canister_cycles()
+    crate::sort::sorted_canister_cycles()
 }
 
 #[test]

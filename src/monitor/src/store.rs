@@ -1,8 +1,8 @@
+use crate::sns::GetSnsCanistersSummaryResponse;
+use candid::Nat;
 use ic_cdk::api::management_canister::main::CanisterStatusResponse;
 use ic_cdk_timers::TimerId;
 use ic_ledger_types::Tokens;
-
-use crate::sns::GetSnsCanistersSummaryResponse;
 use std::cell::RefCell;
 
 thread_local! {
@@ -14,6 +14,7 @@ pub struct State {
     timer_id: Option<TimerId>,
     last_poll_time: Option<u64>,
     icp_balance: Option<Tokens>,
+    cycle_balance: Option<Nat>,
     summary: Option<GetSnsCanistersSummaryResponse>,
     pub childs: Option<Vec<(String, CanisterStatusResponse)>>,
 }
@@ -41,6 +42,14 @@ impl State {
 
     pub fn get_icp_balance(&self) -> Tokens {
         self.icp_balance.expect("ICP balance not set")
+    }
+
+    pub fn set_cycle_balance(&mut self, balance: Nat) {
+        self.cycle_balance = Some(balance);
+    }
+
+    pub fn get_cycle_balance(&self) -> Nat {
+        self.cycle_balance.clone().expect("Cycle balance not set")
     }
 
     pub fn set_summary(&mut self, summary: GetSnsCanistersSummaryResponse) {
