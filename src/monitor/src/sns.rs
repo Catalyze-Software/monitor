@@ -1,5 +1,8 @@
+use crate::principals::CHILD_MEMBERS;
 use crate::{principals::SNS_ROOT, store::STATE};
 use candid::{CandidType, Deserialize, Nat, Principal};
+use ic_cdk::api::management_canister::main::canister_status;
+use ic_cdk::api::management_canister::provisional::CanisterIdRecord;
 use ic_cdk::{call, trap};
 
 #[derive(CandidType, Deserialize)]
@@ -159,6 +162,16 @@ pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
                 .clone(),
         ));
     }
+
+    // iterate over child canisters (not present in `GetSnsCanistersSummaryResponse`)
+    STATE.with(|s| match s.borrow().childs.clone() {
+        None => {}
+        Some(childs) => {
+            for (canister, status) in childs {
+                vec.push(CanisterCycles(canister, status.cycles));
+            }
+        }
+    });
 
     // sort the vec by cycles in ascending order
     vec.sort_by(|a, b| a.1.cmp(&b.1));

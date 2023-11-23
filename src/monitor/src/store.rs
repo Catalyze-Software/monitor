@@ -1,3 +1,4 @@
+use ic_cdk::api::management_canister::main::CanisterStatusResponse;
 use ic_cdk_timers::TimerId;
 use ic_ledger_types::Tokens;
 
@@ -14,6 +15,7 @@ pub struct State {
     last_poll_time: Option<u64>,
     icp_balance: Option<Tokens>,
     summary: Option<GetSnsCanistersSummaryResponse>,
+    pub childs: Option<Vec<(String, CanisterStatusResponse)>>,
 }
 
 impl State {
@@ -47,5 +49,9 @@ impl State {
 
     pub fn get_summary(&self) -> GetSnsCanistersSummaryResponse {
         self.summary.clone().expect("Summary not set")
+    }
+
+    pub fn set_childs(&mut self, childs: Vec<(String, CanisterStatusResponse)>) {
+        self.childs = Some(childs);
     }
 }

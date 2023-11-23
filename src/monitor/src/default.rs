@@ -16,14 +16,21 @@ const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
 fn init() {
     // run operations once immediately to init state
     // need to use timer to spawn async fn from sync context
-    let _ = set_timer(Duration::from_nanos(1), move || ic_cdk::spawn(operations()));
+    let _ = set_timer(Duration::from_nanos(1), move || {
+        ic_cdk::spawn(operations());
+        ic_cdk::spawn(child_operations());
+    });
 
     // set timer to run operations at INTERVAL
-    let timer_id = set_timer_interval(INTERVAL, move || ic_cdk::spawn(operations()));
+    let timer_id = set_timer_interval(INTERVAL, move || {
+        ic_cdk::spawn(operations());
+        ic_cdk::spawn(child_operations());
+    });
+
     STATE.with(|s| s.borrow_mut().set_timer_id(timer_id));
 }
 
-pub async fn operations() {
+async fn operations() {
     let now = time();
     let balance = crate::ledger::icp_balance().await;
     let summary = crate::sns::get_sns_canisters_summary().await;
@@ -34,6 +41,14 @@ pub async fn operations() {
         state.set_last_poll_time(now);
         state.set_icp_balance(balance);
         state.set_summary(summary);
+    });
+}
+
+async fn child_operations() {
+    let childs = crate::child::get_child_canister_summary().await;
+    STATE.with(|s| {
+        let mut state = s.borrow_mut();
+        state.set_childs(childs);
     });
 }
 
