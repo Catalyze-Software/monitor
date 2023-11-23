@@ -14,8 +14,11 @@ const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
 
 #[init]
 fn init() {
+    // run operations once immediately to init state
+    // need to use timer to spawn async fn from sync context
     let _ = set_timer(Duration::from_nanos(1), move || ic_cdk::spawn(operations()));
 
+    // set timer to run operations at INTERVAL
     let timer_id = set_timer_interval(INTERVAL, move || ic_cdk::spawn(operations()));
     STATE.with(|s| s.borrow_mut().set_timer_id(timer_id));
 }
