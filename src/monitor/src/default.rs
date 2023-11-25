@@ -1,4 +1,7 @@
-use crate::store::STATE;
+use crate::{
+    log::{EVENT_CHILD_SUMMARY, EVENT_CYCLE_BALANCE, EVENT_ICP_BALANCE, EVENT_SNS_SUMMARY},
+    store::STATE,
+};
 use ic_cdk::api::time;
 use ic_cdk_macros::{init, post_upgrade, pre_upgrade};
 use ic_cdk_timers::{clear_timer, set_timer, set_timer_interval};
@@ -31,7 +34,7 @@ fn init() {
     STATE.with(|s| s.borrow_mut().set_timer_id(timer_id));
 }
 
-async fn operations() {
+pub async fn operations() {
     let now = time();
     let balance = crate::ledger::icp_balance().await;
     let cycles = crate::ledger::cycle_balance().await;
@@ -41,17 +44,24 @@ async fn operations() {
         let mut state = s.borrow_mut();
 
         state.set_last_poll_time(now);
+
         state.set_icp_balance(balance);
+        state.log(now, EVENT_ICP_BALANCE.to_string());
+
         state.set_cycle_balance(cycles);
+        state.log(now, EVENT_CYCLE_BALANCE.to_string());
+
         state.set_summary(summary);
+        state.log(now, EVENT_SNS_SUMMARY.to_string());
     });
 }
 
-async fn child_operations() {
+pub async fn child_operations() {
     let childs = crate::child::get_child_canister_summary().await;
     STATE.with(|s| {
         let mut state = s.borrow_mut();
         state.set_childs(childs);
+        state.log(time(), EVENT_CHILD_SUMMARY.to_string());
     });
 }
 

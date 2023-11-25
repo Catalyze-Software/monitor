@@ -1,4 +1,4 @@
-use crate::sns::GetSnsCanistersSummaryResponse;
+use crate::{sns::GetSnsCanistersSummaryResponse, utils::format_time};
 use candid::Nat;
 use ic_cdk::api::management_canister::main::CanisterStatusResponse;
 use ic_cdk_timers::TimerId;
@@ -11,15 +11,32 @@ thread_local! {
 
 #[derive(Default)]
 pub struct State {
+    log: Vec<(u64, String)>,
+
     timer_id: Option<TimerId>,
     last_poll_time: Option<u64>,
+
     icp_balance: Option<Tokens>,
     cycle_balance: Option<Nat>,
+
     summary: Option<GetSnsCanistersSummaryResponse>,
     pub childs: Option<Vec<(String, CanisterStatusResponse)>>,
 }
 
 impl State {
+    pub fn log(&mut self, timestamp: u64, msg: String) {
+        self.log.push((timestamp, msg));
+    }
+
+    pub fn get_log(&self, n: usize) -> Vec<String> {
+        self.log
+            .iter()
+            .rev()
+            .take(n)
+            .map(|(timestamp, msg)| format!("{} {}", format_time(*timestamp), msg.clone()))
+            .collect()
+    }
+
     pub fn set_timer_id(&mut self, timer_id: TimerId) {
         self.timer_id = Some(timer_id);
     }

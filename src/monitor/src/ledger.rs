@@ -2,8 +2,8 @@ use candid::Nat;
 use ic_cdk::api::management_canister::main::canister_status;
 use ic_cdk::id;
 use ic_ledger_types::{
-    account_balance, AccountBalanceArgs, AccountIdentifier, Tokens, DEFAULT_SUBACCOUNT,
-    MAINNET_LEDGER_CANISTER_ID,
+    account_balance, transfer, AccountBalanceArgs, AccountIdentifier, Tokens, TransferArgs,
+    TransferResult, DEFAULT_SUBACCOUNT, MAINNET_LEDGER_CANISTER_ID,
 };
 
 /*

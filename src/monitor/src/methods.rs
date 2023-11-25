@@ -1,20 +1,15 @@
-use time::format_description::well_known::Rfc2822;
-
-use crate::{sort::CanisterCycles, store::STATE};
-use ic_cdk::trap;
-use ic_cdk_macros::query;
-use time::OffsetDateTime;
+use crate::{
+    default::{child_operations, operations},
+    sort::CanisterCycles,
+    store::STATE,
+    utils::format_time,
+};
+use candid::Nat;
+use ic_cdk_macros::{query, update};
 
 #[query]
 fn last_poll_time() -> String {
-    let poll_time = STATE.with(|s| s.borrow().get_last_poll_time());
-
-    let datetime = OffsetDateTime::from_unix_timestamp_nanos(poll_time as i128)
-        .unwrap_or_else(|e| trap(&format!("Error converting timestamp: {}", e)));
-
-    datetime
-        .format(&Rfc2822)
-        .unwrap_or_else(|e| trap(&format!("Error formatting datetime: {}", e)))
+    format_time(STATE.with(|s| s.borrow().get_last_poll_time()))
 }
 
 #[query]
@@ -23,8 +18,24 @@ fn icp_balance() -> u64 {
 }
 
 #[query]
+fn cycle_balance() -> Nat {
+    STATE.with(|s| s.borrow().get_cycle_balance())
+}
+
+#[query]
 fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     crate::sort::sorted_canister_cycles()
+}
+
+#[update]
+fn update_state() {
+    ic_cdk::spawn(operations());
+    ic_cdk::spawn(child_operations());
+}
+
+#[query]
+fn get_log(n: usize) -> Vec<String> {
+    STATE.with(|s| s.borrow().get_log(n))
 }
 
 #[test]
