@@ -9,6 +9,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat))],
         ['query'],
       ),
+    'test_top_up' : IDL.Func([], [], []),
     'update_state' : IDL.Func([], [], []),
   });
 };

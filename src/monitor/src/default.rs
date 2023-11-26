@@ -46,10 +46,16 @@ pub async fn operations() {
         state.set_last_poll_time(now);
 
         state.set_icp_balance(balance);
-        state.log(now, EVENT_ICP_BALANCE.to_string());
+        state.log(
+            now,
+            format!("{}: {}", EVENT_ICP_BALANCE.to_string(), balance),
+        );
 
-        state.set_cycle_balance(cycles);
-        state.log(now, EVENT_CYCLE_BALANCE.to_string());
+        state.set_cycle_balance(cycles.clone());
+        state.log(
+            now,
+            format!("{}: {}", EVENT_CYCLE_BALANCE.to_string(), cycles),
+        );
 
         state.set_summary(summary);
         state.log(now, EVENT_SNS_SUMMARY.to_string());

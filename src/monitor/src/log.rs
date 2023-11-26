@@ -4,5 +4,4 @@ pub const EVENT_SNS_SUMMARY: &str = "Updated SNS summary";
 pub const EVENT_CHILD_SUMMARY: &str = "Updated child summary";
 
 pub const EVENT_ICP_SENT: &str = "ICP sent";
-pub const EVENT_CYCLES_RECEIVED: &str = "Cycles received";
-pub const EVENT_CYCLES_SENT: &str = "Cycles sent";
+pub const EVENT_CYCLES_MINTED: &str = "Cycles minted";

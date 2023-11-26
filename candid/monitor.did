@@ -4,5 +4,6 @@ service : () -> {
   icp_balance : () -> (nat64) query;
   last_poll_time : () -> (text) query;
   sorted_canister_cycles : () -> (vec record { text; nat }) query;
+  test_top_up : () -> ();
   update_state : () -> ();
 }
