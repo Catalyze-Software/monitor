@@ -4,15 +4,18 @@ use crate::{
     store::{CanisterCycles, STATE},
 };
 use ic_cdk_macros::{query, update};
+use ic_ledger_types::Tokens;
 
 #[query]
-fn last_poll_time() -> String {
-    format_time(STATE.with(|s| s.borrow().get_last_poll_time()))
+fn last_poll_time() -> (String, u64) {
+    let time = STATE.with(|s| s.borrow().get_last_poll_time());
+    (format_time(time), time)
 }
 
 #[query]
-fn icp_balance() -> String {
-    format!("{}", STATE.with(|s| s.borrow().get_icp_balance()))
+fn icp_balance() -> (String, u64) {
+    let balance = STATE.with(|s| s.borrow().get_icp_balance());
+    (format!("{}", balance), Tokens::e8s(&balance))
 }
 
 #[query]

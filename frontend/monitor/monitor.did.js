@@ -6,8 +6,8 @@ export const idlFactory = ({ IDL }) => {
   });
   return IDL.Service({
     'get_log' : IDL.Func([IDL.Nat64], [IDL.Vec(IDL.Text)], ['query']),
-    'icp_balance' : IDL.Func([], [IDL.Text], ['query']),
-    'last_poll_time' : IDL.Func([], [IDL.Text], ['query']),
+    'icp_balance' : IDL.Func([], [IDL.Text, IDL.Nat64], ['query']),
+    'last_poll_time' : IDL.Func([], [IDL.Text, IDL.Nat64], ['query']),
     'sorted_canister_cycles' : IDL.Func(
         [],
         [IDL.Vec(CanisterCycles)],
