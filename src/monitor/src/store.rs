@@ -1,5 +1,8 @@
-use crate::{log::format_time, operations::sns::GetSnsCanistersSummaryResponse};
-use candid::Nat;
+use crate::{
+    log::format_time,
+    operations::sns::{CanisterSummary, GetSnsCanistersSummaryResponse},
+};
+use candid::{CandidType, Deserialize, Nat, Principal};
 use ic_cdk::api::management_canister::main::CanisterStatusResponse;
 use ic_cdk_timers::TimerId;
 use ic_ledger_types::Tokens;
@@ -20,7 +23,7 @@ pub struct State {
     cycle_balance: Option<Nat>,
 
     summary: Option<GetSnsCanistersSummaryResponse>,
-    // pub childs: Option<Vec<(String, CanisterStatusResponse)>>,
+    pub childs: Option<Vec<CanisterCycles>>,
 }
 
 impl State {
@@ -77,11 +80,36 @@ impl State {
         self.summary.clone().expect("Summary not set")
     }
 
-    // pub fn set_childs(&mut self, childs: Vec<(String, CanisterStatusResponse)>) {
-    //     self.childs = Some(childs);
-    // }
+    pub fn set_childs(&mut self, childs: Vec<CanisterCycles>) {
+        self.childs = Some(childs);
+    }
 
-    // pub fn get_childs(&self) -> Vec<(String, CanisterStatusResponse)> {
-    //     self.childs.clone().expect("Childs not set")
-    // }
+    pub fn get_childs(&self) -> Vec<CanisterCycles> {
+        self.childs.as_ref().expect("Childs not set").clone()
+    }
+}
+
+#[derive(CandidType, Deserialize, Clone)]
+pub struct CanisterCycles {
+    pub name: String,
+    pub canister_id: Principal,
+    pub cycles: Nat,
+}
+
+impl CanisterCycles {
+    pub fn new<'a>(name: &str, canister_summary: &CanisterSummary) -> Self {
+        Self {
+            name: String::from(name),
+            canister_id: canister_summary.canister_id.unwrap(),
+            cycles: canister_summary.status.as_ref().unwrap().cycles.clone(),
+        }
+    }
+
+    pub fn from_status<'a>(name: &str, canister_id: &str, status: &CanisterStatusResponse) -> Self {
+        Self {
+            name: String::from(name),
+            canister_id: Principal::from_text(canister_id).expect("Invalid principal"),
+            cycles: Nat::from(status.cycles.clone()),
+        }
+    }
 }

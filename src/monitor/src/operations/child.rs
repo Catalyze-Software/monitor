@@ -4,6 +4,8 @@ use ic_cdk::api::management_canister::{
     provisional::CanisterIdRecord,
 };
 
+use crate::store::CanisterCycles;
+
 /*
 * Canisters not present in `GetSnsCanistersSummaryResponse`
 *
@@ -24,46 +26,50 @@ pub const CHILD_EVENTS: &str = "cnkl6-daaaa-aaaap-abquq-cai";
 pub const CHILD_EVENT_ATTENDEES: &str = "dhfje-bqaaa-aaaap-abqtq-cai";
 pub const CHILD_REPORTS: &str = "c7m4h-pqaaa-aaaap-abqxq-cai";
 
-pub async fn get_child_canister_summary() -> Vec<(String, CanisterStatusResponse)> {
+pub async fn get_child_canister_summary() -> Vec<CanisterCycles> {
     let mut vec = Vec::new();
 
-    vec.push((
-        String::from("child_members"),
-        get_canister_status(Principal::from_text(CHILD_MEMBERS).expect("Invalid principal")).await,
+    vec.push(CanisterCycles::from_status(
+        "child_members",
+        CHILD_MEMBERS,
+        &get_canister_status(CHILD_MEMBERS).await,
     ));
 
-    vec.push((
-        String::from("child_groups"),
-        get_canister_status(Principal::from_text(CHILD_GROUPS).expect("Invalid principal")).await,
+    vec.push(CanisterCycles::from_status(
+        "child_groups",
+        CHILD_GROUPS,
+        &get_canister_status(CHILD_GROUPS).await,
     ));
 
-    vec.push((
-        String::from("child_profiles"),
-        get_canister_status(Principal::from_text(CHILD_PROFILES).expect("Invalid principal")).await,
+    vec.push(CanisterCycles::from_status(
+        "child_profiles",
+        CHILD_PROFILES,
+        &get_canister_status(CHILD_PROFILES).await,
     ));
 
-    vec.push((
-        String::from("child_events"),
-        get_canister_status(Principal::from_text(CHILD_EVENTS).expect("Invalid principal")).await,
+    vec.push(CanisterCycles::from_status(
+        "child_events",
+        CHILD_EVENTS,
+        &get_canister_status(CHILD_EVENTS).await,
     ));
 
-    vec.push((
-        String::from("child_event_attendees"),
-        get_canister_status(
-            Principal::from_text(CHILD_EVENT_ATTENDEES).expect("Invalid principal"),
-        )
-        .await,
+    vec.push(CanisterCycles::from_status(
+        "child_event_attendees",
+        CHILD_EVENT_ATTENDEES,
+        &get_canister_status(CHILD_EVENT_ATTENDEES).await,
     ));
 
-    vec.push((
-        String::from("child_reports"),
-        get_canister_status(Principal::from_text(CHILD_REPORTS).expect("Invalid principal")).await,
+    vec.push(CanisterCycles::from_status(
+        "child_reports",
+        CHILD_REPORTS,
+        &get_canister_status(CHILD_REPORTS).await,
     ));
 
     vec
 }
 
-async fn get_canister_status(canister_id: Principal) -> CanisterStatusResponse {
+async fn get_canister_status(canister_id: &str) -> CanisterStatusResponse {
+    let canister_id = Principal::from_text(canister_id).expect("Invalid principal");
     let arg = CanisterIdRecord { canister_id };
 
     canister_status(arg)

@@ -1,28 +1,9 @@
-use crate::{operations::sns::CanisterSummary, store::STATE};
-use candid::{CandidType, Deserialize, Nat, Principal};
-use ic_cdk::trap;
+use crate::store::{CanisterCycles, STATE};
 
 /*
 * Select each canister-cycles pair from STATE
 * and return a sorted vector of these pairs
 */
-#[derive(CandidType, Deserialize)]
-pub struct CanisterCycles {
-    pub name: String,
-    pub canister_id: Principal,
-    pub cycles: Nat,
-}
-
-impl CanisterCycles {
-    pub fn new<'a>(name: &str, canister_summary: &CanisterSummary) -> Self {
-        Self {
-            name: String::from(name),
-            canister_id: canister_summary.canister_id.unwrap(),
-            cycles: canister_summary.status.as_ref().unwrap().cycles.clone(),
-        }
-    }
-}
-
 pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     let mut vec = Vec::new();
 
@@ -49,14 +30,14 @@ pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     }
 
     // iterate over child canisters (not present in `GetSnsCanistersSummaryResponse`)
-    // STATE.with(|s| match s.borrow().childs.clone() {
-    //     None => {}
-    //     Some(childs) => {
-    //         for (canister, status) in childs {
-    //             vec.push(CanisterCycles(canister, status.cycles));
-    //         }
-    //     }
-    // });
+    STATE.with(|s| match s.borrow().childs.clone() {
+        None => {}
+        Some(childs) => {
+            for child in childs {
+                vec.push(child);
+            }
+        }
+    });
 
     // add this monitor canister cycle balance
     vec.push(CanisterCycles {

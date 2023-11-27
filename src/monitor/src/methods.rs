@@ -1,4 +1,8 @@
-use crate::{default::operations, log::format_time, sort::CanisterCycles, store::STATE};
+use crate::{
+    default::operations,
+    log::format_time,
+    store::{CanisterCycles, STATE},
+};
 use ic_cdk_macros::{query, update};
 
 #[query]

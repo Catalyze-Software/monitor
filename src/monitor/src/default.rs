@@ -1,5 +1,6 @@
 use crate::{
     log::{log, EVENT_CHILD_SUMMARY, EVENT_CYCLE_BALANCE, EVENT_ICP_BALANCE, EVENT_SNS_SUMMARY},
+    operations::charge::{top_up_child_canisters, top_up_sns_canisters},
     store::STATE,
 };
 use ic_cdk::api::time;
@@ -18,20 +19,20 @@ const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
 
 #[init]
 fn init() {
-    // set timer to run operations at INTERVAL
-    let timer_id = set_timer_interval(INTERVAL, move || {
-        ic_cdk::spawn(operations());
-        // ic_cdk::spawn(child_operations());
-    });
-
-    STATE.with(|s| s.borrow_mut().set_timer_id(timer_id));
-
     // run operations once immediately to init state
     // need to use timer to spawn async fn from sync context
     let _ = set_timer(Duration::from_nanos(1), move || {
         ic_cdk::spawn(operations());
-        // ic_cdk::spawn(child_operations());
+        ic_cdk::spawn(child_operations());
     });
+
+    // set timer to run operations at INTERVAL
+    let timer_id = set_timer_interval(INTERVAL, move || {
+        ic_cdk::spawn(operations());
+        ic_cdk::spawn(child_operations());
+    });
+
+    STATE.with(|s| s.borrow_mut().set_timer_id(timer_id));
 }
 
 /*
@@ -57,20 +58,20 @@ pub async fn operations() {
     log(EVENT_SNS_SUMMARY.to_string());
 
     // top up canisters with low cycles after state update
-    ic_cdk::spawn(crate::operations::charge::top_up_sns_canisters());
+    top_up_sns_canisters().await;
 }
 
-// pub async fn child_operations() {
-//     let childs = crate::operations::child::get_child_canister_summary().await;
-//     STATE.with(|s| {
-//         s.borrow_mut().set_childs(childs);
-//     });
+pub async fn child_operations() {
+    let childs = crate::operations::child::get_child_canister_summary().await;
+    STATE.with(|s| {
+        s.borrow_mut().set_childs(childs);
+    });
 
-//     log(EVENT_CHILD_SUMMARY.to_string());
+    log(EVENT_CHILD_SUMMARY.to_string());
 
-//     // top up child canisters with low cycles after state update
-//     // ic_cdk::spawn(crate::operations::charge::top_up_child_canisters());
-// }
+    // top up child canisters with low cycles after state update
+    top_up_child_canisters().await;
+}
 
 #[pre_upgrade]
 fn pre_upgrade() {
