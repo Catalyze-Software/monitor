@@ -1,9 +1,8 @@
 use crate::{
     default::{child_operations, operations},
-    ledger::top_up_self,
+    log::format_time,
     sort::CanisterCycles,
     store::STATE,
-    utils::format_time,
 };
 use candid::Nat;
 use ic_cdk_macros::{query, update};
@@ -37,11 +36,6 @@ fn update_state() {
 #[query]
 fn get_log(n: usize) -> Vec<String> {
     STATE.with(|s| s.borrow().get_log(n))
-}
-
-#[update]
-async fn test_top_up() {
-    top_up_self().await
 }
 
 #[test]

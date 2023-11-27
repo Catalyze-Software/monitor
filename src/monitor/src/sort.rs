@@ -7,7 +7,7 @@ use ic_cdk::trap;
 * and return a sorted vector of these pairs
 */
 #[derive(CandidType, Deserialize)]
-pub struct CanisterCycles(String, Nat);
+pub struct CanisterCycles(pub String, pub Nat);
 
 pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     let mut vec = Vec::new();

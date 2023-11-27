@@ -1,7 +1,6 @@
-use crate::{sns::GetSnsCanistersSummaryResponse, utils::format_time};
+use crate::{log::format_time, operations::sns::GetSnsCanistersSummaryResponse};
 use candid::Nat;
 use ic_cdk::api::management_canister::main::CanisterStatusResponse;
-use ic_cdk::api::time;
 use ic_cdk_timers::TimerId;
 use ic_ledger_types::Tokens;
 use std::cell::RefCell;
@@ -81,11 +80,8 @@ impl State {
     pub fn set_childs(&mut self, childs: Vec<(String, CanisterStatusResponse)>) {
         self.childs = Some(childs);
     }
-}
 
-pub fn log(msg: String) {
-    STATE.with(|s| {
-        let mut state = s.borrow_mut();
-        state.log(time(), msg);
-    });
+    pub fn get_childs(&self) -> Vec<(String, CanisterStatusResponse)> {
+        self.childs.clone().expect("Childs not set")
+    }
 }

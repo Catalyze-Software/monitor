@@ -1,5 +1,5 @@
 use crate::{
-    log::{EVENT_CHILD_SUMMARY, EVENT_CYCLE_BALANCE, EVENT_ICP_BALANCE, EVENT_SNS_SUMMARY},
+    log::{log, EVENT_CHILD_SUMMARY, EVENT_CYCLE_BALANCE, EVENT_ICP_BALANCE, EVENT_SNS_SUMMARY},
     store::STATE,
 };
 use ic_cdk::api::time;
@@ -34,41 +34,43 @@ fn init() {
     STATE.with(|s| s.borrow_mut().set_timer_id(timer_id));
 }
 
+/*
+* Perform SNS canisters query routine and top-up if needed
+*/
 pub async fn operations() {
     let now = time();
-    let balance = crate::ledger::icp_balance().await;
-    let cycles = crate::ledger::cycle_balance().await;
-    let summary = crate::sns::get_sns_canisters_summary().await;
+    let balance = crate::operations::ledger::icp_balance().await;
+    let cycles = crate::operations::cmc::cycle_balance().await;
+    let summary = crate::operations::sns::get_sns_canisters_summary().await;
 
     STATE.with(|s| {
         let mut state = s.borrow_mut();
 
         state.set_last_poll_time(now);
-
         state.set_icp_balance(balance);
-        state.log(
-            now,
-            format!("{}: {}", EVENT_ICP_BALANCE.to_string(), balance),
-        );
-
         state.set_cycle_balance(cycles.clone());
-        state.log(
-            now,
-            format!("{}: {}", EVENT_CYCLE_BALANCE.to_string(), cycles),
-        );
-
         state.set_summary(summary);
-        state.log(now, EVENT_SNS_SUMMARY.to_string());
     });
+
+    // log the wuery operations
+    log(format!("{}: {}", EVENT_ICP_BALANCE.to_string(), balance));
+    log(format!("{}: {}", EVENT_CYCLE_BALANCE.to_string(), cycles));
+    log(EVENT_SNS_SUMMARY.to_string());
+
+    // top up canisters with low cycles after state update
+    crate::operations::charge::top_up_sns_canisters().await;
 }
 
 pub async fn child_operations() {
-    let childs = crate::child::get_child_canister_summary().await;
+    let childs = crate::operations::child::get_child_canister_summary().await;
     STATE.with(|s| {
-        let mut state = s.borrow_mut();
-        state.set_childs(childs);
-        state.log(time(), EVENT_CHILD_SUMMARY.to_string());
+        s.borrow_mut().set_childs(childs);
     });
+
+    log(EVENT_CHILD_SUMMARY.to_string());
+
+    // top up child canisters with low cycles after state update
+    crate::operations::charge::top_up_child_canisters().await;
 }
 
 #[pre_upgrade]

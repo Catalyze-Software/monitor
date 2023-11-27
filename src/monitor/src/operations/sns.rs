@@ -1,6 +1,7 @@
-use crate::principals::SNS_ROOT;
 use candid::{CandidType, Deserialize, Principal};
 use ic_cdk::call;
+
+pub const SNS_ROOT: &str = "uly3p-iqaaa-aaaaq-aabma-cai";
 
 #[derive(CandidType, Deserialize)]
 pub struct GetSnsCanistersSummaryRequest {
