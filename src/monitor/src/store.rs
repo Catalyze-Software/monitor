@@ -20,7 +20,7 @@ pub struct State {
     cycle_balance: Option<Nat>,
 
     summary: Option<GetSnsCanistersSummaryResponse>,
-    pub childs: Option<Vec<(String, CanisterStatusResponse)>>,
+    // pub childs: Option<Vec<(String, CanisterStatusResponse)>>,
 }
 
 impl State {
@@ -77,11 +77,11 @@ impl State {
         self.summary.clone().expect("Summary not set")
     }
 
-    pub fn set_childs(&mut self, childs: Vec<(String, CanisterStatusResponse)>) {
-        self.childs = Some(childs);
-    }
+    // pub fn set_childs(&mut self, childs: Vec<(String, CanisterStatusResponse)>) {
+    //     self.childs = Some(childs);
+    // }
 
-    pub fn get_childs(&self) -> Vec<(String, CanisterStatusResponse)> {
-        self.childs.clone().expect("Childs not set")
-    }
+    // pub fn get_childs(&self) -> Vec<(String, CanisterStatusResponse)> {
+    //     self.childs.clone().expect("Childs not set")
+    // }
 }

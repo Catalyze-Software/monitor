@@ -10,7 +10,7 @@ dfx generate --network ic
 
 for t in ${canisters[@]}; do
     echo -e "${GREEN} $ENV > Building $t..${NC}"
-    dfx build --network ic $t
+    dfx build --network development $t
 
     mkdir -p wasm
     cp -r target/wasm32-unknown-unknown/release/$t.wasm wasm/$t.wasm

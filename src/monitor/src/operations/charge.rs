@@ -1,6 +1,6 @@
 use super::cmc::{icp_xdr_rate, notify_top_up};
 use super::ledger::transfer_icp_to_cmc_for_cycles_minting;
-use crate::log::log;
+use crate::log::{log, EVENT_CANISTER_TOPPED_UP};
 use crate::log::{EVENT_CYCLES_MINTED, EVENT_ICP_SENT};
 use crate::sort::{sorted_canister_cycles, CanisterCycles};
 use crate::store::STATE;
@@ -16,12 +16,14 @@ const TOP_UP_XDR_AMOUNT_PERMYRIADS: u64 = 10;
 pub async fn top_up_sns_canisters() {
     let sorted_canister_cycles = sorted_canister_cycles();
 
-    for CanisterCycles(canister_id, cycles) in sorted_canister_cycles {
+    for CanisterCycles {
+        name: _,
+        canister_id,
+        cycles,
+    } in sorted_canister_cycles
+    {
         if cycles < CYCLES_BALANCES_THRESHOLD {
-            let canister_id =
-                Principal::from_text(canister_id).expect("Failed to decode principal");
             top_up(canister_id).await;
-
         // since this vector is sorted in ascending cycle order, we can break early
         } else {
             break;
@@ -32,17 +34,17 @@ pub async fn top_up_sns_canisters() {
 /*
 * Iterate over the child canisters and top up canisters with low cycles
 */
-pub async fn top_up_child_canisters() {
-    let childs = STATE.with(|s| s.borrow().get_childs());
+// pub async fn top_up_child_canisters() {
+//     let childs = STATE.with(|s| s.borrow().get_childs());
 
-    for (canister_id, status) in childs {
-        if status.cycles < CYCLES_BALANCES_THRESHOLD {
-            let canister_id =
-                Principal::from_text(canister_id).expect("Failed to decode principal");
-            top_up(canister_id).await;
-        }
-    }
-}
+//     for (canister_id, status) in childs {
+//         if status.cycles < CYCLES_BALANCES_THRESHOLD {
+//             let canister_id =
+//                 Principal::from_text(canister_id).expect("Failed to decode principal");
+//             top_up(canister_id).await;
+//         }
+//     }
+// }
 
 /*
 * Perform all async operations for topping up one canister with cycles and log results
