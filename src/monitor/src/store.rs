@@ -10,13 +10,12 @@ use std::cell::RefCell;
 
 thread_local! {
     pub static STATE: RefCell<State> = RefCell::new(State::default());
+    pub static TIMER: RefCell<Timer> = RefCell::new(Timer::default());
 }
 
-#[derive(Default)]
+#[derive(Default, Clone, CandidType, Deserialize)]
 pub struct State {
     log: Vec<(u64, String)>,
-
-    timer_id: Option<TimerId>,
     last_poll_time: Option<u64>,
 
     icp_balance: Option<Tokens>,
@@ -38,14 +37,6 @@ impl State {
             .take(n)
             .map(|(timestamp, msg)| format!("{} {}", format_time(*timestamp), msg.clone()))
             .collect()
-    }
-
-    pub fn set_timer_id(&mut self, timer_id: TimerId) {
-        self.timer_id = Some(timer_id);
-    }
-
-    pub fn get_timer_id(&self) -> TimerId {
-        self.timer_id.expect("TimerId not set")
     }
 
     pub fn set_last_poll_time(&mut self, poll_time: u64) {
@@ -86,6 +77,21 @@ impl State {
 
     pub fn get_childs(&self) -> Vec<CanisterCycles> {
         self.childs.as_ref().expect("Childs not set").clone()
+    }
+}
+
+#[derive(Default)]
+pub struct Timer {
+    timer_id: Option<TimerId>,
+}
+
+impl Timer {
+    pub fn set_timer_id(&mut self, timer_id: TimerId) {
+        self.timer_id = Some(timer_id);
+    }
+
+    pub fn get_timer_id(&self) -> TimerId {
+        self.timer_id.expect("Timer id not set")
     }
 }
 

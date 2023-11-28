@@ -1,9 +1,11 @@
 use crate::{
     log::{log, EVENT_CHILD_SUMMARY, EVENT_CYCLE_BALANCE, EVENT_ICP_BALANCE, EVENT_SNS_SUMMARY},
     operations::charge::{top_up_child_canisters, top_up_sns_canisters},
-    store::STATE,
+    store::{State, STATE, TIMER},
 };
+use candid::{Decode, Encode};
 use ic_cdk::api::time;
+use ic_cdk::storage::{stable_restore, stable_save};
 use ic_cdk_macros::{init, post_upgrade, pre_upgrade};
 use ic_cdk_timers::{clear_timer, set_timer, set_timer_interval};
 use std::time::Duration;
@@ -32,7 +34,7 @@ fn init() {
         ic_cdk::spawn(child_operations());
     });
 
-    STATE.with(|s| s.borrow_mut().set_timer_id(timer_id));
+    TIMER.with(|t| t.borrow_mut().set_timer_id(timer_id));
 }
 
 /*
@@ -75,13 +77,22 @@ pub async fn child_operations() {
 
 #[pre_upgrade]
 fn pre_upgrade() {
-    STATE.with(|s| {
-        let state = s.borrow();
-        clear_timer(state.get_timer_id());
+    TIMER.with(|t| {
+        let timer = t.borrow();
+        clear_timer(timer.get_timer_id());
     });
+
+    let serialized = Encode!(&STATE.with(|s| s.borrow().clone())).unwrap();
+    stable_save::<(Vec<u8>,)>((serialized,)).expect("Failed to save state");
 }
 
 #[post_upgrade]
 fn post_upgrade() {
+    let (serialized,) = stable_restore::<(Vec<u8>,)>().expect("Failed to restore state");
+    let state = candid::Decode!(&serialized, State).unwrap();
+
+    STATE.with(|s| {
+        *s.borrow_mut() = state;
+    });
     init();
 }
