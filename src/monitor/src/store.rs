@@ -75,8 +75,8 @@ impl State {
         self.childs = Some(childs);
     }
 
-    pub fn get_childs(&self) -> Vec<CanisterCycles> {
-        self.childs.as_ref().expect("Childs not set").clone()
+    pub fn get_childs(&self) -> Option<Vec<CanisterCycles>> {
+        self.childs.clone()
     }
 }
 

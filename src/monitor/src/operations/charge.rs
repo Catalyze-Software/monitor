@@ -8,7 +8,7 @@ use candid::Principal;
 use ic_ledger_types::Tokens;
 
 const CYCLES_BALANCES_THRESHOLD: u64 = 3_000_000_000_000;
-const TOP_UP_XDR_AMOUNT_PERMYRIADS: u64 = 10;
+const TOP_UP_XDR_AMOUNT_PERMYRIADS: u64 = 10_000_000; // 0.1 XDR = 10_000_000 permyriads
 
 /*
 * Iterate over the sorted SNS canister-cycles vector and top up canisters with low cycles
@@ -35,7 +35,7 @@ pub async fn top_up_sns_canisters() {
 * Iterate over the child canisters and top up canisters with low cycles
 */
 pub async fn top_up_child_canisters() {
-    let childs = STATE.with(|s| s.borrow().get_childs());
+    let childs = STATE.with(|s| s.borrow().get_childs().unwrap_or_else(|| vec![]));
 
     for CanisterCycles {
         name,

@@ -23,18 +23,31 @@ const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
 fn init() {
     // run operations once immediately to init state
     // need to use timer to spawn async fn from sync context
-    let _ = set_timer(Duration::from_nanos(1), move || {
-        ic_cdk::spawn(operations());
-        ic_cdk::spawn(child_operations());
-    });
+    let _ = set_timer(Duration::from_nanos(1), move || run());
 
     // set timer to run operations at INTERVAL
-    let timer_id = set_timer_interval(INTERVAL, move || {
-        ic_cdk::spawn(operations());
-        ic_cdk::spawn(child_operations());
-    });
+    let timer_id = set_timer_interval(INTERVAL, move || run());
 
     TIMER.with(|t| t.borrow_mut().set_timer_id(timer_id));
+}
+
+/*
+* Perform a full run of state update and charge operations
+*/
+pub fn run() {
+    // read SNS canister summary
+    ic_cdk::spawn(operations());
+    // top up sns canisters if needed
+    ic_cdk::spawn(top_up_sns_canisters());
+    // read SNS canister summary again after top-up
+    ic_cdk::spawn(operations());
+
+    // read child canister summary
+    ic_cdk::spawn(child_operations());
+    // top up child canisters if needed
+    ic_cdk::spawn(top_up_child_canisters());
+    // read child canister summary again after top-up
+    ic_cdk::spawn(child_operations());
 }
 
 /*
@@ -58,9 +71,6 @@ pub async fn operations() {
     log(format!("{}: {}", EVENT_ICP_BALANCE.to_string(), balance));
     log(format!("{}: {}", EVENT_CYCLE_BALANCE.to_string(), cycles));
     log(EVENT_SNS_SUMMARY.to_string());
-
-    // top up canisters with low cycles after state update
-    top_up_sns_canisters().await;
 }
 
 pub async fn child_operations() {
