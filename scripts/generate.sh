@@ -6,11 +6,11 @@ canisters=(
 
 echo -e "${GREEN}> $ENV: Generating required files..${NC}"
 cargo test --test generate
-dfx generate --network ic
+dfx generate
 
 for t in ${canisters[@]}; do
     echo -e "${GREEN} $ENV > Building $t..${NC}"
-    dfx build --network development $t
+    dfx build $t --ic
 
     mkdir -p wasm
     cp -r target/wasm32-unknown-unknown/release/$t.wasm wasm/$t.wasm
