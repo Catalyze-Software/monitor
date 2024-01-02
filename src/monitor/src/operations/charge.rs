@@ -8,7 +8,7 @@ use candid::Principal;
 use ic_ledger_types::Tokens;
 
 const CYCLES_BALANCES_THRESHOLD: u64 = 3_000_000_000_000;
-const TOP_UP_XDR_AMOUNT: u64 = 10_000_000_000_000; // CYCLES
+const TOP_UP_CYCLE_AMOUNT: u64 = 10_000_000_000_000; // CYCLES 10T
 
 /*
 * Iterate over the sorted SNS canister-cycles vector and top up canisters with low cycles
@@ -55,7 +55,7 @@ pub async fn top_up_child_canisters() {
 async fn top_up(name: String, canister_id: Principal) {
     // get rate, calculate icp amount and log result
     let rate = icp_xdr_rate().await.xdr_permyriad_per_icp;
-    let icp_e8s = TOP_UP_XDR_AMOUNT / rate;
+    let icp_e8s = TOP_UP_CYCLE_AMOUNT / rate;
 
     log(format!(
         "ICP/XDR rate: {}, top up amount: {} ICP",
