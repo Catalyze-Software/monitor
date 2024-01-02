@@ -23,10 +23,10 @@ const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
 fn init() {
     // run operations once immediately to init state
     // need to use timer to spawn async fn from sync context
-    let _ = set_timer(Duration::from_nanos(1), move || run());
+    let _ = set_timer(Duration::from_nanos(1), move || ic_cdk::spawn(run()));
 
     // set timer to run operations at INTERVAL
-    let timer_id = set_timer_interval(INTERVAL, move || run());
+    let timer_id = set_timer_interval(INTERVAL, move || ic_cdk::spawn(run()));
 
     TIMER.with(|t| t.borrow_mut().set_timer_id(timer_id));
 }
@@ -34,26 +34,26 @@ fn init() {
 /*
 * Perform a full run of state update and charge operations
 */
-pub fn run() {
+pub async fn run() {
     // read SNS canister summary
-    ic_cdk::spawn(operations());
+    operations().await;
     // top up sns canisters if needed
-    ic_cdk::spawn(top_up_sns_canisters());
+    top_up_sns_canisters().await;
     // read SNS canister summary again after top-up
-    ic_cdk::spawn(operations());
+    operations().await;
 
-    // read child canister summary
-    ic_cdk::spawn(child_operations());
-    // top up child canisters if needed
-    ic_cdk::spawn(top_up_child_canisters());
-    // read child canister summary again after top-up
-    ic_cdk::spawn(child_operations());
+    // // read child canister summary
+    // ic_cdk::spawn(child_operations());
+    // // top up child canisters if needed
+    // ic_cdk::spawn(top_up_child_canisters());
+    // // read child canister summary again after top-up
+    // ic_cdk::spawn(child_operations());
 }
 
 /*
 * Perform SNS canisters query routine and top-up if needed
 */
-pub async fn operations() {
+async fn operations() {
     let balance = crate::operations::ledger::icp_balance().await;
     let cycles = crate::operations::cmc::cycle_balance().await;
     let summary = crate::operations::sns::get_sns_canisters_summary().await;

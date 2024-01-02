@@ -1,5 +1,5 @@
 use crate::{
-    default::{child_operations, operations, run},
+    default::run,
     log::format_time,
     store::{CanisterCycles, STATE},
 };
@@ -24,8 +24,8 @@ fn sorted_canister_cycles() -> Vec<CanisterCycles> {
 }
 
 #[update]
-fn update_state() {
-    run()
+async fn update_state() {
+    run().await
 }
 
 #[query]
