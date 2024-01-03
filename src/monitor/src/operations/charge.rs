@@ -3,17 +3,17 @@ use super::ledger::transfer_icp_to_cmc_for_cycles_minting;
 use crate::log::log;
 use crate::log::{EVENT_CYCLES_MINTED, EVENT_ICP_SENT};
 use crate::sort::sorted_canister_cycles;
-use crate::store::{CanisterCycles, STATE};
+use crate::store::CanisterCycles;
 use candid::Principal;
 use ic_ledger_types::Tokens;
 
 const CYCLES_BALANCES_THRESHOLD: u64 = 3_000_000_000_000;
-const TOP_UP_CYCLE_AMOUNT: u64 = 10_000_000_000_000; // CYCLES 10T
+const TOP_UP_CYCLE_AMOUNT: u64 = 2_000_000_000_000; // CYCLES 10T
 
 /*
-* Iterate over the sorted SNS canister-cycles vector and top up canisters with low cycles
+* Iterate over all canister-cycles vector and top up canisters with low cycles
 */
-pub async fn top_up_sns_canisters() {
+pub async fn top_up_canisters() {
     let sorted_canister_cycles = sorted_canister_cycles();
 
     for CanisterCycles {
@@ -27,24 +27,6 @@ pub async fn top_up_sns_canisters() {
         // since this vector is sorted in ascending cycle order, we can break early
         } else {
             break;
-        }
-    }
-}
-
-/*
-* Iterate over the child canisters and top up canisters with low cycles
-*/
-pub async fn top_up_child_canisters() {
-    let childs = STATE.with(|s| s.borrow().get_childs().unwrap_or_else(|| vec![]));
-
-    for CanisterCycles {
-        name,
-        canister_id,
-        cycles,
-    } in childs
-    {
-        if cycles < CYCLES_BALANCES_THRESHOLD {
-            top_up(name, canister_id).await;
         }
     }
 }
@@ -64,7 +46,8 @@ async fn top_up(name: String, canister_id: Principal) {
     ));
 
     // transfer icp to CMC for cycles minting and log result
-    let block_index = transfer_icp_to_cmc_for_cycles_minting(Tokens::from_e8s(icp_e8s)).await;
+    let block_index =
+        transfer_icp_to_cmc_for_cycles_minting(Tokens::from_e8s(icp_e8s), canister_id).await;
     log(format!(
         "{}: {} ICP",
         EVENT_ICP_SENT,

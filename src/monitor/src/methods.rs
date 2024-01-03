@@ -25,7 +25,7 @@ fn sorted_canister_cycles() -> Vec<CanisterCycles> {
 
 #[update]
 async fn update_state() {
-    run().await
+    ic_cdk::spawn(run())
 }
 
 #[query]

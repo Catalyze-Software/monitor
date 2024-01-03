@@ -1,6 +1,6 @@
 use crate::{
-    log::{log, EVENT_CHILD_SUMMARY, EVENT_CYCLE_BALANCE, EVENT_ICP_BALANCE, EVENT_SNS_SUMMARY},
-    operations::charge::{top_up_child_canisters, top_up_sns_canisters},
+    log::{log, EVENT_CHILD_SUMMARY, EVENT_CYCLE_BALANCE, EVENT_ICP_BALANCE, EVENT_SNS_SUMMARY, EVENT_READ_OPERATIONS, EVENT_TOP_UP_CANISTERS},
+    operations::charge::top_up_canisters,
     store::{State, STATE, TIMER},
 };
 use candid::{Decode, Encode};
@@ -11,13 +11,6 @@ use ic_cdk_timers::{clear_timer, set_timer, set_timer_interval};
 use std::time::Duration;
 
 const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
-
-/*
-* One global timer is set at each canister upgrade / reinstall.
-* The timer invokes an async fn `operations` from the `init` sync context
-* Timer is cleared at each canister upgrade / reinstall and set again in `post_upgrade`
-* Child ops are seperated because they currently trap (monitor is not controller)
-*/
 
 #[init]
 fn init() {
@@ -35,54 +28,66 @@ fn init() {
 * Perform a full run of state update and charge operations
 */
 pub async fn run() {
-    // read SNS canister summary
-    operations().await;
-    // top up sns canisters if needed
-    top_up_sns_canisters().await;
-    // read SNS canister summary again after top-up
-    operations().await;
+    read_operations().await;
+    log(EVENT_READ_OPERATIONS.to_string());
 
-    // // read child canister summary
-    // ic_cdk::spawn(child_operations());
-    // // top up child canisters if needed
-    // ic_cdk::spawn(top_up_child_canisters());
-    // // read child canister summary again after top-up
-    // ic_cdk::spawn(child_operations());
+    top_up_canisters().await;
+    log(EVENT_TOP_UP_CANISTERS.to_string());
+
+    read_operations().await;
+    log(EVENT_READ_OPERATIONS.to_string());
+
+    log("RUN COMPLETED SUCCESFULLY".to_string());
 }
 
 /*
 * Perform SNS canisters query routine and top-up if needed
 */
-async fn operations() {
+async fn read_operations() {
+    // Monitor ICP balance
     let balance = crate::operations::ledger::icp_balance().await;
+
+    STATE.with(|s| {
+        let mut state = s.borrow_mut();
+        state.set_icp_balance(balance);
+    });
+
+    log(format!("{}: {}", EVENT_ICP_BALANCE.to_string(), balance));
+
+    // Monitor cycles balance
     let cycles = crate::operations::cmc::cycle_balance().await;
+
+    STATE.with(|s| {
+        let mut state = s.borrow_mut();
+        state.set_cycle_balance(cycles.clone());
+    });
+
+    log(format!("{}: {}", EVENT_CYCLE_BALANCE.to_string(), cycles));
+
+    // SNS canisters summary
     let summary = crate::operations::sns::get_sns_canisters_summary().await;
 
     STATE.with(|s| {
         let mut state = s.borrow_mut();
-
-        state.set_last_poll_time(time());
-        state.set_icp_balance(balance);
-        state.set_cycle_balance(cycles.clone());
         state.set_summary(summary);
     });
 
-    // log the query operations
-    log(format!("{}: {}", EVENT_ICP_BALANCE.to_string(), balance));
-    log(format!("{}: {}", EVENT_CYCLE_BALANCE.to_string(), cycles));
     log(EVENT_SNS_SUMMARY.to_string());
-}
 
-pub async fn child_operations() {
+    // Child canisters summary
     let childs = crate::operations::child::get_child_canister_summary().await;
+
     STATE.with(|s| {
         s.borrow_mut().set_childs(childs);
     });
 
     log(EVENT_CHILD_SUMMARY.to_string());
 
-    // top up child canisters with low cycles after state update
-    top_up_child_canisters().await;
+    // Set last poll time
+    STATE.with(|s| {
+        let mut state = s.borrow_mut();
+        state.set_last_poll_time(time());
+    });
 }
 
 #[pre_upgrade]

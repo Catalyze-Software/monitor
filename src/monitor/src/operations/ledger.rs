@@ -1,3 +1,4 @@
+use candid::Principal;
 use ic_cdk::api::time;
 use ic_cdk::id;
 use ic_ledger_types::transfer;
@@ -28,13 +29,13 @@ pub async fn icp_balance() -> Tokens {
 /*
 Transfer ICP to CMC canister for cycle minting
 */
-pub async fn transfer_icp_to_cmc_for_cycles_minting(amount: Tokens) -> BlockIndex {
+pub async fn transfer_icp_to_cmc_for_cycles_minting(amount: Tokens, canister_id: Principal) -> BlockIndex {
     let arg = TransferArgs {
         memo: MEMO_TOP_UP_CANISTER,
         amount,
         fee: ICP_TRANSACTION_FEE,
         from_subaccount: None,
-        to: AccountIdentifier::new(&MAINNET_CYCLES_MINTING_CANISTER_ID, &Subaccount::from(id())),
+        to: AccountIdentifier::new(&MAINNET_CYCLES_MINTING_CANISTER_ID, &Subaccount::from(canister_id)),
         created_at_time: Some(Timestamp {
             timestamp_nanos: time(),
         }),

@@ -30,7 +30,7 @@ pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     }
 
     // iterate over child canisters (not present in `GetSnsCanistersSummaryResponse`)
-    STATE.with(|s| match s.borrow().childs.clone() {
+    STATE.with(|s| match s.borrow().get_childs() {
         None => {}
         Some(childs) => {
             for child in childs {

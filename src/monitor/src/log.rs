@@ -12,6 +12,9 @@ pub const EVENT_CHILD_SUMMARY: &str = "Updated child summary";
 pub const EVENT_ICP_SENT: &str = "ICP sent";
 pub const EVENT_CYCLES_MINTED: &str = "Cycles minted";
 
+pub const EVENT_READ_OPERATIONS: &str = "Read operations successful";
+pub const EVENT_TOP_UP_CANISTERS: &str = "Top up canisters successful";
+
 pub fn log(msg: String) {
     STATE.with(|s| {
         let mut state = s.borrow_mut();
