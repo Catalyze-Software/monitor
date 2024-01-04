@@ -5,7 +5,7 @@ canisters=(
 )
 
 echo -e "${GREEN}> $ENV: Generating required files..${NC}"
-cargo test --test generate
+cargo test generate_candid -p monitor
 dfx generate
 
 for t in ${canisters[@]}; do
