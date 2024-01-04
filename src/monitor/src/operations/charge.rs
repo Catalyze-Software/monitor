@@ -7,8 +7,8 @@ use crate::store::CanisterCycles;
 use candid::Principal;
 use ic_ledger_types::Tokens;
 
-const CYCLES_BALANCES_THRESHOLD: u64 = 3_000_000_000_000;
-const TOP_UP_CYCLE_AMOUNT: u64 = 2_000_000_000_000; // CYCLES 10T
+const CYCLES_BALANCE_THRESHOLD: u64 = 5_000_000_000_000; // 5T
+const CYCLE_TOP_UP_AMOUNT: u64 = 10_000_000_000_000; // 10T
 
 /*
 * Iterate over all canister-cycles vector and top up canisters with low cycles
@@ -22,7 +22,7 @@ pub async fn top_up_canisters() {
         cycles,
     } in sorted_canister_cycles
     {
-        if cycles < CYCLES_BALANCES_THRESHOLD {
+        if cycles < CYCLES_BALANCE_THRESHOLD {
             top_up(name, canister_id).await;
         // since this vector is sorted in ascending cycle order, we can break early
         } else {
@@ -37,7 +37,7 @@ pub async fn top_up_canisters() {
 async fn top_up(name: String, canister_id: Principal) {
     // get rate, calculate icp amount and log result
     let rate = icp_xdr_rate().await.xdr_permyriad_per_icp;
-    let icp_e8s = TOP_UP_CYCLE_AMOUNT / rate;
+    let icp_e8s = CYCLE_TOP_UP_AMOUNT / rate;
 
     log(format!(
         "ICP/XDR rate: {}, top up amount: {} ICP",
