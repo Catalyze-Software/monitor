@@ -4,7 +4,6 @@ use ic_cdk::trap;
 use time::{format_description::well_known::Rfc2822, OffsetDateTime};
 
 pub const EVENT_ICP_BALANCE: &str = "Updated ICP balance";
-pub const EVENT_CYCLE_BALANCE: &str = "Updated cycle balance";
 
 pub const EVENT_SNS_SUMMARY: &str = "Updated SNS summary";
 pub const EVENT_CHILD_SUMMARY: &str = "Updated child summary";

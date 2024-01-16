@@ -22,7 +22,7 @@ pub struct State {
     cycle_balance: Option<Nat>,
 
     summary: Option<GetSnsCanistersSummaryResponse>,
-    pub childs: Option<Vec<CanisterCycles>>,
+    childs: Option<Vec<CanisterCycles>>,
 }
 
 impl State {

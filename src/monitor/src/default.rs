@@ -1,5 +1,8 @@
 use crate::{
-    log::{log, EVENT_CHILD_SUMMARY, EVENT_CYCLE_BALANCE, EVENT_ICP_BALANCE, EVENT_SNS_SUMMARY, EVENT_READ_OPERATIONS, EVENT_TOP_UP_CANISTERS},
+    log::{
+        log, EVENT_CHILD_SUMMARY, EVENT_ICP_BALANCE, EVENT_READ_OPERATIONS, EVENT_SNS_SUMMARY,
+        EVENT_TOP_UP_CANISTERS,
+    },
     operations::charge::top_up_canisters,
     store::{State, STATE, TIMER},
 };
@@ -61,8 +64,6 @@ async fn read_operations() {
         let mut state = s.borrow_mut();
         state.set_cycle_balance(cycles.clone());
     });
-
-    log(format!("{}: {}", EVENT_CYCLE_BALANCE.to_string(), cycles));
 
     // SNS canisters summary
     let summary = crate::operations::sns::get_sns_canisters_summary().await;
