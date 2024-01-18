@@ -5,9 +5,12 @@ export const idlFactory = ({ IDL }) => {
     'cycles' : IDL.Nat,
   });
   return IDL.Service({
+    'get_latest_with_timestamp' : IDL.Func(
+        [IDL.Nat64],
+        [IDL.Vec(IDL.Text)],
+        ['query'],
+      ),
     'get_log' : IDL.Func([IDL.Nat64], [IDL.Vec(IDL.Text)], ['query']),
-    'icp_balance' : IDL.Func([], [IDL.Text, IDL.Nat64], ['query']),
-    'last_poll_time' : IDL.Func([], [IDL.Text, IDL.Nat64], ['query']),
     'sorted_canister_cycles' : IDL.Func(
         [],
         [IDL.Vec(CanisterCycles)],

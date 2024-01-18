@@ -4,3 +4,4 @@ mod methods;
 mod operations;
 mod sort;
 mod store;
+mod stable_store;

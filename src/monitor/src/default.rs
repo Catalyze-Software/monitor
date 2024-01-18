@@ -1,14 +1,5 @@
-use crate::{
-    log::{
-        log, EVENT_CHILD_SUMMARY, EVENT_ICP_BALANCE, EVENT_READ_OPERATIONS, EVENT_SNS_SUMMARY,
-        EVENT_TOP_UP_CANISTERS,
-    },
-    operations::charge::top_up_canisters,
-    store::{State, STATE, TIMER},
-};
-use candid::{Decode, Encode};
-use ic_cdk::api::time;
-use ic_cdk::storage::{stable_restore, stable_save};
+use crate::stable_store::{read_operations, top_up_canisters, Logs};
+use crate::store::TIMER;
 use ic_cdk_macros::{init, post_upgrade, pre_upgrade};
 use ic_cdk_timers::{clear_timer, set_timer, set_timer_interval};
 use std::time::Duration;
@@ -32,64 +23,64 @@ fn init() {
 */
 pub async fn run() {
     read_operations().await;
-    log(EVENT_READ_OPERATIONS.to_string());
+    Logs::log("Read operations successful".to_string());
 
     top_up_canisters().await;
-    log(EVENT_TOP_UP_CANISTERS.to_string());
+    Logs::log("Top up canisters successful".to_string());
 
     read_operations().await;
-    log(EVENT_READ_OPERATIONS.to_string());
+    Logs::log("Read operations successful".to_string());
 
-    log("RUN COMPLETED SUCCESFULLY".to_string());
+    Logs::log("RUN COMPLETED SUCCESFULLY".to_string());
 }
 
 /*
 * Perform SNS canisters query routine and top-up if needed
 */
-async fn read_operations() {
-    // Monitor ICP balance
-    let balance = crate::operations::ledger::icp_balance().await;
+// async fn read_operations() {
+//     // Monitor ICP balance
+//     let balance = crate::operations::ledger::icp_balance().await;
 
-    STATE.with(|s| {
-        let mut state = s.borrow_mut();
-        state.set_icp_balance(balance);
-    });
+//     STATE.with(|s| {
+//         let mut state = s.borrow_mut();
+//         state.set_icp_balance(balance);
+//     });
 
-    log(format!("{}: {}", EVENT_ICP_BALANCE.to_string(), balance));
+//     log(format!("{}: {}", EVENT_ICP_BALANCE.to_string(), balance));
 
-    // Monitor cycles balance
-    let cycles = crate::operations::cmc::cycle_balance().await;
+//     // Monitor cycles balance
+//     let cycles = crate::operations::cmc::cycle_balance().await;
 
-    STATE.with(|s| {
-        let mut state = s.borrow_mut();
-        state.set_cycle_balance(cycles.clone());
-    });
+//     STATE.with(|s| {
+//         let mut state = s.borrow_mut();
+//         state.set_cycle_balance(cycles.clone());
+//     });
 
-    // SNS canisters summary
-    let summary = crate::operations::sns::get_sns_canisters_summary().await;
+//     // SNS canisters summary
+//     let summary = crate::operations::sns::get_sns_canisters_summary().await;
 
-    STATE.with(|s| {
-        let mut state = s.borrow_mut();
-        state.set_summary(summary);
-    });
+//     STATE.with(|s| {
+//         let mut state = s.borrow_mut();
+//         state.set_summary(summary);
+//     });
 
-    log(EVENT_SNS_SUMMARY.to_string());
+//     log(EVENT_SNS_SUMMARY.to_string());
 
-    // Child canisters summary
-    let childs = crate::operations::child::get_child_canister_summary().await;
+//     // Child canisters summary
+//     let childs = crate::operations::child::get_child_canister_summary().await;
 
-    STATE.with(|s| {
-        s.borrow_mut().set_childs(childs);
-    });
+//     STATE.with(|s| {
+//         s.borrow_mut().set_childs(childs);
+//     });
 
-    log(EVENT_CHILD_SUMMARY.to_string());
+//     log(EVENT_CHILD_SUMMARY.to_string());
 
-    // Set last poll time
-    STATE.with(|s| {
-        let mut state = s.borrow_mut();
-        state.set_last_poll_time(time());
-    });
-}
+//     // Set last poll time
+//     STATE.with(|s| {
+//         let mut state = s.borrow_mut();
+//         state.set_last_poll_time(time());
+//     });
+// }
 
 #[pre_upgrade]
 fn pre_upgrade() {
@@ -98,17 +89,17 @@ fn pre_upgrade() {
         clear_timer(timer.get_timer_id());
     });
 
-    let serialized = Encode!(&STATE.with(|s| s.borrow().clone())).unwrap();
-    stable_save::<(Vec<u8>,)>((serialized,)).expect("Failed to save state");
+    // let serialized = Encode!(&STATE.with(|s| s.borrow().clone())).unwrap();
+    // stable_save::<(Vec<u8>,)>((serialized,)).expect("Failed to save state");
 }
 
 #[post_upgrade]
 fn post_upgrade() {
-    let (serialized,) = stable_restore::<(Vec<u8>,)>().expect("Failed to restore state");
-    let state = candid::Decode!(&serialized, State).unwrap();
+    // let (serialized,) = stable_restore::<(Vec<u8>,)>().expect("Failed to restore state");
+    // let state = candid::Decode!(&serialized, State).unwrap();
 
-    STATE.with(|s| {
-        *s.borrow_mut() = state;
-    });
+    // STATE.with(|s| {
+    //     *s.borrow_mut() = state;
+    // });
     init();
 }

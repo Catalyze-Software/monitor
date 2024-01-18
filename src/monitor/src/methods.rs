@@ -1,26 +1,21 @@
-use crate::{
-    default::run,
-    log::format_time,
-    store::{CanisterCycles, STATE},
-};
+use crate::{default::run, stable_store::Logs, store::CanisterCycles};
 use ic_cdk_macros::{query, update};
-use ic_ledger_types::Tokens;
 
-#[query]
-fn last_poll_time() -> (String, u64) {
-    let time = STATE.with(|s| s.borrow().get_last_poll_time());
-    (format_time(time), time)
-}
+// #[query]
+// fn last_poll_time() -> (String, u64) {
+//     let time = STATE.with(|s| s.borrow().get_last_poll_time());
+//     (format_time(time), time)
+// }
 
-#[query]
-fn icp_balance() -> (String, u64) {
-    let balance = STATE.with(|s| s.borrow().get_icp_balance());
-    (format!("{}", balance), Tokens::e8s(&balance))
-}
+// #[query]
+// fn icp_balance() -> (String, u64) {
+//     let balance = STATE.with(|s| s.borrow().get_icp_balance());
+//     (format!("{}", balance), Tokens::e8s(&balance))
+// }
 
 #[query]
 fn sorted_canister_cycles() -> Vec<CanisterCycles> {
-    crate::sort::sorted_canister_cycles()
+    crate::stable_store::sorted_canister_cycles()
 }
 
 #[update]
@@ -29,8 +24,13 @@ async fn update_state() {
 }
 
 #[query]
-fn get_log(n: usize) -> Vec<String> {
-    STATE.with(|s| s.borrow().get_log(n))
+fn get_log(n: u64) -> Vec<String> {
+    Logs::get_latest(n)
+}
+
+#[query]
+fn get_latest_with_timestamp(n: u64) -> Vec<String> {
+    Logs::get_latest_with_timestamps(n)
 }
 
 #[test]
