@@ -11,6 +11,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'get_log' : IDL.Func([IDL.Nat64], [IDL.Vec(IDL.Text)], ['query']),
+    'icp_balance' : IDL.Func([], [IDL.Text], ['query']),
     'sorted_canister_cycles' : IDL.Func(
         [],
         [IDL.Vec(CanisterCycles)],

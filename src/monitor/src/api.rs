@@ -1,21 +1,16 @@
-use ic_cdk_macros::{query, update};
+use crate::stores::stable_store::MonitorStore;
 use crate::utils::auth::is_authenticated;
 use crate::{
     run::run,
     stores::{stable_models::CanisterCycles, stable_store::Logs},
 };
+use ic_cdk_macros::{query, update};
 
-// #[query]
-// fn last_poll_time() -> (String, u64) {
-//     let time = STATE.with(|s| s.borrow().get_last_poll_time());
-//     (format_time(time), time)
-// }
-
-// #[query]
-// fn icp_balance() -> (String, u64) {
-//     let balance = STATE.with(|s| s.borrow().get_icp_balance());
-//     (format!("{}", balance), Tokens::e8s(&balance))
-// }
+#[query(guard = "is_authenticated")]
+fn icp_balance() -> String {
+    let monitor_state = MonitorStore::get_latest().expect("No monitor state");
+    format!("{}", monitor_state.icp_balance)
+}
 
 #[query(guard = "is_authenticated")]
 fn sorted_canister_cycles() -> Vec<CanisterCycles> {

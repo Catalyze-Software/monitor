@@ -9,6 +9,7 @@ export interface CanisterCycles {
 export interface _SERVICE {
   'get_latest_with_timestamp' : ActorMethod<[bigint], Array<string>>,
   'get_log' : ActorMethod<[bigint], Array<string>>,
+  'icp_balance' : ActorMethod<[], string>,
   'sorted_canister_cycles' : ActorMethod<[], Array<CanisterCycles>>,
   'update_state' : ActorMethod<[], undefined>,
 }

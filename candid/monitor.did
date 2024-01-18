@@ -6,6 +6,7 @@ type CanisterCycles = record {
 service : {
   get_latest_with_timestamp : (nat64) -> (vec text) query;
   get_log : (nat64) -> (vec text) query;
+  icp_balance : () -> (text) query;
   sorted_canister_cycles : () -> (vec CanisterCycles) query;
   update_state : () -> ();
 }
