@@ -1,5 +1,5 @@
 use ic_cdk_macros::{query, update};
-
+use crate::utils::auth::is_authenticated;
 use crate::{
     run::run,
     stores::{stable_models::CanisterCycles, stable_store::Logs},
@@ -17,22 +17,22 @@ use crate::{
 //     (format!("{}", balance), Tokens::e8s(&balance))
 // }
 
-#[query]
+#[query(guard = "is_authenticated")]
 fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     crate::utils::sort::sorted_canister_cycles()
 }
 
-#[update]
+#[update(guard = "is_authenticated")]
 async fn update_state() {
     ic_cdk::spawn(run())
 }
 
-#[query]
+#[query(guard = "is_authenticated")]
 fn get_log(n: u64) -> Vec<String> {
     Logs::get_latest(n)
 }
 
-#[query]
+#[query(guard = "is_authenticated")]
 fn get_latest_with_timestamp(n: u64) -> Vec<String> {
     Logs::get_latest_with_timestamps(n)
 }
