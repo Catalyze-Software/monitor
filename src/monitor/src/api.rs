@@ -1,5 +1,9 @@
-use crate::{default::run, stable_store::Logs, store::CanisterCycles};
 use ic_cdk_macros::{query, update};
+
+use crate::{
+    run::run,
+    stores::{stable_models::CanisterCycles, stable_store::Logs},
+};
 
 // #[query]
 // fn last_poll_time() -> (String, u64) {
@@ -15,7 +19,7 @@ use ic_cdk_macros::{query, update};
 
 #[query]
 fn sorted_canister_cycles() -> Vec<CanisterCycles> {
-    crate::stable_store::sorted_canister_cycles()
+    crate::utils::sort::sorted_canister_cycles()
 }
 
 #[update]
