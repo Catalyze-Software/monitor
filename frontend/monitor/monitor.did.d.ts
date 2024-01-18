@@ -7,9 +7,8 @@ export interface CanisterCycles {
   'cycles' : bigint,
 }
 export interface _SERVICE {
+  'get_latest_with_timestamp' : ActorMethod<[bigint], Array<string>>,
   'get_log' : ActorMethod<[bigint], Array<string>>,
-  'icp_balance' : ActorMethod<[], [string, bigint]>,
-  'last_poll_time' : ActorMethod<[], [string, bigint]>,
   'sorted_canister_cycles' : ActorMethod<[], Array<CanisterCycles>>,
   'update_state' : ActorMethod<[], undefined>,
 }

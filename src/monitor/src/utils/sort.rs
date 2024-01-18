@@ -1,15 +1,26 @@
-use crate::store::{CanisterCycles, STATE};
+use crate::stores::{
+    stable_models::CanisterCycles,
+    stable_store::{ChildStore, MonitorStore, SnsStore},
+};
 
 /*
-* Select each canister-cycles pair from STATE
-* and return a sorted vector of these pairs
+* Sorted canister cycles
 */
 pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     let mut vec = Vec::new();
 
-    let summary = STATE.with(|s| s.borrow().get_summary());
+    // add this monitor canister
+    let monitor_data = MonitorStore::get_latest().unwrap();
 
-    // get cycles for the general sns canisters
+    vec.push(CanisterCycles {
+        name: String::from("monitor"),
+        canister_id: ic_cdk::id(),
+        cycles: monitor_data.cycle_balance,
+    });
+
+    // add the SNS canisters
+    let summary = SnsStore::get_latest().unwrap();
+
     vec.push(CanisterCycles::new("root", &summary.root.unwrap()));
     vec.push(CanisterCycles::new("swap", &summary.swap.unwrap()));
     vec.push(CanisterCycles::new("ledger", &summary.ledger.unwrap()));
@@ -29,22 +40,15 @@ pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
         vec.push(CanisterCycles::new(&format!("archives {}", i), &canister));
     }
 
-    // iterate over child canisters (not present in `GetSnsCanistersSummaryResponse`)
-    STATE.with(|s| match s.borrow().get_childs() {
-        None => {}
-        Some(childs) => {
-            for child in childs {
-                vec.push(child);
-            }
-        }
-    });
+    // add the child canisters
+    let child_data = ChildStore::get_latest().unwrap();
 
-    // add this monitor canister cycle balance
-    vec.push(CanisterCycles {
-        name: String::from("monitor"),
-        canister_id: ic_cdk::id(),
-        cycles: STATE.with(|s| s.borrow().get_cycle_balance()),
-    });
+    vec.push(child_data.members.clone());
+    vec.push(child_data.groups.clone());
+    vec.push(child_data.profiles.clone());
+    vec.push(child_data.events.clone());
+    vec.push(child_data.event_attendees.clone());
+    vec.push(child_data.reports.clone());
 
     // sort the vec by cycles in ascending order
     vec.sort_by(|a, b| a.cycles.cmp(&b.cycles));

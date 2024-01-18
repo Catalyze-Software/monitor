@@ -1,16 +1,11 @@
+use crate::stores::stable_models::CanisterCycles;
 use candid::Principal;
 use ic_cdk::api::management_canister::{
     main::{canister_status, CanisterStatusResponse},
     provisional::CanisterIdRecord,
 };
 
-use crate::store::CanisterCycles;
-
-/*
-* Canisters not present in `GetSnsCanistersSummaryResponse`
-*
-* Production principals:
-*/
+// Production principals:
 pub const CHILD_MEMBERS: &str = "5nrjv-iaaaa-aaaap-aa4la-cai";
 pub const CHILD_GROUPS: &str = "5rvte-7aaaa-aaaap-aa4ja-cai";
 pub const CHILD_PROFILES: &str = "4vy4w-gaaaa-aaaap-aa4pa-cai";
@@ -18,14 +13,9 @@ pub const CHILD_EVENTS: &str = "zocah-aqaaa-aaaap-aa4qa-cai";
 pub const CHILD_EVENT_ATTENDEES: &str = "zaanp-3aaaa-aaaap-aa4ra-cai";
 pub const CHILD_REPORTS: &str = "zsg2w-xqaaa-aaaap-aa4sa-cai";
 
-// Development principals
-// pub const CHILD_MEMBERS: &str = "dogcy-xyaaa-aaaap-abqsa-cai";
-// pub const CHILD_GROUPS: &str = "cdigw-yqaaa-aaaap-abqvq-cai";
-// pub const CHILD_PROFILES: &str = "crorp-uaaaa-aaaap-abqwq-cai";
-// pub const CHILD_EVENTS: &str = "cnkl6-daaaa-aaaap-abquq-cai";
-// pub const CHILD_EVENT_ATTENDEES: &str = "dhfje-bqaaa-aaaap-abqtq-cai";
-// pub const CHILD_REPORTS: &str = "c7m4h-pqaaa-aaaap-abqxq-cai";
-
+/*
+* Canisters not present in `GetSnsCanistersSummaryResponse`
+*/
 pub async fn get_child_canister_summary() -> Vec<CanisterCycles> {
     let mut vec = Vec::new();
 
