@@ -55,3 +55,16 @@ pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
 
     vec
 }
+
+pub fn cycle_balances() -> Vec<String> {
+    sorted_canister_cycles()
+        .iter()
+        .map(|canister| {
+            format!(
+                "{}: {}",
+                canister.name,
+                format!("{:.2}", canister.cycles.clone())
+            )
+        })
+        .collect()
+}

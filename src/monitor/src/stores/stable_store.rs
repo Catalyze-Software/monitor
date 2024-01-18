@@ -31,7 +31,7 @@ thread_local! {
         StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_SNS_CANISTERS))));
 
     static CHILD_DATA: RefCell<StableBTreeMap<u64, ChildData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
-        StableBTreeMap::new(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_CHILD_CANISTERS))));
+        StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_CHILD_CANISTERS))));
 }
 
 /*
@@ -57,11 +57,6 @@ impl Logs {
         };
 
         LOGS.with(|l| l.borrow_mut().insert(index, log));
-    }
-
-    pub fn _get(i: u64) -> Option<String> {
-        let msg = LOGS.with(|l| l.borrow().get(&i).expect("No logs").msg.clone());
-        Some(msg)
     }
 
     pub fn get_range(start: u64, end: u64) -> Vec<String> {
@@ -106,14 +101,25 @@ impl MonitorStore {
         MONITOR_STORE.with(|m| m.borrow_mut().insert(index, monitor_data));
     }
 
-    pub fn _get(i: u64) -> Option<MonitorData> {
-        MONITOR_STORE.with(|m| m.borrow().get(&i))
-    }
-
     pub fn get_latest() -> Option<MonitorData> {
         let (_, value) =
             MONITOR_STORE.with(|m| m.borrow().last_key_value().expect("No monitor data"));
         Some(value.clone())
+    }
+
+    pub fn get_latest_icp_balances(n: u64) -> Vec<String> {
+        let (key, _) =
+            MONITOR_STORE.with(|m| m.borrow().last_key_value().expect("No monitor data"));
+
+        // check length of tree to avoid underflow
+        let (start, end) = if key < n { (0, key) } else { (key - n, key) };
+
+        MONITOR_STORE.with(|m| {
+            m.borrow()
+                .range(start..end)
+                .map(|(_, monitor_data)| format!("{}", monitor_data.icp_balance))
+                .collect()
+        })
     }
 }
 
@@ -122,10 +128,6 @@ impl SnsStore {
         let index = SNS_STORE.with(|s| s.borrow_mut().len() + 1);
 
         SNS_STORE.with(|s| s.borrow_mut().insert(index, sns_data));
-    }
-
-    pub fn _get(i: u64) -> Option<SnsData> {
-        SNS_STORE.with(|s| s.borrow().get(&i))
     }
 
     pub fn get_latest() -> Option<SnsData> {
@@ -139,10 +141,6 @@ impl ChildStore {
         let index = CHILD_DATA.with(|c| c.borrow_mut().len() + 1);
 
         CHILD_DATA.with(|c| c.borrow_mut().insert(index, child_data));
-    }
-
-    pub fn _get(i: u64) -> Option<ChildData> {
-        CHILD_DATA.with(|c| c.borrow().get(&i))
     }
 
     pub fn get_latest() -> Option<ChildData> {

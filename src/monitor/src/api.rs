@@ -1,9 +1,7 @@
 use crate::stores::stable_store::MonitorStore;
 use crate::utils::auth::is_authenticated;
-use crate::{
-    run::run,
-    stores::{stable_models::CanisterCycles, stable_store::Logs},
-};
+use crate::utils::sort::cycle_balances;
+use crate::{run::run, stores::stable_store::Logs};
 use ic_cdk_macros::{query, update};
 
 #[query(guard = "is_authenticated")]
@@ -13,8 +11,13 @@ fn icp_balance() -> String {
 }
 
 #[query(guard = "is_authenticated")]
-fn sorted_canister_cycles() -> Vec<CanisterCycles> {
-    crate::utils::sort::sorted_canister_cycles()
+fn latest_icp_balances(n: u64) -> Vec<String> {
+    MonitorStore::get_latest_icp_balances(n)
+}
+
+#[query(guard = "is_authenticated")]
+fn all_cycle_balances() -> Vec<String> {
+    cycle_balances()
 }
 
 #[update(guard = "is_authenticated")]

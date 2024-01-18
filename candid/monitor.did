@@ -1,12 +1,8 @@
-type CanisterCycles = record {
-  name : text;
-  canister_id : principal;
-  cycles : nat;
-};
 service : {
+  all_cycle_balances : () -> (vec text) query;
   get_latest_with_timestamp : (nat64) -> (vec text) query;
   get_log : (nat64) -> (vec text) query;
   icp_balance : () -> (text) query;
-  sorted_canister_cycles : () -> (vec CanisterCycles) query;
+  latest_icp_balances : (nat64) -> (vec text) query;
   update_state : () -> ();
 }
