@@ -3,8 +3,7 @@ use ic_cdk_macros::{init, post_upgrade, pre_upgrade};
 use ic_cdk_timers::{clear_timer, set_timer, set_timer_interval};
 use std::time::Duration;
 
-// const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
-const INTERVAL: Duration = Duration::from_secs(10 * 60); // 10 min
+const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
 
 #[init]
 fn init() {
