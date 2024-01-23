@@ -1,5 +1,8 @@
-use crate::stores::stable_store::MonitorStore;
+use crate::stores::stable_models::Timestamp;
+use crate::stores::stable_store::{ChildStore, MonitorStore, SnsStore};
 use crate::utils::auth::is_authenticated;
+use crate::utils::cycle_history::get_latest_cycle_balances;
+use crate::utils::icp_history::get_latest_icp_balances;
 use crate::utils::sort::cycle_balances;
 use crate::{run::run, stores::stable_store::Logs};
 use ic_cdk_macros::{query, update};
@@ -11,8 +14,13 @@ fn icp_balance() -> String {
 }
 
 #[query(guard = "is_authenticated")]
-fn latest_icp_balances(n: u64) -> Vec<String> {
-    MonitorStore::get_latest_icp_balances(n)
+fn latest_icp_balances(n: u64) -> Vec<(Timestamp, f64)> {
+    get_latest_icp_balances(n)
+}
+
+#[query(guard = "is_authenticated")]
+fn latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(String, f64)>)> {
+    get_latest_cycle_balances(n)
 }
 
 #[query(guard = "is_authenticated")]
@@ -21,18 +29,27 @@ fn all_cycle_balances() -> Vec<String> {
 }
 
 #[update(guard = "is_authenticated")]
-async fn update_state() {
+async fn initiate_run() {
     ic_cdk::spawn(run())
-}
-
-#[query(guard = "is_authenticated")]
-fn get_log(n: u64) -> Vec<String> {
-    Logs::get_latest(n)
 }
 
 #[query(guard = "is_authenticated")]
 fn get_latest_with_timestamp(n: u64) -> Vec<String> {
     Logs::get_latest_with_timestamps(n)
+}
+
+#[query(guard = "is_authenticated")]
+fn store_stats() -> Vec<String> {
+    vec![
+        format!("Logs: {}", Logs::size()),
+        format!("Monitor: {}", MonitorStore::size()),
+        format!("SNS: {}", SnsStore::size()),
+        format!("Child: {}", ChildStore::size()),
+        format!("Logs index: {}", Logs::new_index()),
+        format!("Monitor index: {}", MonitorStore::new_index()),
+        format!("SNS index: {}", SnsStore::new_index()),
+        format!("Child index: {}", ChildStore::new_index()),
+    ]
 }
 
 #[test]

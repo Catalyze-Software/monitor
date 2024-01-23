@@ -20,6 +20,7 @@ pub struct Log {
 
 #[derive(CandidType, Deserialize, Clone)]
 pub struct MonitorData {
+    pub timestamp: Timestamp,
     pub icp_balance: Tokens,
     pub cycle_balance: Nat,
 }
@@ -29,6 +30,7 @@ pub type SnsData = GetSnsCanistersSummaryResponse;
 // 6 child canisters
 #[derive(CandidType, Deserialize, Clone)]
 pub struct ChildData {
+    pub timestamp: Timestamp,
     pub members: CanisterCycles,
     pub groups: CanisterCycles,
     pub profiles: CanisterCycles,
