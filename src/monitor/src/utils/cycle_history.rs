@@ -9,6 +9,9 @@ type TCycles = f64;
 
 // latest n cycle balances of monitor, all sns canisters and all child canisters
 pub fn get_latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(CanisterName, TCycles)>)> {
+    // double n because we skip even indexes
+    let n = n * 2;
+    
     // ensure monitor, sns and child store have same size
     let monitor_size = MonitorStore::size();
     let sns_size = SnsStore::size();
@@ -24,6 +27,13 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(CanisterName, T
     let mut time_series = Vec::new();
 
     for i in 0..n as usize {
+        // read operations happen twice every run, see run.rs
+        // to get only the last read operation of each run (read after charging finished)
+        // we skip even indexes
+        if i % 2 == 0 {
+            continue;
+        }
+
         let mut balances = Vec::new();
         let timestamp = monitor_history[i].timestamp;
 
