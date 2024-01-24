@@ -1,7 +1,6 @@
 use super::stable_models::{ChildData, Log, MonitorData, SnsData};
-use crate::utils::{log::format_time, range};
+use crate::{queries::range, utils::log::format_time};
 use ic_cdk::api::time;
-
 use ic_stable_structures::{
     memory_manager::{MemoryId, MemoryManager, VirtualMemory},
     BTreeMap as StableBTreeMap, DefaultMemoryImpl, Storable,

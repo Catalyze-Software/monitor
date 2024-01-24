@@ -2,11 +2,9 @@ use candid::Principal;
 use ic_ledger_types::Tokens;
 
 use crate::{
+    queries::sort::sorted_canister_cycles,
     stores::{stable_models::CanisterCycles, stable_store::Logs},
-    utils::{
-        log::{EVENT_CYCLES_MINTED, EVENT_ICP_SENT},
-        sort::sorted_canister_cycles,
-    },
+    utils::log::{EVENT_CYCLES_MINTED, EVENT_ICP_SENT},
 };
 
 use super::{

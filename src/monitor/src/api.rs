@@ -1,9 +1,9 @@
+use crate::queries::cycle_history::get_latest_cycle_balances;
+use crate::queries::icp_history::get_latest_icp_balances;
+use crate::queries::sort::cycle_balances;
 use crate::stores::stable_models::Timestamp;
 use crate::stores::stable_store::{ChildStore, MonitorStore, SnsStore};
 use crate::utils::auth::is_authenticated;
-use crate::utils::cycle_history::get_latest_cycle_balances;
-use crate::utils::icp_history::get_latest_icp_balances;
-use crate::utils::sort::cycle_balances;
 use crate::{run::run, stores::stable_store::Logs};
 use ic_cdk_macros::{query, update};
 
