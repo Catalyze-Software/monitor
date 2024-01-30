@@ -2,11 +2,9 @@ use candid::Principal;
 use ic_ledger_types::Tokens;
 
 use crate::{
+    queries::sort::sorted_canister_cycles,
     stores::{stable_models::CanisterCycles, stable_store::Logs},
-    utils::{
-        log::{EVENT_CYCLES_MINTED, EVENT_ICP_SENT},
-        sort::sorted_canister_cycles,
-    },
+    utils::log::{EVENT_CYCLES_MINTED, EVENT_ICP_SENT},
 };
 
 use super::{
@@ -14,8 +12,8 @@ use super::{
     ledger::transfer_icp_to_cmc_for_cycles_minting,
 };
 
-const CYCLES_BALANCE_THRESHOLD: u64 = 6_500_000_000_000; // 5T
-const CYCLE_TOP_UP_AMOUNT: u64 = 1_000_000_000;
+const CYCLES_BALANCE_THRESHOLD: u64 = 5_000_000_000_000; // 5T
+const CYCLE_TOP_UP_AMOUNT: u64 = 10_000_000_000_000; // 10T
 
 /*
 * Iterate over all canister-cycles vector and top up canisters with low cycles

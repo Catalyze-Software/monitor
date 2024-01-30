@@ -1,3 +1,2 @@
-pub mod log;
-pub mod sort;
 pub mod auth;
+pub mod log;

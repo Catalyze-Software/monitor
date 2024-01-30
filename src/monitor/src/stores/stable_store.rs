@@ -1,9 +1,9 @@
-use super::stable_models::{ChildData, Log, MonitorData, SnsData, Timestamp};
-use crate::utils::log::format_time;
+use super::stable_models::{ChildData, Log, MonitorData, SnsData};
+use crate::{queries::range, utils::log::format_time};
 use ic_cdk::api::time;
 use ic_stable_structures::{
     memory_manager::{MemoryId, MemoryManager, VirtualMemory},
-    BTreeMap as StableBTreeMap, DefaultMemoryImpl,
+    BTreeMap as StableBTreeMap, DefaultMemoryImpl, Storable,
 };
 use std::cell::RefCell;
 
@@ -21,7 +21,7 @@ const MEM_ID_CHILD_CANISTERS: MemoryId = MemoryId::new(3);
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> = RefCell::new(MemoryManager::init(DefaultMemoryImpl::default()));
 
-    static LOGS: RefCell<StableBTreeMap<Timestamp, Log, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
+    static LOGS: RefCell<StableBTreeMap<u64, Log, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
         StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_LOGS))));
 
     static MONITOR_STORE: RefCell<StableBTreeMap<u64, MonitorData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
@@ -31,7 +31,7 @@ thread_local! {
         StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_SNS_CANISTERS))));
 
     static CHILD_DATA: RefCell<StableBTreeMap<u64, ChildData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
-        StableBTreeMap::new(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_CHILD_CANISTERS))));
+        StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_CHILD_CANISTERS))));
 }
 
 /*
@@ -47,8 +47,20 @@ pub struct ChildStore;
 * Imple stable stores
 */
 impl Logs {
+    pub fn size() -> u64 {
+        LOGS.with(|l| l.borrow().len())
+    }
+
+    pub fn new_index() -> u64 {
+        LOGS.with(|l| new_index(&l.borrow()))
+    }
+
+    fn insert(index: u64, log: Log) {
+        LOGS.with(|l| l.borrow_mut().insert(index, log));
+    }
+
     pub fn log(log: String) {
-        let index = LOGS.with(|l| l.borrow_mut().len() + 1);
+        let index = Self::new_index();
         let now = time();
 
         let log = Log {
@@ -56,43 +68,17 @@ impl Logs {
             msg: log,
         };
 
-        LOGS.with(|l| l.borrow_mut().insert(index, log));
-    }
-
-    pub fn _get(i: u64) -> Option<String> {
-        let msg = LOGS.with(|l| l.borrow().get(&i).expect("No logs").msg.clone());
-        Some(msg)
-    }
-
-    pub fn get_range(start: u64, end: u64) -> Vec<String> {
-        LOGS.with(|l| {
-            l.borrow()
-                .range(start..end)
-                .map(|(_, log)| log.msg.clone())
-                .collect()
-        })
-    }
-
-    pub fn get_latest(n: u64) -> Vec<String> {
-        let (key, _) = LOGS.with(|l| l.borrow().last_key_value().expect("No logs"));
-
-        // check length of tree to avoid underflow
-        if key < n {
-            return Logs::get_range(0, key);
-        } else {
-            return Logs::get_range(key - n, key);
-        };
+        Self::insert(index, log);
     }
 
     pub fn get_latest_with_timestamps(n: u64) -> Vec<String> {
-        let (key, _) = LOGS.with(|l| l.borrow().last_key_value().expect("No logs"));
+        let len = Self::size();
 
-        // check length of tree to avoid underflow
-        let (start, end) = if key < n { (0, key) } else { (key - n, key) };
+        let (start, end) = range(n, len);
 
         LOGS.with(|l| {
             l.borrow()
-                .range(start..end)
+                .range(start..=end)
                 .map(|(_, log)| format!("{} {}", format_time(log.timestamp), log.msg.clone()))
                 .collect()
         })
@@ -100,14 +86,18 @@ impl Logs {
 }
 
 impl MonitorStore {
-    pub fn insert(monitor_data: MonitorData) {
-        let index = MONITOR_STORE.with(|m| m.borrow_mut().len() + 1);
-
-        MONITOR_STORE.with(|m| m.borrow_mut().insert(index, monitor_data));
+    pub fn size() -> u64 {
+        MONITOR_STORE.with(|m| m.borrow().len())
     }
 
-    pub fn _get(i: u64) -> Option<MonitorData> {
-        MONITOR_STORE.with(|m| m.borrow().get(&i))
+    pub fn new_index() -> u64 {
+        MONITOR_STORE.with(|m| new_index(&m.borrow()))
+    }
+
+    pub fn insert(monitor_data: MonitorData) {
+        let index = Self::new_index();
+
+        MONITOR_STORE.with(|m| m.borrow_mut().insert(index, monitor_data));
     }
 
     pub fn get_latest() -> Option<MonitorData> {
@@ -115,38 +105,92 @@ impl MonitorStore {
             MONITOR_STORE.with(|m| m.borrow().last_key_value().expect("No monitor data"));
         Some(value.clone())
     }
+
+    pub fn get_latest_n(n: u64) -> Vec<MonitorData> {
+        let len = Self::size();
+
+        let (start, end) = range(n, len);
+
+        MONITOR_STORE.with(|m| {
+            m.borrow()
+                .range(start..=end)
+                .map(|(_, monitor_data)| monitor_data.clone())
+                .collect()
+        })
+    }
 }
 
 impl SnsStore {
-    pub fn insert(sns_data: SnsData) {
-        let index = SNS_STORE.with(|s| s.borrow_mut().len() + 1);
-
-        SNS_STORE.with(|s| s.borrow_mut().insert(index, sns_data));
+    pub fn size() -> u64 {
+        SNS_STORE.with(|s| s.borrow().len())
     }
 
-    pub fn _get(i: u64) -> Option<SnsData> {
-        SNS_STORE.with(|s| s.borrow().get(&i))
+    pub fn new_index() -> u64 {
+        SNS_STORE.with(|s| new_index(&s.borrow()))
+    }
+
+    pub fn insert(sns_data: SnsData) {
+        let index = Self::new_index();
+
+        SNS_STORE.with(|s| s.borrow_mut().insert(index, sns_data));
     }
 
     pub fn get_latest() -> Option<SnsData> {
         let (_, value) = SNS_STORE.with(|s| s.borrow().last_key_value().expect("No SNS data"));
         Some(value.clone())
     }
+
+    pub fn get_latest_n(n: u64) -> Vec<SnsData> {
+        let len = Self::size();
+
+        let (start, end) = range(n, len);
+
+        SNS_STORE.with(|s| {
+            s.borrow()
+                .range(start..=end)
+                .map(|(_, sns_data)| sns_data.clone())
+                .collect()
+        })
+    }
 }
 
 impl ChildStore {
-    pub fn insert(child_data: ChildData) {
-        let index = CHILD_DATA.with(|c| c.borrow_mut().len() + 1);
-
-        CHILD_DATA.with(|c| c.borrow_mut().insert(index, child_data));
+    pub fn size() -> u64 {
+        CHILD_DATA.with(|c| c.borrow().len())
     }
 
-    pub fn _get(i: u64) -> Option<ChildData> {
-        CHILD_DATA.with(|c| c.borrow().get(&i))
+    pub fn new_index() -> u64 {
+        CHILD_DATA.with(|c| new_index(&c.borrow()))
+    }
+
+    pub fn insert(child_data: ChildData) {
+        let index = Self::new_index();
+
+        CHILD_DATA.with(|c| c.borrow_mut().insert(index, child_data));
     }
 
     pub fn get_latest() -> Option<ChildData> {
         let (_, value) = CHILD_DATA.with(|c| c.borrow().last_key_value().expect("No child data"));
         Some(value.clone())
     }
+
+    pub fn get_latest_n(n: u64) -> Vec<ChildData> {
+        let len = Self::size();
+
+        let (start, end) = range(n, len);
+
+        CHILD_DATA.with(|c| {
+            c.borrow()
+                .range(start..=end)
+                .map(|(_, child_data)| child_data.clone())
+                .collect()
+        })
+    }
+}
+
+fn new_index<Value>(tree: &StableBTreeMap<u64, Value, VirtualMemory<DefaultMemoryImpl>>) -> u64
+where
+    Value: Storable,
+{
+    tree.last_key_value().map_or(1, |(key, _)| key + 1)
 }
