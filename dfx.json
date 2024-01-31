@@ -4,6 +4,12 @@
       "candid": "candid/monitor.did",
       "package": "monitor",
       "type": "rust"
+    },
+    "dashboard": {
+      "type": "assets",
+      "source": [
+        "src/dashboard/build"
+      ]
     }
   }
 }
