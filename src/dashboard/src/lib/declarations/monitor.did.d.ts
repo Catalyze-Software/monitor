@@ -1,5 +1,6 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
+import type { IDL } from '@dfinity/candid';
 
 export interface _SERVICE {
   'all_cycle_balances' : ActorMethod<[], Array<string>>,
@@ -13,3 +14,4 @@ export interface _SERVICE {
   'latest_icp_balances' : ActorMethod<[bigint], Array<[bigint, number]>>,
   'store_stats' : ActorMethod<[], Array<string>>,
 }
+export declare const idlFactory: IDL.InterfaceFactory;

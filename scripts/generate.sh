@@ -17,7 +17,7 @@ for t in ${canisters[@]}; do
     gzip -c wasm/$t.wasm > wasm/$t.wasm.gz
 
     mkdir -p frontend/$t
-    cp -a src/declarations/$t frontend
+    cp -a src/declarations/$t src/dashboard/src/lib/declarations
 done
 
 rm -rf src/declarations

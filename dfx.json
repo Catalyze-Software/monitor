@@ -3,10 +3,16 @@
     "monitor": {
       "candid": "candid/monitor.did",
       "package": "monitor",
-      "type": "rust"
+      "type": "rust",
+      "build": [
+        "bash scripts/generate.sh"
+      ]
     },
     "dashboard": {
       "type": "assets",
+      "build": [
+        "npm run build"
+      ],
       "source": [
         "src/dashboard/build"
       ]
