@@ -1,14 +1,17 @@
 <script>
-  import {
-    Content,
-    Layout,
-    MenuItem,
-    Toasts,
-  } from "@dfinity/gix-components"
+  import { Content, Layout, MenuItem, Toasts } from "@dfinity/gix-components"
   import { authStore } from "$lib/stores/auth.store"
   import FrontPageBanner from "$lib/components/layout/FrontPageBanner.svelte"
   import LogoutButton from "$lib/components/buttons/LogoutButton.svelte"
   import Logo from "$lib/components/layout/Logo.svelte"
+  import { onMount } from "svelte"
+  import { goto } from "$app/navigation"
+
+  onMount(() => {
+    if (!authStore) {
+      goto("/")
+    }
+  })
 </script>
 
 <Toasts />

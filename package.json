@@ -1,5 +1,7 @@
 {
     "scripts": {
-        "build": "cd src/dashboard && npm install && npm run build"
+        "dev": "cd src/dashboard && npm run dev",
+        "build": "cd src/dashboard && npm run build",
+        "generate": "cargo test generate_candid -p monitor && dfx generate monitor"
     }
 }

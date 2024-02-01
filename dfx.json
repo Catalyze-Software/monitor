@@ -4,8 +4,11 @@
       "candid": "candid/monitor.did",
       "package": "monitor",
       "type": "rust",
+      "declarations": {
+        "output": "src/dashboard/src/lib/declarations"
+      },
       "build": [
-        "bash scripts/generate.sh"
+        "npm run generate"
       ]
     },
     "dashboard": {
