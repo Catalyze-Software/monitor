@@ -1,11 +1,8 @@
 <script lang="ts">
   import { canisterStore } from "$lib/stores/canisters.store"
-  import BarChart from "$lib/components/chartist/BarChart.svelte"
   import { cyclesToT } from "$lib/utils/tcycles.utils"
-  import type { BarChartData, BarChartOptions } from "chartist"
+  import { BarChart, type BarChartData, type BarChartOptions } from "chartist"
   import { onMount } from "svelte"
-
-  let ready = false
 
   let data: BarChartData = {
     labels: [],
@@ -30,11 +27,9 @@
     data.labels = labels
     data.series = [balances]
 
-    ready = true
+    new BarChart(".cycle-balances-chart", data, options)
   })
 </script>
 
-{#if ready}
-  <h3>Cycle balances</h3>
-  <BarChart {data} {options} />
-{/if}
+<h3>Cycle balances</h3>
+<div class="cycle-balances-chart"></div>

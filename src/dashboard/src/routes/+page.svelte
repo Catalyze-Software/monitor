@@ -1,5 +1,6 @@
 <script lang="ts">
   import CanisterCycles from "$lib/components/graphs/CanisterCycles.svelte"
+  import CycleHistory from "$lib/components/graphs/CycleHistory.svelte"
   import IcpHistory from "$lib/components/graphs/ICPHistory.svelte"
   import { Card } from "@dfinity/gix-components"
 </script>
@@ -10,6 +11,10 @@
 
 <Card>
   <CanisterCycles />
+</Card>
+
+<Card>
+  <CycleHistory />
 </Card>
 
 <style lang="scss" global>

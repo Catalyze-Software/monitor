@@ -6,6 +6,7 @@ import {
   idlFactory as monitor_idl,
   type _SERVICE,
   type CanisterCycles,
+  type CycleBalances,
 } from "$lib/declarations/monitor.did"
 import { createAgent } from "@dfinity/utils"
 
@@ -36,4 +37,12 @@ export const latestIcpBalances = async (n: bigint) => {
 export const sortedCanisterCycles = async () => {
   const monitor = await monitorActor()
   return await tryCall<[], CanisterCycles[]>(monitor.sorted_canister_cycles)
+}
+
+export const latestCycleBalances = async (n: bigint) => {
+  const monitor = await monitorActor()
+  return await tryCall<[bigint], CycleBalances[]>(
+    monitor.latest_cycle_balances,
+    n
+  )
 }

@@ -2,13 +2,20 @@ use crate::stores::{
     stable_models::Timestamp,
     stable_store::{ChildStore, MonitorStore, SnsStore},
 };
-use candid::Nat;
+use candid::{CandidType, Deserialize, Nat};
 use num_traits::ToPrimitive;
+
 type CanisterName = String;
 type TCycles = f64;
 
+#[derive(CandidType, Deserialize)]
+pub struct CycleBalances {
+    timestamp: Timestamp,
+    balances: Vec<(CanisterName, TCycles)>,
+}
+
 // latest n cycle balances of monitor, all sns canisters and all child canisters
-pub fn get_latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(CanisterName, TCycles)>)> {
+pub fn get_latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
     // double n because we skip even indexes
     let mut n = n * 2;
 
@@ -43,7 +50,7 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(CanisterName, T
         let timestamp = monitor_history[i].timestamp;
 
         let monitor_balance = monitor_history[i].cycle_balance.clone();
-        balances.push(("monitor".to_string(), cycles_to_tcycles(monitor_balance)));
+        balances.push(("Monitor".to_string(), cycles_to_tcycles(monitor_balance)));
 
         // sns root
         let sns_root_balance = sns_history[i]
@@ -55,7 +62,7 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(CanisterName, T
             .unwrap()
             .cycles
             .clone();
-        balances.push(("sns_root".to_string(), cycles_to_tcycles(sns_root_balance)));
+        balances.push(("SNS Root".to_string(), cycles_to_tcycles(sns_root_balance)));
 
         // sns swap
         let sns_swap_balance = sns_history[i]
@@ -67,7 +74,7 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(CanisterName, T
             .unwrap()
             .cycles
             .clone();
-        balances.push(("sns_swap".to_string(), cycles_to_tcycles(sns_swap_balance)));
+        balances.push(("SNS Swap".to_string(), cycles_to_tcycles(sns_swap_balance)));
 
         // sns ledger
         let sns_ledger_balance = sns_history[i]
@@ -80,7 +87,7 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(CanisterName, T
             .cycles
             .clone();
         balances.push((
-            "sns_ledger".to_string(),
+            "SNS Ledger".to_string(),
             cycles_to_tcycles(sns_ledger_balance),
         ));
 
@@ -95,7 +102,7 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(CanisterName, T
             .cycles
             .clone();
         balances.push((
-            "sns_index".to_string(),
+            "SNS Index".to_string(),
             cycles_to_tcycles(sns_index_balance),
         ));
 
@@ -110,7 +117,7 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(CanisterName, T
             .cycles
             .clone();
         balances.push((
-            "sns_governance".to_string(),
+            "SNS Governance".to_string(),
             cycles_to_tcycles(sns_governance_balance),
         ));
 
@@ -118,7 +125,7 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(CanisterName, T
         for (j, dapp) in sns_history[i].dapps.iter().enumerate() {
             let sns_dapp_balance = dapp.status.as_ref().unwrap().cycles.clone();
             balances.push((
-                format!("sns_dapp {}", j),
+                format!("SNS Dapp {}", j),
                 cycles_to_tcycles(sns_dapp_balance),
             ));
         }
@@ -127,49 +134,37 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(CanisterName, T
         for (j, archive) in sns_history[i].archives.iter().enumerate() {
             let sns_archive_balance = archive.status.as_ref().unwrap().cycles.clone();
             balances.push((
-                format!("sns_archive {}", j),
+                format!("SNS Archive {}", j),
                 cycles_to_tcycles(sns_archive_balance),
             ));
         }
 
         // add child canisters
         let members_balance = child_history[i].members.cycles.clone();
-        balances.push((
-            "child_members".to_string(),
-            cycles_to_tcycles(members_balance),
-        ));
+        balances.push(("Members".to_string(), cycles_to_tcycles(members_balance)));
 
         let groups_balance = child_history[i].groups.cycles.clone();
-        balances.push((
-            "child_groups".to_string(),
-            cycles_to_tcycles(groups_balance),
-        ));
+        balances.push(("Groups".to_string(), cycles_to_tcycles(groups_balance)));
 
         let profiles_balance = child_history[i].profiles.cycles.clone();
-        balances.push((
-            "child_profiles".to_string(),
-            cycles_to_tcycles(profiles_balance),
-        ));
+        balances.push(("Profiles".to_string(), cycles_to_tcycles(profiles_balance)));
 
         let events_balance = child_history[i].events.cycles.clone();
-        balances.push((
-            "child_events".to_string(),
-            cycles_to_tcycles(events_balance),
-        ));
+        balances.push(("Events".to_string(), cycles_to_tcycles(events_balance)));
 
         let event_attendees_balance = child_history[i].event_attendees.cycles.clone();
         balances.push((
-            "child_event_attendees".to_string(),
+            "Event Attendees".to_string(),
             cycles_to_tcycles(event_attendees_balance),
         ));
 
         let reports_balance = child_history[i].reports.cycles.clone();
-        balances.push((
-            "child_reports".to_string(),
-            cycles_to_tcycles(reports_balance),
-        ));
+        balances.push(("Reports".to_string(), cycles_to_tcycles(reports_balance)));
 
-        time_series.push((timestamp, balances));
+        time_series.push(CycleBalances {
+            timestamp,
+            balances,
+        });
     }
 
     time_series

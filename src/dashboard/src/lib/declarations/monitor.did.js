@@ -1,4 +1,8 @@
 export const idlFactory = ({ IDL }) => {
+  const CycleBalances = IDL.Record({
+    'timestamp' : IDL.Nat64,
+    'balances' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64)),
+  });
   const CanisterCycles = IDL.Record({
     'name' : IDL.Text,
     'canister_id' : IDL.Principal,
@@ -15,11 +19,7 @@ export const idlFactory = ({ IDL }) => {
     'initiate_run' : IDL.Func([], [], []),
     'latest_cycle_balances' : IDL.Func(
         [IDL.Nat64],
-        [
-          IDL.Vec(
-            IDL.Tuple(IDL.Nat64, IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64)))
-          ),
-        ],
+        [IDL.Vec(CycleBalances)],
         ['query'],
       ),
     'latest_icp_balances' : IDL.Func(

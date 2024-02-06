@@ -6,10 +6,7 @@
       "type": "rust",
       "declarations": {
         "output": "src/dashboard/src/lib/declarations"
-      },
-      "build": [
-        "npm run generate"
-      ]
+      }
     },
     "dashboard": {
       "type": "assets",

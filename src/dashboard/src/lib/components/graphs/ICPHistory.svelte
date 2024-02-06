@@ -1,11 +1,8 @@
 <script lang="ts">
   import { latestIcpBalances } from "$lib/api/monitor.api"
-  import LineChart from "$lib/components/chartist/LineChart.svelte"
   import { convertTimestamp } from "$lib/utils/date.utils"
-  import type { LineChartData, LineChartOptions } from "chartist"
+  import { LineChart, type LineChartData, type LineChartOptions } from "chartist"
   import { onMount } from "svelte"
-
-  let ready = false
 
   let data: LineChartData = {
     labels: [],
@@ -34,11 +31,9 @@
     // single balance array doesnt render graph?
     data.series = [balances, balances]
 
-    ready = true
+    new LineChart(".icp-history-chart", data, options)
   })
 </script>
 
-{#if ready}
-  <h3>Monitor ICP balance history</h3>
-  <LineChart {data} {options} />
-{/if}
+<h3>Monitor ICP balance history</h3>
+<div class="icp-history-chart"></div>
