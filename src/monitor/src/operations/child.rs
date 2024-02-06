@@ -20,37 +20,37 @@ pub async fn get_child_canister_summary() -> Vec<CanisterCycles> {
     let mut vec = Vec::new();
 
     vec.push(CanisterCycles::from_status(
-        "child_members",
+        "Members",
         CHILD_MEMBERS,
         &get_canister_status(CHILD_MEMBERS).await,
     ));
 
     vec.push(CanisterCycles::from_status(
-        "child_groups",
+        "Groups",
         CHILD_GROUPS,
         &get_canister_status(CHILD_GROUPS).await,
     ));
 
     vec.push(CanisterCycles::from_status(
-        "child_profiles",
+        "Profiles",
         CHILD_PROFILES,
         &get_canister_status(CHILD_PROFILES).await,
     ));
 
     vec.push(CanisterCycles::from_status(
-        "child_events",
+        "Events",
         CHILD_EVENTS,
         &get_canister_status(CHILD_EVENTS).await,
     ));
 
     vec.push(CanisterCycles::from_status(
-        "child_event_attendees",
+        "Event attendees",
         CHILD_EVENT_ATTENDEES,
         &get_canister_status(CHILD_EVENT_ATTENDEES).await,
     ));
 
     vec.push(CanisterCycles::from_status(
-        "child_reports",
+        "Reports",
         CHILD_REPORTS,
         &get_canister_status(CHILD_REPORTS).await,
     ));

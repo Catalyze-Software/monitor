@@ -3,7 +3,22 @@
     "monitor": {
       "candid": "candid/monitor.did",
       "package": "monitor",
-      "type": "rust"
+      "type": "rust",
+      "declarations": {
+        "output": "src/dashboard/src/lib/declarations"
+      },
+      "build": [
+        "npm run generate"
+      ]
+    },
+    "dashboard": {
+      "type": "assets",
+      "build": [
+        "npm run build"
+      ],
+      "source": [
+        "src/dashboard/build"
+      ]
     }
   }
 }

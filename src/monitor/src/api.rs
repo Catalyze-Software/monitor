@@ -1,7 +1,7 @@
 use crate::queries::cycle_history::get_latest_cycle_balances;
 use crate::queries::icp_history::get_latest_icp_balances;
 use crate::queries::sort::cycle_balances;
-use crate::stores::stable_models::Timestamp;
+use crate::stores::stable_models::{CanisterCycles, Timestamp};
 use crate::stores::stable_store::{ChildStore, MonitorStore, SnsStore};
 use crate::utils::auth::is_authenticated;
 use crate::{run::run, stores::stable_store::Logs};
@@ -26,6 +26,11 @@ fn latest_cycle_balances(n: u64) -> Vec<(Timestamp, Vec<(String, f64)>)> {
 #[query(guard = "is_authenticated")]
 fn all_cycle_balances() -> Vec<String> {
     cycle_balances()
+}
+
+#[query(guard = "is_authenticated")]
+fn sorted_canister_cycles() -> Vec<CanisterCycles> {
+    crate::queries::sort::sorted_canister_cycles()
 }
 
 #[update(guard = "is_authenticated")]

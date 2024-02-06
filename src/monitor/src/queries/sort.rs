@@ -13,7 +13,7 @@ pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     let monitor_data = MonitorStore::get_latest().unwrap();
 
     vec.push(CanisterCycles {
-        name: String::from("monitor"),
+        name: String::from("Monitor"),
         canister_id: ic_cdk::id(),
         cycles: monitor_data.cycle_balance,
     });
@@ -21,23 +21,23 @@ pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     // add the SNS canisters
     let summary = SnsStore::get_latest().unwrap();
 
-    vec.push(CanisterCycles::new("root", &summary.root.unwrap()));
-    vec.push(CanisterCycles::new("swap", &summary.swap.unwrap()));
-    vec.push(CanisterCycles::new("ledger", &summary.ledger.unwrap()));
-    vec.push(CanisterCycles::new("index", &summary.index.unwrap()));
+    vec.push(CanisterCycles::new("SNS Root", &summary.root.unwrap()));
+    vec.push(CanisterCycles::new("SNS Swap", &summary.swap.unwrap()));
+    vec.push(CanisterCycles::new("SNS Ledger", &summary.ledger.unwrap()));
+    vec.push(CanisterCycles::new("SNS Index", &summary.index.unwrap()));
     vec.push(CanisterCycles::new(
-        "governance",
+        "SNS Governance",
         &summary.governance.unwrap(),
     ));
 
     // iterate over the dapps canisters
     for (i, canister) in summary.dapps.iter().enumerate() {
-        vec.push(CanisterCycles::new(&format!("dapps {}", i), &canister));
+        vec.push(CanisterCycles::new(&format!("Dapps {}", i), &canister));
     }
 
     // iterate over the archives canisters
     for (i, canister) in summary.archives.iter().enumerate() {
-        vec.push(CanisterCycles::new(&format!("archives {}", i), &canister));
+        vec.push(CanisterCycles::new(&format!("Archives {}", i), &canister));
     }
 
     // add the child canisters
