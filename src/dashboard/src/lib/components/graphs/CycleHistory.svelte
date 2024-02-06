@@ -1,40 +1,39 @@
 <script lang="ts">
   import { convertTimestamp } from "$lib/utils/date.utils"
-  import type { LineChartData, LineChartOptions } from "chartist"
-  import { LineChart } from "chartist"
   import { onMount } from "svelte"
   import { cycleHistoryStore } from "$lib/stores/cycleHistory.store"
+  import { Line } from "svelte-chartjs"
+  import type { ChartData, Point } from "chart.js"
 
-  let data: LineChartData = {
+  let ready = false
+
+  let data: ChartData<"line", (number | Point)[], unknown> = {
     labels: [],
-    series: [],
-  }
-
-  let options: LineChartOptions = {
+    datasets: [],
   }
 
   onMount(async () => {
-    let labels: string[] = []
-    let balances: number[][] = []
-
-    $cycleHistoryStore.forEach((instant) => {
-      labels.push(convertTimestamp(instant.timestamp))
-
+    $cycleHistoryStore.forEach((instant, i) => {
+      data.labels?.push(convertTimestamp(instant.timestamp))
       instant.balances.forEach((balance, index) => {
-        if (balances[index] === undefined) {
-          balances[index] = []
+        if (i === 0) {
+          data.datasets?.push({
+            label: balance[0],
+            data: [balance[1]],
+          })
+          return
         }
-
-        balances[index].push(balance[1])
+        data.datasets[index].data?.push(balance[1])
       })
     })
 
-    data.labels = labels
-    data.series = balances
-
-    new LineChart(".cycle-history-chart", data, options)
+    ready = true
   })
 </script>
 
 <h3>Canister cycle history</h3>
-<div class="cycle-history-chart"></div>
+{#if ready}
+  <Line {data} />
+{:else}
+  <p>Loading...</p>
+{/if}

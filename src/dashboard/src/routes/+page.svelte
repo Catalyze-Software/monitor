@@ -16,8 +16,3 @@
 <Card>
   <CycleHistory />
 </Card>
-
-<style lang="scss" global>
-  @import "../../node_modules/chartist/dist/index.scss";
-  @import "../../node_modules/chartist/dist/_settings.scss";
-</style>
