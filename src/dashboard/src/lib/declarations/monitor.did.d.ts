@@ -11,8 +11,10 @@ export interface CycleBalances {
   'timestamp' : bigint,
   'balances' : Array<[string, number]>,
 }
+export interface Log { 'msg' : string, 'timestamp' : bigint }
 export interface _SERVICE {
   'all_cycle_balances' : ActorMethod<[], Array<string>>,
+  'get_latest_logs' : ActorMethod<[bigint], Array<Log>>,
   'get_latest_with_timestamp' : ActorMethod<[bigint], Array<string>>,
   'icp_balance' : ActorMethod<[], string>,
   'initiate_run' : ActorMethod<[], undefined>,

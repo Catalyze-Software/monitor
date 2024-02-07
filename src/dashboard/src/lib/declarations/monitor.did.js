@@ -1,4 +1,5 @@
 export const idlFactory = ({ IDL }) => {
+  const Log = IDL.Record({ 'msg' : IDL.Text, 'timestamp' : IDL.Nat64 });
   const CycleBalances = IDL.Record({
     'timestamp' : IDL.Nat64,
     'balances' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64)),
@@ -10,6 +11,7 @@ export const idlFactory = ({ IDL }) => {
   });
   return IDL.Service({
     'all_cycle_balances' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
+    'get_latest_logs' : IDL.Func([IDL.Nat64], [IDL.Vec(Log)], ['query']),
     'get_latest_with_timestamp' : IDL.Func(
         [IDL.Nat64],
         [IDL.Vec(IDL.Text)],

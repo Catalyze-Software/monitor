@@ -71,6 +71,22 @@ impl Logs {
         Self::insert(index, log);
     }
 
+    pub fn get_latest(n: u64) -> Vec<Log> {
+        let len = Self::size();
+
+        let (start, end) = range(n, len);
+
+        LOGS.with(|l| {
+            l.borrow()
+                .range(start..=end)
+                .map(|(_, log)| log.clone())
+                .collect::<Vec<Log>>()
+                .into_iter()
+                .rev()
+                .collect()
+        })
+    }
+
     pub fn get_latest_with_timestamps(n: u64) -> Vec<String> {
         let len = Self::size();
 

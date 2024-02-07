@@ -7,6 +7,7 @@ import {
   type _SERVICE,
   type CanisterCycles,
   type CycleBalances,
+  type Log,
 } from "$lib/declarations/monitor.did"
 import { createAgent } from "@dfinity/utils"
 
@@ -45,4 +46,9 @@ export const latestCycleBalances = async (n: bigint) => {
     monitor.latest_cycle_balances,
     n
   )
+}
+
+export const latestLogs = async (n: bigint) => {
+  const monitor = await monitorActor()
+  return await tryCall<[bigint], Log[]>(monitor.get_latest_logs, n)
 }
