@@ -25,6 +25,9 @@
       {
         label: "T Cycles",
         data: [],
+        backgroundColor: "#794ee7",
+        borderColor: "#794ee7",
+        borderWidth: 1,
       },
     ],
   }

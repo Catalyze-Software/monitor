@@ -20,6 +20,6 @@
 
   .card {
     margin: 0 1rem;
-    width: 25rem;
+    width: 28rem;
   }
 </style>

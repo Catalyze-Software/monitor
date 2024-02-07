@@ -12,6 +12,28 @@
     datasets: [],
   }
 
+  const colors = [
+    "#794ee7", // Purple
+    "#e38b1b", // Orange
+    "#30af91", // Green
+    "#198ae3", // Blue
+    "#ea6c99", // Pink
+    "#b871d9", // Orchid
+    "#af63db", // Dark Orchid
+    "#553b75", // Indigo
+    "#3d4c7a", // Dark Blue
+    "#f3ddbb", // Light Orange
+    "#c7e3e1", // Light Green
+    "#ebd4e7", // Light Pink
+    "#c1d4f1", // Light Blue
+    "#634a65", // Deep Violet
+    "#3d2a5c", // Purple Dark
+    "#2d1a4a", // Darker Purple
+    "#291942", // Even Darker Purple
+    "#24143d", // Almost Black Purple
+    "#b080ff", // Light Purple
+  ]
+
   onMount(async () => {
     $cycleHistoryStore.forEach((instant, i) => {
       data.labels?.push(convertTimestamp(instant.timestamp))
@@ -20,6 +42,8 @@
           data.datasets?.push({
             label: balance[0],
             data: [balance[1]],
+            borderColor: colors[index % colors.length],
+            backgroundColor: "rgba(0, 0, 0, 0)",
           })
           return
         }

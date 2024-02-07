@@ -41,4 +41,5 @@
 
 <style lang="scss" global>
   @import "../../node_modules/@dfinity/gix-components/dist/styles/global.scss";
+  @import "../../node_modules/@dfinity/gix-components/dist/styles/global/colors.scss";
 </style>

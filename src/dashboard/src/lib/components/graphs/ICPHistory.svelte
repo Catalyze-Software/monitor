@@ -34,6 +34,13 @@
       {
         label: "ICP",
         data: [],
+        borderColor: "#794ee7",
+        backgroundColor: "rgba(121, 78, 231, 0.2)",
+        borderWidth: 2,
+        pointBackgroundColor: "#794ee7",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "#794ee7",
       },
     ],
   }

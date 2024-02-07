@@ -5,14 +5,37 @@
   import { Card } from "@dfinity/gix-components"
 </script>
 
-<Card>
-  <IcpHistory />
-</Card>
+<div class="card-container">
+  <div class="card">
+    <Card>
+      <IcpHistory />
+    </Card>
+  </div>
+  
+  <div class="card">
+    <Card>
+      <CanisterCycles />
+    </Card>
+  </div>
+  
+  <div class="card">
+    <Card>
+      <CycleHistory />
+    </Card>
+  </div>
+</div>
 
-<Card>
-  <CanisterCycles />
-</Card>
+<style>
+  .card-container {
+    display: flex;
+    justify-content: left;
+    flex-wrap: wrap;
+  }
 
-<Card>
-  <CycleHistory />
-</Card>
+  .card {
+    margin: 0 1rem;
+    min-width: 400px;
+    max-width: 600px;
+    width: 100%;
+  }
+</style>
