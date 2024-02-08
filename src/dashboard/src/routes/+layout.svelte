@@ -4,14 +4,6 @@
   import FrontPageBanner from "$lib/components/layout/FrontPageBanner.svelte"
   import LogoutButton from "$lib/components/buttons/LogoutButton.svelte"
   import Logo from "$lib/components/layout/Logo.svelte"
-  import { onMount } from "svelte"
-  import { goto } from "$app/navigation"
-
-  onMount(() => {
-    if (!authStore) {
-      goto("/")
-    }
-  })
 </script>
 
 <Toasts />
@@ -41,5 +33,4 @@
 
 <style lang="scss" global>
   @import "../../node_modules/@dfinity/gix-components/dist/styles/global.scss";
-  @import "../../node_modules/@dfinity/gix-components/dist/styles/global/colors.scss";
 </style>

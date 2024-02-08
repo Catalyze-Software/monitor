@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { canisterStore } from "$lib/stores/canisters.store"
   import { cyclesToT } from "$lib/utils/tcycles.utils"
   import { onMount } from "svelte"
   import { Bar } from "svelte-chartjs"
@@ -14,6 +13,7 @@
     CategoryScale,
     LinearScale,
   } from "chart.js"
+  import { sortedCanisterCycles } from "$lib/api/monitor.api"
 
   Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
@@ -33,7 +33,9 @@
   }
 
   onMount(async () => {
-    $canisterStore.forEach((item) => {
+    const cycles = await sortedCanisterCycles()
+
+    cycles.forEach((item) => {
       data.labels?.push(item.name)
       data.datasets[0].data.push(cyclesToT(item.cycles))
     })

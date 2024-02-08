@@ -1,9 +1,9 @@
 <script lang="ts">
   import { convertTimestamp } from "$lib/utils/date.utils"
   import { onMount } from "svelte"
-  import { cycleHistoryStore } from "$lib/stores/cycleHistory.store"
   import { Line } from "svelte-chartjs"
   import type { ChartData, Point } from "chart.js"
+  import { latestCycleBalances } from "$lib/api/monitor.api"
 
   let ready = false
 
@@ -35,7 +35,9 @@
   ]
 
   onMount(async () => {
-    $cycleHistoryStore.forEach((instant, i) => {
+    const latest = await latestCycleBalances(1000n)
+
+    latest.forEach((instant, i) => {
       data.labels?.push(convertTimestamp(instant.timestamp))
       instant.balances.forEach((balance, index) => {
         if (i === 0) {

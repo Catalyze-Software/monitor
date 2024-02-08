@@ -30,6 +30,7 @@
     background-color: #f5f5f5;
     padding: 0.5rem;
     margin: 0.5rem;
+    max-width: 40rem;
   }
 
   .log strong {
