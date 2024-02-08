@@ -2,7 +2,7 @@
   import { latestLogs } from "$lib/api/monitor.api"
   import type { Log } from "$lib/declarations/monitor.did"
   import { convertTimestampToDateTime } from "$lib/utils/date.utils"
-  import { Content } from "@dfinity/gix-components"
+  import { Card, Content } from "@dfinity/gix-components"
   import { onMount } from "svelte"
 
   let ready = false
@@ -15,26 +15,9 @@
   })
 </script>
 
-<Content>
-  <h1 slot="title">Monitor logs</h1>
-  {#each logs as log}
-    <div class="log">
-      <strong>{convertTimestampToDateTime(log.timestamp)}</strong>
-      {log.msg}
-    </div>
-  {/each}
-</Content>
-
-<style>
-  .log {
-    background-color: #f5f5f5;
-    padding: 0.5rem;
-    margin: 0.5rem;
-    max-width: 40rem;
-  }
-
-  .log strong {
-    color: #666;
-    display: block;
-  }
-</style>
+{#each logs as log}
+  <Card>
+    <h3 slot="start">{convertTimestampToDateTime(log.timestamp)}</h3>
+    <p>{log.msg}</p>
+  </Card>
+{/each}
