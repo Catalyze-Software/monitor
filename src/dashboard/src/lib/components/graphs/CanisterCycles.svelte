@@ -1,40 +1,52 @@
 <script lang="ts">
-  import { canisterStore } from "$lib/stores/canisters.store"
-  import BarChart from "$lib/components/chartist/BarChart.svelte"
   import { cyclesToT } from "$lib/utils/tcycles.utils"
-  import type { BarChartData, BarChartOptions } from "chartist"
   import { onMount } from "svelte"
+  import { Bar } from "svelte-chartjs"
+  import type { ChartData } from "chart.js"
+
+  import {
+    Chart,
+    Title,
+    Tooltip,
+    Legend,
+    BarElement,
+    CategoryScale,
+    LinearScale,
+  } from "chart.js"
+  import { sortedCanisterCycles } from "$lib/api/monitor.api"
+
+  Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
   let ready = false
 
-  let data: BarChartData = {
+  let data: ChartData<"bar", (number | [number, number])[], unknown> = {
     labels: [],
-    series: [],
-  }
-
-  let options: BarChartOptions = {
-    horizontalBars: true,
-    height: 500,
-    reverseData: true,
+    datasets: [
+      {
+        label: "T Cycles",
+        data: [],
+        backgroundColor: "#794ee7",
+        borderColor: "#794ee7",
+        borderWidth: 1,
+      },
+    ],
   }
 
   onMount(async () => {
-    let labels: string[] = []
-    let balances: number[] = []
+    const cycles = await sortedCanisterCycles()
 
-    $canisterStore.forEach((item) => {
-      labels.push(item.name)
-      balances.push(cyclesToT(item.cycles))
+    cycles.forEach((item) => {
+      data.labels?.push(item.name)
+      data.datasets[0].data.push(cyclesToT(item.cycles))
     })
-
-    data.labels = labels
-    data.series = [balances]
 
     ready = true
   })
 </script>
 
+<h3>Cycle balances</h3>
 {#if ready}
-  <h3>Cycle balances</h3>
-  <BarChart {data} {options} />
+  <Bar {data} />
+{:else}
+  <p>Loading...</p>
 {/if}

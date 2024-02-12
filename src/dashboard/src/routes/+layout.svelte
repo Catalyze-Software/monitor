@@ -4,14 +4,8 @@
   import FrontPageBanner from "$lib/components/layout/FrontPageBanner.svelte"
   import LogoutButton from "$lib/components/buttons/LogoutButton.svelte"
   import Logo from "$lib/components/layout/Logo.svelte"
-  import { onMount } from "svelte"
-  import { goto } from "$app/navigation"
-
-  onMount(() => {
-    if (!authStore) {
-      goto("/")
-    }
-  })
+  import { newUser, newUserPrincipal } from "$lib/api/monitor.api"
+  import NewUser  from "$lib/components/cards/NewUser.svelte"
 </script>
 
 <Toasts />
@@ -33,7 +27,15 @@
       {#if !$authStore}
         <FrontPageBanner />
       {:else if $authStore}
-        <slot />
+        {#await newUser() then response}
+          {#if response}
+            {#await newUserPrincipal() then principal}
+              <NewUser principal={principal.toString()} />
+            {/await}
+          {:else}
+            <slot />
+          {/if}
+        {/await}
       {/if}
     </main>
   </Content>

@@ -26,7 +26,7 @@ const initAuthStore = async (): Promise<AuthStore> => {
     login: async () => {
       authClient = authClient ?? (await AuthClient.create())
       await authClient.login({
-        identityProvider: "https://identity.internetcomputer.org",
+        identityProvider: "https://identity.ic0.app",
         maxTimeToLive: BigInt(98 * 60 * 60) * BigInt(1_000_000_000_000),
         onSuccess: async () => {
           set(authClient.getIdentity())

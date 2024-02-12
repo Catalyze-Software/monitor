@@ -1,18 +1,41 @@
 <script lang="ts">
   import CanisterCycles from "$lib/components/graphs/CanisterCycles.svelte"
+  import CycleHistory from "$lib/components/graphs/CycleHistory.svelte"
   import IcpHistory from "$lib/components/graphs/ICPHistory.svelte"
   import { Card } from "@dfinity/gix-components"
 </script>
 
-<Card>
-  <IcpHistory />
-</Card>
+<div class="card-container">
+  <div class="card">
+    <Card>
+      <IcpHistory />
+    </Card>
+  </div>
+  
+  <div class="card">
+    <Card>
+      <CanisterCycles />
+    </Card>
+  </div>
+  
+  <div class="card">
+    <Card>
+      <CycleHistory />
+    </Card>
+  </div>
+</div>
 
-<Card>
-  <CanisterCycles />
-</Card>
+<style>
+  .card-container {
+    display: flex;
+    justify-content: left;
+    flex-wrap: wrap;
+  }
 
-<style lang="scss" global>
-  @import "../../node_modules/chartist/dist/index.scss";
-  @import "../../node_modules/chartist/dist/_settings.scss";
+  .card {
+    margin: 0 1rem;
+    min-width: 250px;
+    max-width: 600px;
+    width: 100%;
+  }
 </style>
