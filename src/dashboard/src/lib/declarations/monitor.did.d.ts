@@ -20,7 +20,9 @@ export interface _SERVICE {
   'initiate_run' : ActorMethod<[], undefined>,
   'latest_cycle_balances' : ActorMethod<[bigint], Array<CycleBalances>>,
   'latest_icp_balances' : ActorMethod<[bigint], Array<[bigint, number]>>,
+  'new_user' : ActorMethod<[], [] | [Principal]>,
   'sorted_canister_cycles' : ActorMethod<[], Array<CanisterCycles>>,
   'store_stats' : ActorMethod<[], Array<string>>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;
+export declare const init: ({ IDL }: { IDL: IDL }) => IDL.Type[];

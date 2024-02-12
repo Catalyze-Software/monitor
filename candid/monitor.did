@@ -16,6 +16,7 @@ service : {
   initiate_run : () -> ();
   latest_cycle_balances : (nat64) -> (vec CycleBalances) query;
   latest_icp_balances : (nat64) -> (vec record { nat64; float64 }) query;
+  new_user : () -> (opt principal) query;
   sorted_canister_cycles : () -> (vec CanisterCycles) query;
   store_stats : () -> (vec text) query;
 }

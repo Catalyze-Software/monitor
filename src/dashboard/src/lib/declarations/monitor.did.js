@@ -29,6 +29,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Nat64, IDL.Float64))],
         ['query'],
       ),
+    'new_user' : IDL.Func([], [IDL.Opt(IDL.Principal)], ['query']),
     'sorted_canister_cycles' : IDL.Func(
         [],
         [IDL.Vec(CanisterCycles)],

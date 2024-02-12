@@ -13,7 +13,7 @@ const ALLOWED_PRINCIPALS: [&str; 4] = [
     "q3m5g-guuii-gy5u3-qekcy-rwqxq-ym3ff-zqjue-mjxue-2icoi-qcyk3-pqe"
 ];
 
-pub fn is_authenticated() -> Result<(), String> {
+pub fn is_registered() -> Result<(), String> {
     let caller = ic_cdk::caller();
 
     if ALLOWED_PRINCIPALS.contains(&caller.to_string().as_str()) {
