@@ -39,6 +39,12 @@ pub struct ChildData {
     pub reports: CanisterCycles,
 }
 
+#[derive(CandidType, Deserialize, Clone)]
+pub struct FrontendData {
+    pub timestamp: Timestamp,
+    pub frontend: CanisterCycles,
+}
+
 /*
 * Impl Storable for Models
 */
@@ -87,6 +93,18 @@ impl Storable for ChildData {
 
     fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
         Decode!(bytes.as_ref(), Self).expect("Failed to decode ChildData")
+    }
+}
+
+impl Storable for FrontendData {
+    const BOUND: Bound = Bound::Unbounded;
+
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        Cow::Owned(Encode!(&self).expect("Failed to encode FrontendData"))
+    }
+
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        Decode!(bytes.as_ref(), Self).expect("Failed to decode FrontendData")
     }
 }
 

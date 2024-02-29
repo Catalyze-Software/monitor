@@ -6,6 +6,7 @@ pub const EVENT_SNS_DATA: &str = "Fetched and stored SNS canisters summary";
 pub const EVENT_CHILD_SUMMARY: &str = "Fetched and stored child canisters summary";
 pub const EVENT_ICP_SENT: &str = "ICP sent";
 pub const EVENT_CYCLES_MINTED: &str = "Cycles minted";
+pub const EVENT_FRONTEND_SUMMARY: &str = "Fetched and stored frontend canister summary";
 
 pub fn format_time(timestamp: u64) -> String {
     let datetime = OffsetDateTime::from_unix_timestamp_nanos(timestamp as i128)

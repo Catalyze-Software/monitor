@@ -1,12 +1,14 @@
 use crate::{
     operations::child::get_child_canister_summary,
     stores::{
-        stable_models::{ChildData, MonitorData},
-        stable_store::{ChildStore, Logs, MonitorStore, SnsStore},
+        stable_models::{ChildData, FrontendData, MonitorData},
+        stable_store::{ChildStore, FrontendStore, Logs, MonitorStore, SnsStore},
     },
-    utils::log::{EVENT_CHILD_SUMMARY, EVENT_MONITOR_DATA, EVENT_SNS_DATA},
+    utils::log::{EVENT_CHILD_SUMMARY, EVENT_FRONTEND_SUMMARY, EVENT_MONITOR_DATA, EVENT_SNS_DATA},
 };
 use ic_cdk::api::time;
+
+use super::frontend::get_frontend_canister_summary;
 
 /*
 * Perform canister status query routine
@@ -45,4 +47,13 @@ pub async fn read_operations() {
 
     ChildStore::insert(child_data);
     Logs::log(format!("{}", EVENT_CHILD_SUMMARY.to_string()));
+
+    // Frontend canister
+    let frontend = get_frontend_canister_summary().await;
+    let frontend_data = FrontendData {
+        timestamp: time(),
+        frontend,
+    };
+    FrontendStore::insert(frontend_data);
+    Logs::log(format!("{}", EVENT_FRONTEND_SUMMARY.to_string()));
 }

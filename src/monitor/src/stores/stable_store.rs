@@ -1,4 +1,4 @@
-use super::stable_models::{ChildData, Log, MonitorData, SnsData};
+use super::stable_models::{ChildData, FrontendData, Log, MonitorData, SnsData};
 use crate::{queries::range, utils::log::format_time};
 use ic_cdk::api::time;
 use ic_stable_structures::{
@@ -14,6 +14,7 @@ const MEM_ID_LOGS: MemoryId = MemoryId::new(0);
 const MEM_ID_MONITOR: MemoryId = MemoryId::new(1);
 const MEM_ID_SNS_CANISTERS: MemoryId = MemoryId::new(2);
 const MEM_ID_CHILD_CANISTERS: MemoryId = MemoryId::new(3);
+const MEM_ID_FRONTEND_CANISTER: MemoryId = MemoryId::new(4);
 
 /*
 * Stable stores
@@ -32,6 +33,9 @@ thread_local! {
 
     static CHILD_DATA: RefCell<StableBTreeMap<u64, ChildData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
         StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_CHILD_CANISTERS))));
+
+    static FRONTEND_DATA: RefCell<StableBTreeMap<u64, FrontendData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
+        StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_CHILD_CANISTERS))));
 }
 
 /*
@@ -42,6 +46,7 @@ pub struct Logs;
 pub struct MonitorStore;
 pub struct SnsStore;
 pub struct ChildStore;
+pub struct FrontendStore;
 
 /*
 * Imple stable stores
@@ -199,6 +204,41 @@ impl ChildStore {
             c.borrow()
                 .range(start..=end)
                 .map(|(_, child_data)| child_data.clone())
+                .collect()
+        })
+    }
+}
+
+impl FrontendStore {
+    pub fn size() -> u64 {
+        FRONTEND_DATA.with(|f| f.borrow().len())
+    }
+
+    pub fn new_index() -> u64 {
+        FRONTEND_DATA.with(|f| new_index(&f.borrow()))
+    }
+
+    pub fn insert(frontend_data: FrontendData) {
+        let index = Self::new_index();
+
+        FRONTEND_DATA.with(|f| f.borrow_mut().insert(index, frontend_data));
+    }
+
+    pub fn get_latest() -> Option<FrontendData> {
+        let (_, value) =
+            FRONTEND_DATA.with(|f| f.borrow().last_key_value().expect("No frontend data"));
+        Some(value.clone())
+    }
+
+    pub fn get_latest_n(n: u64) -> Vec<FrontendData> {
+        let len = Self::size();
+
+        let (start, end) = range(n, len);
+
+        FRONTEND_DATA.with(|f| {
+            f.borrow()
+                .range(start..=end)
+                .map(|(_, frontend_data)| frontend_data.clone())
                 .collect()
         })
     }
