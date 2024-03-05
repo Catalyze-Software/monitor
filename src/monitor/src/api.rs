@@ -3,10 +3,12 @@ use crate::queries::icp_history::get_latest_icp_balances;
 use crate::queries::sort::cycle_balances;
 use crate::stores::stable_models::{CanisterCycles, Log, Timestamp};
 use crate::stores::stable_store::{ChildStore, FrontendStore, MonitorStore, SnsStore};
+use crate::system::TIMER;
 use crate::utils::auth::is_registered;
 use crate::{run::run, stores::stable_store::Logs};
 use candid::Principal;
 use ic_cdk_macros::{query, update};
+use ic_cdk_timers::TimerId;
 
 #[query(guard = "is_registered")]
 fn icp_balance() -> String {
@@ -70,6 +72,14 @@ fn new_user() -> Option<Principal> {
     match is_registered() {
         Ok(_) => None,
         _ => Some(ic_cdk::caller()),
+    }
+}
+
+#[query]
+fn timer_set() -> bool {
+    match TIMER.with(|t| t.borrow().clone()) {
+        Some(_) => true,
+        None => false,
     }
 }
 

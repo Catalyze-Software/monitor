@@ -19,4 +19,5 @@ service : {
   new_user : () -> (opt principal) query;
   sorted_canister_cycles : () -> (vec CanisterCycles) query;
   store_stats : () -> (vec text) query;
+  timer_set : () -> (bool) query;
 }

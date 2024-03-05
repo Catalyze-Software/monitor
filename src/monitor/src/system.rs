@@ -5,12 +5,19 @@ use std::time::Duration;
 
 const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
 
+// thread local refcell for timer index
+thread_local! {
+   pub static TIMER: std::cell::RefCell<Option<ic_cdk_timers::TimerId>> = std::cell::RefCell::new(None);
+}
+
 #[init]
 fn init() {
     // set timer to run operations at INTERVAL
     // first run will be INTERVAL after the canister is upgraded/ reinstalled
     // call `initiate_run` to start the first run immediately
-    let _ = set_timer_interval(INTERVAL, move || ic_cdk::spawn(run()));
+    let id = set_timer_interval(INTERVAL, move || ic_cdk::spawn(run()));
+
+    TIMER.with(|t| *t.borrow_mut() = Some(id));
 }
 
 #[post_upgrade]
