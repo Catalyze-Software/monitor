@@ -1,9 +1,4 @@
-use crate::stores::stable_models::CanisterCycles;
-use candid::Principal;
-use ic_cdk::api::management_canister::{
-    main::{canister_status, CanisterStatusResponse},
-    provisional::CanisterIdRecord,
-};
+use crate::{stores::stable_models::CanisterCycles, utils::canister_status::get_canister_status};
 
 // Production principals:
 pub const CHILD_MEMBERS: &str = "5nrjv-iaaaa-aaaap-aa4la-cai";
@@ -56,14 +51,4 @@ pub async fn get_child_canister_summary() -> Vec<CanisterCycles> {
     ));
 
     vec
-}
-
-async fn get_canister_status(canister_id: &str) -> CanisterStatusResponse {
-    let canister_id = Principal::from_text(canister_id).expect("Invalid principal");
-    let arg = CanisterIdRecord { canister_id };
-
-    canister_status(arg)
-        .await
-        .expect("Failed to call canister_status")
-        .0
 }

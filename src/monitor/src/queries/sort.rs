@@ -1,6 +1,6 @@
 use crate::stores::{
     stable_models::CanisterCycles,
-    stable_store::{ChildStore, MonitorStore, SnsStore},
+    stable_store::{ChildStore, FrontendStore, MonitorStore, SnsStore},
 };
 
 /*
@@ -49,6 +49,10 @@ pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     vec.push(child_data.events.clone());
     vec.push(child_data.event_attendees.clone());
     vec.push(child_data.reports.clone());
+
+    // add the frontend canister
+    let frontend_data = FrontendStore::get_latest().unwrap();
+    vec.push(frontend_data.frontend);
 
     // sort the vec by cycles in ascending order
     vec.sort_by(|a, b| a.cycles.cmp(&b.cycles));
