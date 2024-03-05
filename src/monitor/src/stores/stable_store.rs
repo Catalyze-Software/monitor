@@ -35,7 +35,7 @@ thread_local! {
         StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_CHILD_CANISTERS))));
 
     static FRONTEND_DATA: RefCell<StableBTreeMap<u64, FrontendData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
-        StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_CHILD_CANISTERS))));
+        StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_FRONTEND_CANISTER))));
 }
 
 /*
@@ -227,7 +227,7 @@ impl FrontendStore {
     pub fn get_latest() -> Option<FrontendData> {
         let (_, value) =
             FRONTEND_DATA.with(|f| f.borrow().last_key_value().expect("No frontend data"));
-        Some(value.clone())
+        Some(value)
     }
 
     pub fn get_latest_n(n: u64) -> Vec<FrontendData> {
@@ -238,7 +238,7 @@ impl FrontendStore {
         FRONTEND_DATA.with(|f| {
             f.borrow()
                 .range(start..=end)
-                .map(|(_, frontend_data)| frontend_data.clone())
+                .map(|(_, frontend_data)| frontend_data)
                 .collect()
         })
     }

@@ -1,6 +1,6 @@
 use crate::stores::{
     stable_models::Timestamp,
-    stable_store::{ChildStore, MonitorStore, SnsStore},
+    stable_store::{ChildStore, FrontendStore, MonitorStore, SnsStore},
 };
 use candid::{CandidType, Deserialize, Nat};
 use num_traits::ToPrimitive;
@@ -23,9 +23,11 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
     let monitor_size = MonitorStore::size();
     let sns_size = SnsStore::size();
     let child_size = ChildStore::size();
+    let frontend_size = FrontendStore::size();
 
     assert_eq!(monitor_size, sns_size);
     assert_eq!(monitor_size, child_size);
+    assert_eq!(monitor_size, frontend_size);
 
     // ensure n is not greater than store size
     if n > monitor_size {
@@ -35,6 +37,7 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
     let monitor_history = MonitorStore::get_latest_n(n);
     let sns_history = SnsStore::get_latest_n(n);
     let child_history = ChildStore::get_latest_n(n);
+    let frontend_history = FrontendStore::get_latest_n(n);
 
     let mut time_series = Vec::new();
 
@@ -161,6 +164,11 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
         let reports_balance = child_history[i].reports.cycles.clone();
         balances.push(("Reports".to_string(), cycles_to_tcycles(reports_balance)));
 
+        // add frontend canister
+        let frontend_balance = frontend_history[i].frontend.cycles.clone();
+        balances.push(("Frontend".to_string(), cycles_to_tcycles(frontend_balance)));
+
+        // add balances to time series
         time_series.push(CycleBalances {
             timestamp,
             balances,

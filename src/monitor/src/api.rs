@@ -2,7 +2,7 @@ use crate::queries::cycle_history::{get_latest_cycle_balances, CycleBalances};
 use crate::queries::icp_history::get_latest_icp_balances;
 use crate::queries::sort::cycle_balances;
 use crate::stores::stable_models::{CanisterCycles, Log, Timestamp};
-use crate::stores::stable_store::{ChildStore, MonitorStore, SnsStore};
+use crate::stores::stable_store::{ChildStore, FrontendStore, MonitorStore, SnsStore};
 use crate::utils::auth::is_registered;
 use crate::{run::run, stores::stable_store::Logs};
 use candid::Principal;
@@ -56,10 +56,12 @@ fn store_stats() -> Vec<String> {
         format!("Monitor: {}", MonitorStore::size()),
         format!("SNS: {}", SnsStore::size()),
         format!("Child: {}", ChildStore::size()),
+        format!("Frontend: {}", FrontendStore::size()),
         format!("Logs index: {}", Logs::new_index()),
         format!("Monitor index: {}", MonitorStore::new_index()),
         format!("SNS index: {}", SnsStore::new_index()),
         format!("Child index: {}", ChildStore::new_index()),
+        format!("Frontend index: {}", FrontendStore::new_index()),
     ]
 }
 
@@ -67,7 +69,7 @@ fn store_stats() -> Vec<String> {
 fn new_user() -> Option<Principal> {
     match is_registered() {
         Ok(_) => None,
-        _ => Some(ic_cdk::caller())
+        _ => Some(ic_cdk::caller()),
     }
 }
 

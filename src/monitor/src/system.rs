@@ -7,11 +7,9 @@ const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
 
 #[init]
 fn init() {
-    // run operations once immediately to init state
-    // need to use timer to spawn async fn from sync context
-    // let _ = set_timer(Duration::from_nanos(1), move || ic_cdk::spawn(run()));
-
     // set timer to run operations at INTERVAL
+    // first run will be INTERVAL after the canister is upgraded/ reinstalled
+    // call `initiate_run` to start the first run immediately
     let _ = set_timer_interval(INTERVAL, move || ic_cdk::spawn(run()));
 }
 
