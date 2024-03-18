@@ -2,8 +2,12 @@
   "canisters": {
     "monitor": {
       "candid": "candid/monitor.did",
+      "wasm": "wasm/monitor.wasm.gz",
       "package": "monitor",
-      "type": "rust",
+      "type": "custom",
+      "build": [
+        "bash ./scripts/build.sh"
+      ],
       "declarations": {
         "output": "src/dashboard/src/lib/declarations"
       }

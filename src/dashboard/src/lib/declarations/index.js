@@ -10,8 +10,7 @@ export { idlFactory } from "./monitor.did.js";
  * beginning in dfx 0.15.0
  */
 export const canisterId =
-  process.env.CANISTER_ID_MONITOR ||
-  process.env.MONITOR_CANISTER_ID;
+  process.env.CANISTER_ID_MONITOR;
 
 export const createActor = (canisterId, options = {}) => {
   const agent = options.agent || new HttpAgent({ ...options.agentOptions });

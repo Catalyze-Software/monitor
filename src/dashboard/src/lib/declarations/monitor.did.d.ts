@@ -23,6 +23,7 @@ export interface _SERVICE {
   'new_user' : ActorMethod<[], [] | [Principal]>,
   'sorted_canister_cycles' : ActorMethod<[], Array<CanisterCycles>>,
   'store_stats' : ActorMethod<[], Array<string>>,
+  'timer_set' : ActorMethod<[], boolean>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;
-export declare const init: ({ IDL }: { IDL: IDL }) => IDL.Type[];
+export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];

@@ -89,8 +89,6 @@ fn timer_set() -> bool {
 fn generate_candid() {
     candid::export_service!();
 
-    ic_scalable_misc::helpers::candid_helper::save_candid(
-        __export_service(),
-        String::from("monitor"),
-    );
+    std::fs::write("../../candid/monitor.did", __export_service())
+        .expect("Unable to write did file");
 }
