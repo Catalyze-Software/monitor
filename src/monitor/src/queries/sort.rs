@@ -1,10 +1,11 @@
 use crate::stores::{
     stable_models::CanisterCycles,
-    stable_store::{ChildStore, FrontendStore, MonitorStore, SnsStore},
+    stable_store::{ChildStore, FrontendStore, MonitorStore, SiweStore, SnsStore},
 };
 
 /*
 * Sorted canister cycles
+* Get the latest cycle balances of all canisters and sort them in ascending order
 */
 pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     let mut vec = Vec::new();
@@ -53,6 +54,10 @@ pub fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     // add the frontend canister
     let frontend_data = FrontendStore::get_latest().unwrap();
     vec.push(frontend_data.frontend);
+
+    // add the siwe canister
+    let siwe_data = SiweStore::get_latest().unwrap();
+    vec.push(siwe_data.siwe);
 
     // sort the vec by cycles in ascending order
     vec.sort_by(|a, b| a.cycles.cmp(&b.cycles));
