@@ -1,6 +1,6 @@
 use crate::stores::{
     stable_models::Timestamp,
-    stable_store::{ChildStore, FrontendStore, MonitorStore, SnsStore},
+    stable_store::{ChildStore, FrontendStore, MonitorStore, SiweStore, SnsStore},
 };
 use candid::{CandidType, Deserialize, Nat};
 use num_traits::ToPrimitive;
@@ -14,20 +14,26 @@ pub struct CycleBalances {
     balances: Vec<(CanisterName, TCycles)>,
 }
 
-// latest n cycle balances of monitor, all sns canisters and all child canisters
+/*
+* Cycle history data for all canisters
+* n is the number of data points to return
+* each data point (CycleBalances) contains the timestamp of the data point and the cycle balances of all canisters
+*/
 pub fn get_latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
     // double n because we skip even indexes
     let mut n = n * 2;
 
-    // ensure monitor, sns and child store have same size
+    // ensure all stores have the same size
     let monitor_size = MonitorStore::size();
     let sns_size = SnsStore::size();
     let child_size = ChildStore::size();
     let frontend_size = FrontendStore::size();
+    let siwe_size = SiweStore::size();
 
     assert_eq!(monitor_size, sns_size);
     assert_eq!(monitor_size, child_size);
     assert_eq!(monitor_size, frontend_size);
+    assert_eq!(monitor_size, siwe_size);
 
     // ensure n is not greater than store size
     if n > monitor_size {
@@ -38,6 +44,7 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
     let sns_history = SnsStore::get_latest_n(n);
     let child_history = ChildStore::get_latest_n(n);
     let frontend_history = FrontendStore::get_latest_n(n);
+    let siwe_history = SiweStore::get_latest_n(n);
 
     let mut time_series = Vec::new();
 
@@ -50,6 +57,7 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
         }
 
         let mut balances = Vec::new();
+        // timestamps should be the same for all stores
         let timestamp = monitor_history[i].timestamp;
 
         let monitor_balance = monitor_history[i].cycle_balance.clone();
@@ -168,7 +176,11 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
         let frontend_balance = frontend_history[i].frontend.cycles.clone();
         balances.push(("Frontend".to_string(), cycles_to_tcycles(frontend_balance)));
 
-        // add balances to time series
+        // add siwe canister
+        let siwe_balance = siwe_history[i].siwe.cycles.clone();
+        balances.push(("Siwe".to_string(), cycles_to_tcycles(siwe_balance)));
+
+        // finally, add all balances at this timestamp (n=i) to time_series
         time_series.push(CycleBalances {
             timestamp,
             balances,

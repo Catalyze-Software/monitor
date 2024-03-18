@@ -1,14 +1,17 @@
 use crate::{
     operations::child::get_child_canister_summary,
     stores::{
-        stable_models::{ChildData, FrontendData, MonitorData},
-        stable_store::{ChildStore, FrontendStore, Logs, MonitorStore, SnsStore},
+        stable_models::{ChildData, FrontendData, MonitorData, SiweData},
+        stable_store::{ChildStore, FrontendStore, Logs, MonitorStore, SiweStore, SnsStore},
     },
-    utils::log::{EVENT_CHILD_SUMMARY, EVENT_FRONTEND_SUMMARY, EVENT_MONITOR_DATA, EVENT_SNS_DATA},
+    utils::log::{
+        EVENT_CHILD_SUMMARY, EVENT_FRONTEND_SUMMARY, EVENT_MONITOR_DATA, EVENT_SIWE_SUMMARY,
+        EVENT_SNS_DATA,
+    },
 };
 use ic_cdk::api::time;
 
-use super::frontend::get_frontend_canister_summary;
+use super::{frontend::get_frontend_canister_summary, siwe::get_siwe_canister_summary};
 
 /*
 * Perform canister status query routine
@@ -56,4 +59,13 @@ pub async fn read_operations() {
     };
     FrontendStore::insert(frontend_data);
     Logs::log(format!("{}", EVENT_FRONTEND_SUMMARY.to_string()));
+
+    // Siwe canister
+    let siwe = get_siwe_canister_summary().await;
+    let siwe_data = SiweData {
+        timestamp: time(),
+        siwe,
+    };
+    SiweStore::insert(siwe_data);
+    Logs::log(format!("{}", EVENT_SIWE_SUMMARY.to_string()));
 }

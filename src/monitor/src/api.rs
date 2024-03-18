@@ -2,7 +2,7 @@ use crate::queries::cycle_history::{get_latest_cycle_balances, CycleBalances};
 use crate::queries::icp_history::get_latest_icp_balances;
 use crate::queries::sort::cycle_balances;
 use crate::stores::stable_models::{CanisterCycles, Log, Timestamp};
-use crate::stores::stable_store::{ChildStore, FrontendStore, MonitorStore, SnsStore};
+use crate::stores::stable_store::{ChildStore, FrontendStore, MonitorStore, SiweStore, SnsStore};
 use crate::system::TIMER;
 use crate::utils::auth::is_registered;
 use crate::{run::run, stores::stable_store::Logs};
@@ -59,11 +59,13 @@ fn store_stats() -> Vec<String> {
         format!("SNS: {}", SnsStore::size()),
         format!("Child: {}", ChildStore::size()),
         format!("Frontend: {}", FrontendStore::size()),
+        format!("Siwe: {}", SiweStore::size()),
         format!("Logs index: {}", Logs::new_index()),
         format!("Monitor index: {}", MonitorStore::new_index()),
         format!("SNS index: {}", SnsStore::new_index()),
         format!("Child index: {}", ChildStore::new_index()),
         format!("Frontend index: {}", FrontendStore::new_index()),
+        format!("Siwe index: {}", SiweStore::new_index()),
     ]
 }
 
@@ -75,7 +77,7 @@ fn new_user() -> Option<Principal> {
     }
 }
 
-#[query]
+#[query(guard = "is_registered")]
 fn timer_set() -> bool {
     match TIMER.with(|t| t.borrow().clone()) {
         Some(_) => true,

@@ -1,4 +1,4 @@
-use super::stable_models::{ChildData, FrontendData, Log, MonitorData, SnsData};
+use super::stable_models::{ChildData, FrontendData, Log, MonitorData, SiweData, SnsData};
 use crate::{queries::range, utils::log::format_time};
 use ic_cdk::api::time;
 use ic_stable_structures::{
@@ -15,6 +15,7 @@ const MEM_ID_MONITOR: MemoryId = MemoryId::new(1);
 const MEM_ID_SNS_CANISTERS: MemoryId = MemoryId::new(2);
 const MEM_ID_CHILD_CANISTERS: MemoryId = MemoryId::new(3);
 const MEM_ID_FRONTEND_CANISTER: MemoryId = MemoryId::new(4);
+const MEM_ID_SIWE_CANISTER: MemoryId = MemoryId::new(5);
 
 /*
 * Stable stores
@@ -36,6 +37,10 @@ thread_local! {
 
     static FRONTEND_DATA: RefCell<StableBTreeMap<u64, FrontendData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
         StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_FRONTEND_CANISTER))));
+
+    static SIWE_DATA: RefCell<StableBTreeMap<u64, SiweData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
+        StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_SIWE_CANISTER)))
+    );
 }
 
 /*
@@ -47,6 +52,7 @@ pub struct MonitorStore;
 pub struct SnsStore;
 pub struct ChildStore;
 pub struct FrontendStore;
+pub struct SiweStore;
 
 /*
 * Imple stable stores
@@ -239,6 +245,40 @@ impl FrontendStore {
             f.borrow()
                 .range(start..=end)
                 .map(|(_, frontend_data)| frontend_data)
+                .collect()
+        })
+    }
+}
+
+impl SiweStore {
+    pub fn size() -> u64 {
+        SIWE_DATA.with(|s| s.borrow().len())
+    }
+
+    pub fn new_index() -> u64 {
+        SIWE_DATA.with(|s| new_index(&s.borrow()))
+    }
+
+    pub fn insert(siwe_data: SiweData) {
+        let index = Self::new_index();
+
+        SIWE_DATA.with(|s| s.borrow_mut().insert(index, siwe_data));
+    }
+
+    pub fn get_latest() -> Option<SiweData> {
+        let (_, value) = SIWE_DATA.with(|s| s.borrow().last_key_value().expect("No SIWE data"));
+        Some(value)
+    }
+
+    pub fn get_latest_n(n: u64) -> Vec<SiweData> {
+        let len = Self::size();
+
+        let (start, end) = range(n, len);
+
+        SIWE_DATA.with(|s| {
+            s.borrow()
+                .range(start..=end)
+                .map(|(_, siwe_data)| siwe_data)
                 .collect()
         })
     }

@@ -45,6 +45,12 @@ pub struct FrontendData {
     pub frontend: CanisterCycles,
 }
 
+#[derive(CandidType, Deserialize, Clone)]
+pub struct SiweData {
+    pub timestamp: Timestamp,
+    pub siwe: CanisterCycles,
+}
+
 /*
 * Impl Storable for Models
 */
@@ -105,6 +111,18 @@ impl Storable for FrontendData {
 
     fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
         Decode!(bytes.as_ref(), Self).expect("Failed to decode FrontendData")
+    }
+}
+
+impl Storable for SiweData {
+    const BOUND: Bound = Bound::Unbounded;
+
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        Cow::Owned(Encode!(&self).expect("Failed to encode SIWEData"))
+    }
+
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        Decode!(bytes.as_ref(), Self).expect("Failed to decode SIWEData")
     }
 }
 
