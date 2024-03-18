@@ -1,5 +1,8 @@
+use super::{
+    canisters::frontend::get_frontend_canister_summary, canisters::siwe::get_siwe_canister_summary,
+};
 use crate::{
-    operations::child::get_child_canister_summary,
+    operations::canisters::child::get_child_canister_summary,
     stores::{
         stable_models::{ChildData, FrontendData, MonitorData, SiweData},
         stable_store::{ChildStore, FrontendStore, Logs, MonitorStore, SiweStore, SnsStore},
@@ -10,8 +13,6 @@ use crate::{
     },
 };
 use ic_cdk::api::time;
-
-use super::{frontend::get_frontend_canister_summary, siwe::get_siwe_canister_summary};
 
 /*
 * Perform canister status query routine
@@ -31,7 +32,7 @@ pub async fn read_operations() {
     Logs::log(format!("{}", EVENT_MONITOR_DATA.to_string()));
 
     // SNS read, store and log operations
-    let summary = crate::operations::sns::get_sns_canisters_summary().await;
+    let summary = crate::operations::canisters::sns::get_sns_canisters_summary().await;
 
     SnsStore::insert(summary);
     Logs::log(format!("{}", EVENT_SNS_DATA.to_string()));

@@ -5,7 +5,7 @@ use ic_cdk::api::management_canister::main::CanisterStatusResponse;
 use ic_ledger_types::Tokens;
 use ic_stable_structures::{storable::Bound, Storable};
 
-use crate::operations::sns::{CanisterSummary, GetSnsCanistersSummaryResponse};
+use crate::operations::canisters::sns::{CanisterSummary, GetSnsCanistersSummaryResponse};
 
 pub type Timestamp = u64;
 
