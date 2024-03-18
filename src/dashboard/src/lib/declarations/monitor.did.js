@@ -36,6 +36,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'store_stats' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
+    'timer_set' : IDL.Func([], [IDL.Bool], ['query']),
   });
 };
 export const init = ({ IDL }) => { return []; };
