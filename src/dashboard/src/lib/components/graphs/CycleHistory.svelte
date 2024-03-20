@@ -3,11 +3,31 @@
   import { onMount } from "svelte"
   import { Line } from "svelte-chartjs"
   import type { ChartData, Point } from "chart.js"
+  import {
+    Chart,
+    Title,
+    Tooltip,
+    Legend,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+  } from "chart.js"
 
   // Backend function that returns a cycles balance history for every canister
   import { latestCycleBalances } from "$lib/api/monitor.api"
 
   let ready = false
+
+  Chart.register(
+    Title,
+    Tooltip,
+    Legend,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement
+  )
 
   let data: ChartData<"line", (number | Point)[], unknown> = {
     labels: [],
