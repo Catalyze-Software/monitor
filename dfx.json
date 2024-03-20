@@ -19,6 +19,9 @@
       ],
       "source": [
         "src/dashboard/build"
+      ],
+      "dependencies": [
+        "monitor"
       ]
     }
   }
