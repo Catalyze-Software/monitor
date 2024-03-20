@@ -10,7 +10,12 @@
       ],
       "declarations": {
         "output": "src/dashboard/src/lib/declarations"
-      }
+      },
+      "metadata": [
+        {
+          "name": "candid:service"
+        }
+      ]
     },
     "dashboard": {
       "type": "assets",
