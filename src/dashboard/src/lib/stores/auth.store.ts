@@ -40,6 +40,7 @@ const initAuthStore = async (): Promise<AuthStore> => {
       authClient = authClient ?? (await AuthClient.create())
       await authClient.logout()
       set(null)
+      goto("/")
     },
 
     isAuthenticated: async (): Promise<boolean> => {

@@ -1,9 +1,21 @@
 <script>
-  import { Content, Layout, MenuItem, Toasts } from "@dfinity/gix-components"
   import { authStore } from "$lib/stores/auth.store"
+
+  import { Content, Layout, MenuItem, Toasts } from "@dfinity/gix-components"
+
   import FrontPageBanner from "$lib/components/layout/FrontPageBanner.svelte"
   import LogoutButton from "$lib/components/buttons/LogoutButton.svelte"
   import Logo from "$lib/components/layout/Logo.svelte"
+
+  import { goto } from "$app/navigation"
+  import { onMount } from "svelte"
+
+  onMount(async () => {
+    let authed = authStore.isAuthenticated()
+    if (!authed) {
+      goto("/")
+    }
+  })
 </script>
 
 <Toasts />
@@ -17,6 +29,7 @@
 
   <svelte:fragment slot="menu-items">
     <MenuItem href="/" on:click>Overview</MenuItem>
+    <MenuItem href="/cycles-history" on:click>Cycles history</MenuItem>
     <MenuItem href="/canisters" on:click>Canisters</MenuItem>
     <MenuItem href="/logs" on:click>Logs</MenuItem>
   </svelte:fragment>

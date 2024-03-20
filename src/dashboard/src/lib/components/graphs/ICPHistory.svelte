@@ -46,7 +46,7 @@
   }
 
   onMount(async () => {
-    const response = await latestIcpBalances(1000n)
+    const response = await latestIcpBalances(30n)
 
     let labels: string[] = []
     let balances: number[] = []

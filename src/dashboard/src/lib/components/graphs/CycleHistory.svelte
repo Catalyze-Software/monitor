@@ -35,7 +35,7 @@
   ]
 
   onMount(async () => {
-    const latest = await latestCycleBalances(1000n)
+    const latest = await latestCycleBalances(30n)
 
     latest.forEach((instant, i) => {
       data.labels?.push(convertTimestamp(instant.timestamp))
