@@ -5,7 +5,7 @@ use std::time::Duration;
 
 const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
 
-// thread local refcell for timer index
+// thread local refcell for timer id
 thread_local! {
    pub static TIMER: std::cell::RefCell<Option<ic_cdk_timers::TimerId>> = std::cell::RefCell::new(None);
 }

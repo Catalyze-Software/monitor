@@ -8,7 +8,6 @@ use crate::utils::auth::is_registered;
 use crate::{run::run, stores::stable_store::Logs};
 use candid::Principal;
 use ic_cdk_macros::{query, update};
-use ic_cdk_timers::TimerId;
 
 #[query(guard = "is_registered")]
 fn icp_balance() -> String {
