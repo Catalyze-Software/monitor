@@ -8,7 +8,7 @@ import {
   type CanisterCycles,
   type CycleBalances,
   type Log,
-} from "$lib/declarations/monitor.did"
+} from "$lib/declarations/monitor.did.js"
 import { createAgent } from "@dfinity/utils"
 import { toastsStore } from "@dfinity/gix-components"
 

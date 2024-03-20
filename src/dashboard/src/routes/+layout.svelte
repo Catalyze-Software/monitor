@@ -4,8 +4,6 @@
   import FrontPageBanner from "$lib/components/layout/FrontPageBanner.svelte"
   import LogoutButton from "$lib/components/buttons/LogoutButton.svelte"
   import Logo from "$lib/components/layout/Logo.svelte"
-  import { newUser, newUserPrincipal } from "$lib/api/monitor.api"
-  import NewUser  from "$lib/components/cards/NewUser.svelte"
 </script>
 
 <Toasts />
@@ -16,26 +14,20 @@
 
 <Layout>
   <Logo slot="menu-logo" />
+
   <svelte:fragment slot="menu-items">
     <MenuItem href="/" on:click>Overview</MenuItem>
     <MenuItem href="/canisters" on:click>Canisters</MenuItem>
     <MenuItem href="/logs" on:click>Logs</MenuItem>
   </svelte:fragment>
+
   <Content>
     <LogoutButton slot="toolbar-end" />
     <main>
       {#if !$authStore}
         <FrontPageBanner />
       {:else if $authStore}
-        {#await newUser() then response}
-          {#if response}
-            {#await newUserPrincipal() then principal}
-              <NewUser principal={principal.toString()} />
-            {/await}
-          {:else}
-            <slot />
-          {/if}
-        {/await}
+        <slot />
       {/if}
     </main>
   </Content>
