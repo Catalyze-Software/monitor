@@ -13,7 +13,10 @@
     CategoryScale,
     LinearScale,
   } from "chart.js"
+
+  // Backend function that returns a list of canisters with their latest cycles balance
   import { sortedCanisterCycles } from "$lib/api/monitor.api"
+  import type { CanisterCycles } from "$lib/declarations/monitor.did"
 
   Chart.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
@@ -33,7 +36,7 @@
   }
 
   onMount(async () => {
-    const cycles = await sortedCanisterCycles()
+    const cycles: CanisterCycles[] = await sortedCanisterCycles()
 
     cycles.forEach((item) => {
       data.labels?.push(item.name)

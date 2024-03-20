@@ -46,6 +46,7 @@
   }
 
   onMount(async () => {
+    // fetch last 30 days of ICP balances
     const response = await latestIcpBalances(30n)
 
     let labels: string[] = []

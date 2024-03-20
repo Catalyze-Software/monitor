@@ -3,6 +3,8 @@
   import { onMount } from "svelte"
   import { Line } from "svelte-chartjs"
   import type { ChartData, Point } from "chart.js"
+
+  // Backend function that returns a cycles balance history for every canister
   import { latestCycleBalances } from "$lib/api/monitor.api"
 
   let ready = false
@@ -35,8 +37,10 @@
   ]
 
   onMount(async () => {
+    // fetch last 30 days of cycle balances
     const latest = await latestCycleBalances(30n)
 
+    // iterate over the latest balances and populate the chart data
     latest.forEach((instant, i) => {
       data.labels?.push(convertTimestamp(instant.timestamp))
       instant.balances.forEach((balance, index) => {
