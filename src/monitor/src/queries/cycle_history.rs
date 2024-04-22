@@ -1,6 +1,8 @@
 use crate::stores::{
     stable_models::Timestamp,
-    stable_store::{ChildStore, FrontendStore, MonitorStore, SiweStore, SnsStore},
+    stable_store::{
+        ChildStore, DashboardStore, FrontendStore, MonitorStore, SiweStore, SiwsStore, SnsStore,
+    },
 };
 use candid::{CandidType, Deserialize, Nat};
 use num_traits::ToPrimitive;
@@ -29,11 +31,15 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
     let child_size = ChildStore::size();
     let frontend_size = FrontendStore::size();
     let siwe_size = SiweStore::size();
+    let siws_size = SiwsStore::size();
+    let dashboard_size = DashboardStore::size();
 
     assert_eq!(monitor_size, sns_size);
     assert_eq!(monitor_size, child_size);
     assert_eq!(monitor_size, frontend_size);
     assert_eq!(monitor_size, siwe_size);
+    assert_eq!(monitor_size, siws_size);
+    assert_eq!(monitor_size, dashboard_size);
 
     // ensure n is not greater than store size
     if n > monitor_size {
@@ -45,6 +51,8 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
     let child_history = ChildStore::get_latest_n(n);
     let frontend_history = FrontendStore::get_latest_n(n);
     let siwe_history = SiweStore::get_latest_n(n);
+    let siws_history = SiwsStore::get_latest_n(n);
+    let dashboard_history = DashboardStore::get_latest_n(n);
 
     let mut time_series = Vec::new();
 
@@ -179,6 +187,17 @@ pub fn get_latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
         // add siwe canister
         let siwe_balance = siwe_history[i].siwe.cycles.clone();
         balances.push(("Siwe".to_string(), cycles_to_tcycles(siwe_balance)));
+
+        // add siws canister
+        let siws_balance = siws_history[i].siws.cycles.clone();
+        balances.push(("Siws".to_string(), cycles_to_tcycles(siws_balance)));
+
+        // add dashboard canister
+        let dashboard_balance = dashboard_history[i].dashboard.cycles.clone();
+        balances.push((
+            "Dashboard".to_string(),
+            cycles_to_tcycles(dashboard_balance),
+        ));
 
         // finally, add all balances at this timestamp (n=i) to time_series
         time_series.push(CycleBalances {

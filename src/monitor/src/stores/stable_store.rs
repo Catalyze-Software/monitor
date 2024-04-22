@@ -1,4 +1,6 @@
-use super::stable_models::{ChildData, FrontendData, Log, MonitorData, SiweData, SnsData};
+use super::stable_models::{
+    ChildData, DashboardData, FrontendData, Log, MonitorData, SiweData, SiwsData, SnsData,
+};
 use crate::{queries::range, utils::log::format_time};
 use ic_cdk::api::time;
 use ic_stable_structures::{
@@ -16,6 +18,8 @@ const MEM_ID_SNS_CANISTERS: MemoryId = MemoryId::new(2);
 const MEM_ID_CHILD_CANISTERS: MemoryId = MemoryId::new(3);
 const MEM_ID_FRONTEND_CANISTER: MemoryId = MemoryId::new(4);
 const MEM_ID_SIWE_CANISTER: MemoryId = MemoryId::new(5);
+const MEM_ID_SIWS_CANISTER: MemoryId = MemoryId::new(6);
+const MEM_ID_DASHBOARD_CANISTER: MemoryId = MemoryId::new(7);
 
 /*
 * Stable stores
@@ -41,6 +45,14 @@ thread_local! {
     static SIWE_DATA: RefCell<StableBTreeMap<u64, SiweData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
         StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_SIWE_CANISTER)))
     );
+
+    static SIWS_DATA: RefCell<StableBTreeMap<u64, SiwsData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
+        StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_SIWS_CANISTER)))
+    );
+
+    static DASHBOARD_DATA: RefCell<StableBTreeMap<u64, DashboardData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
+        StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_DASHBOARD_CANISTER)))
+    );
 }
 
 /*
@@ -53,6 +65,8 @@ pub struct SnsStore;
 pub struct ChildStore;
 pub struct FrontendStore;
 pub struct SiweStore;
+pub struct SiwsStore;
+pub struct DashboardStore;
 
 /*
 * Imple stable stores
@@ -279,6 +293,75 @@ impl SiweStore {
             s.borrow()
                 .range(start..=end)
                 .map(|(_, siwe_data)| siwe_data)
+                .collect()
+        })
+    }
+}
+
+impl SiwsStore {
+    pub fn size() -> u64 {
+        SIWS_DATA.with(|s| s.borrow().len())
+    }
+
+    pub fn new_index() -> u64 {
+        SIWS_DATA.with(|s| new_index(&s.borrow()))
+    }
+
+    pub fn insert(siws_data: SiwsData) {
+        let index = Self::new_index();
+
+        SIWS_DATA.with(|s| s.borrow_mut().insert(index, siws_data));
+    }
+
+    pub fn get_latest() -> Option<SiwsData> {
+        let (_, value) = SIWS_DATA.with(|s| s.borrow().last_key_value().expect("No SIWS data"));
+        Some(value)
+    }
+
+    pub fn get_latest_n(n: u64) -> Vec<SiwsData> {
+        let len = Self::size();
+
+        let (start, end) = range(n, len);
+
+        SIWS_DATA.with(|s| {
+            s.borrow()
+                .range(start..=end)
+                .map(|(_, siws_data)| siws_data)
+                .collect()
+        })
+    }
+}
+
+impl DashboardStore {
+    pub fn size() -> u64 {
+        DASHBOARD_DATA.with(|d| d.borrow().len())
+    }
+
+    pub fn new_index() -> u64 {
+        DASHBOARD_DATA.with(|d| new_index(&d.borrow()))
+    }
+
+    pub fn insert(dashboard_data: DashboardData) {
+        let index = Self::new_index();
+
+        DASHBOARD_DATA.with(|d| d.borrow_mut().insert(index, dashboard_data));
+    }
+
+    pub fn get_latest() -> Option<DashboardData> {
+        let (_, value) =
+            DASHBOARD_DATA.with(|d| d.borrow().last_key_value().expect("No dashboard data"));
+        Some(value)
+    }
+
+    pub fn get_latest_n(n: u64) -> Vec<DashboardData> {
+        let len = Self::size();
+
+        let (start, end) = range(n, len);
+
+        DASHBOARD_DATA.with(|d| {
+            d.borrow()
+                .range(start..=end)
+                .map(|(_, dashboard_data)| dashboard_data)
                 .collect()
         })
     }
