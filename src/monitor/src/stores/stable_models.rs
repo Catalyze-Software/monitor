@@ -51,6 +51,18 @@ pub struct SiweData {
     pub siwe: CanisterCycles,
 }
 
+#[derive(CandidType, Deserialize, Clone)]
+pub struct SiwsData {
+    pub timestamp: Timestamp,
+    pub siws: CanisterCycles,
+}
+
+#[derive(CandidType, Deserialize, Clone)]
+pub struct DashboardData {
+    pub timestamp: Timestamp,
+    pub dashboard: CanisterCycles,
+}
+
 /*
 * Impl Storable for Models
 */
@@ -123,6 +135,30 @@ impl Storable for SiweData {
 
     fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
         Decode!(bytes.as_ref(), Self).expect("Failed to decode SIWEData")
+    }
+}
+
+impl Storable for SiwsData {
+    const BOUND: Bound = Bound::Unbounded;
+
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        Cow::Owned(Encode!(&self).expect("Failed to encode SIWSData"))
+    }
+
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        Decode!(bytes.as_ref(), Self).expect("Failed to decode SIWSData")
+    }
+}
+
+impl Storable for DashboardData {
+    const BOUND: Bound = Bound::Unbounded;
+
+    fn to_bytes(&self) -> std::borrow::Cow<[u8]> {
+        Cow::Owned(Encode!(&self).expect("Failed to encode DashboardData"))
+    }
+
+    fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
+        Decode!(bytes.as_ref(), Self).expect("Failed to decode DashboardData")
     }
 }
 
