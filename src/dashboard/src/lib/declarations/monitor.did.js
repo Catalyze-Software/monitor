@@ -4,6 +4,13 @@ export const idlFactory = ({ IDL }) => {
     'timestamp' : IDL.Nat64,
     'balances' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64)),
   });
+  const Logger = IDL.Record({
+    'principal' : IDL.Opt(IDL.Principal),
+    'source' : IDL.Opt(IDL.Text),
+    'data' : IDL.Opt(IDL.Text),
+    'description' : IDL.Text,
+    'created_on' : IDL.Nat64,
+  });
   const CanisterCycles = IDL.Record({
     'name' : IDL.Text,
     'canister_id' : IDL.Principal,
@@ -29,7 +36,9 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Nat64, IDL.Float64))],
         ['query'],
       ),
+    'latest_proxy_logs' : IDL.Func([IDL.Nat64], [IDL.Vec(Logger)], []),
     'new_user' : IDL.Func([], [IDL.Opt(IDL.Principal)], ['query']),
+    'proxy_log_size' : IDL.Func([], [IDL.Nat64], []),
     'sorted_canister_cycles' : IDL.Func(
         [],
         [IDL.Vec(CanisterCycles)],

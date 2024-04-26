@@ -10,7 +10,7 @@
   let logs: Log[] = []
 
   onMount(async () => {
-    logs = await latestLogs(1000n)
+    logs = await latestLogs(100n)
     ready = true
   })
 </script>

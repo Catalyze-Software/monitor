@@ -32,6 +32,7 @@
     <MenuItem href="/cycles-history" on:click>Cycles history</MenuItem>
     <MenuItem href="/canisters" on:click>Canisters</MenuItem>
     <MenuItem href="/logs" on:click>Logs</MenuItem>
+    <MenuItem href="/proxy_logs" on:click>Proxy logs</MenuItem>
   </svelte:fragment>
 
   <Content>

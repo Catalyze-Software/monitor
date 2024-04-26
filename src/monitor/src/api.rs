@@ -1,3 +1,4 @@
+use crate::proxy::Logger;
 use crate::queries::cycle_history::{get_latest_cycle_balances, CycleBalances};
 use crate::queries::icp_history::get_latest_icp_balances;
 use crate::queries::sort::cycle_balances;
@@ -45,6 +46,16 @@ async fn initiate_run() {
 #[query(guard = "is_registered")]
 fn get_latest_logs(n: u64) -> Vec<Log> {
     Logs::get_latest(n)
+}
+
+#[update(guard = "is_registered")]
+async fn latest_proxy_logs(amount: u64) -> Vec<Logger> {
+    crate::proxy::get_latest_proxy_logs(amount).await
+}
+
+#[update(guard = "is_registered")]
+async fn proxy_log_size() -> u64 {
+    crate::proxy::log_size().await
 }
 
 #[query(guard = "is_registered")]
