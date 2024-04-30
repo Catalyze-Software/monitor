@@ -9,6 +9,7 @@ import {
   type CycleBalances,
   type Log,
   type Logger,
+  type RewardData,
 } from "$lib/declarations/monitor.did.js"
 import { createAgent } from "@dfinity/utils"
 import { toastsStore } from "@dfinity/gix-components"
@@ -63,6 +64,16 @@ export const latestProxyLogs = async (n: bigint) => {
 export const proxyLogSize = async () => {
   const monitor = await monitorActor()
   return await tryCall<[], bigint>(monitor.proxy_log_size)
+}
+
+export const latestTokenRewards = async (n: bigint) => {
+  const monitor = await monitorActor()
+  return await tryCall<[bigint], RewardData[]>(monitor.token_latest_rewards, n)
+}
+
+export const tokenLogSize = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], bigint>(monitor.token_log_size)
 }
 
 export const newUser = async () => {
