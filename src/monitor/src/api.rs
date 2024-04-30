@@ -7,6 +7,7 @@ use crate::stores::stable_store::{
     ChildStore, DashboardStore, FrontendStore, MonitorStore, SiweStore, SiwsStore, SnsStore,
 };
 use crate::system::TIMER;
+use crate::token_canister::RewardData;
 use crate::utils::auth::is_registered;
 use crate::{run::run, stores::stable_store::Logs};
 use candid::Principal;
@@ -56,6 +57,16 @@ async fn latest_proxy_logs(amount: u64) -> Vec<Logger> {
 #[update(guard = "is_registered")]
 async fn proxy_log_size() -> u64 {
     crate::proxy::log_size().await
+}
+
+#[update(guard = "is_registered")]
+async fn token_latest_rewards(amount: u64) -> Vec<RewardData> {
+    crate::token_canister::latest_rewards(amount).await
+}
+
+#[update(guard = "is_registered")]
+async fn token_log_size() -> u64 {
+    crate::token_canister::log_size().await
 }
 
 #[query(guard = "is_registered")]

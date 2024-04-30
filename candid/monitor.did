@@ -15,6 +15,11 @@ type Logger = record {
   description : text;
   created_on : nat64;
 };
+type RewardData = record {
+  "principal" : principal;
+  description : text;
+  timestamp : nat64;
+};
 service : {
   all_cycle_balances : () -> (vec text) query;
   get_latest_logs : (nat64) -> (vec Log) query;
@@ -29,4 +34,6 @@ service : {
   sorted_canister_cycles : () -> (vec CanisterCycles) query;
   store_stats : () -> (vec text) query;
   timer_set : () -> (bool) query;
+  token_latest_rewards : (nat64) -> (vec RewardData);
+  token_log_size : () -> (nat64);
 }
