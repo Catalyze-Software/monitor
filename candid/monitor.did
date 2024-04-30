@@ -8,6 +8,18 @@ type CycleBalances = record {
   balances : vec record { text; float64 };
 };
 type Log = record { msg : text; timestamp : nat64 };
+type Logger = record {
+  "principal" : opt principal;
+  source : opt text;
+  data : opt text;
+  description : text;
+  created_on : nat64;
+};
+type RewardData = record {
+  "principal" : principal;
+  description : text;
+  timestamp : nat64;
+};
 service : {
   all_cycle_balances : () -> (vec text) query;
   get_latest_logs : (nat64) -> (vec Log) query;
@@ -16,8 +28,12 @@ service : {
   initiate_run : () -> ();
   latest_cycle_balances : (nat64) -> (vec CycleBalances) query;
   latest_icp_balances : (nat64) -> (vec record { nat64; float64 }) query;
+  latest_proxy_logs : (nat64) -> (vec Logger);
   new_user : () -> (opt principal) query;
+  proxy_log_size : () -> (nat64);
   sorted_canister_cycles : () -> (vec CanisterCycles) query;
   store_stats : () -> (vec text) query;
   timer_set : () -> (bool) query;
+  token_latest_rewards : (nat64) -> (vec RewardData);
+  token_log_size : () -> (nat64);
 }

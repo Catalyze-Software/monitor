@@ -8,6 +8,7 @@ import {
   type CanisterCycles,
   type CycleBalances,
   type Log,
+  type Logger,
 } from "$lib/declarations/monitor.did.js"
 import { createAgent } from "@dfinity/utils"
 import { toastsStore } from "@dfinity/gix-components"
@@ -52,6 +53,16 @@ export const latestCycleBalances = async (n: bigint) => {
 export const latestLogs = async (n: bigint) => {
   const monitor = await monitorActor()
   return await tryCall<[bigint], Log[]>(monitor.get_latest_logs, n)
+}
+
+export const latestProxyLogs = async (n: bigint) => {
+  const monitor = await monitorActor()
+  return await tryCall<[bigint], Logger[]>(monitor.latest_proxy_logs, n)
+}
+
+export const proxyLogSize = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], bigint>(monitor.proxy_log_size)
 }
 
 export const newUser = async () => {
