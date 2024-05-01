@@ -1,5 +1,8 @@
-use super::stable_models::{
-    ChildData, DashboardData, FrontendData, Log, MonitorData, SiweData, SiwsData, SnsData,
+use super::{
+    stable_models::{
+        ChildData, DashboardData, FrontendData, Log, MonitorData, SiweData, SiwsData, SnsData,
+    },
+    stable_models_v2::Snapshot,
 };
 use crate::{queries::range, utils::log::format_time};
 use ic_cdk::api::time;
@@ -21,6 +24,8 @@ const MEM_ID_SIWE_CANISTER: MemoryId = MemoryId::new(5);
 const MEM_ID_SIWS_CANISTER: MemoryId = MemoryId::new(6);
 const MEM_ID_DASHBOARD_CANISTER: MemoryId = MemoryId::new(7);
 
+const MEM_ID_CANISTER_STATUS_HISTORY: MemoryId = MemoryId::new(254);
+
 /*
 * Stable stores
 */
@@ -30,9 +35,13 @@ thread_local! {
     static LOGS: RefCell<StableBTreeMap<u64, Log, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
         StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_LOGS))));
 
+    static CANISTER_STATUS_HISTORY: RefCell<StableBTreeMap<u64, Snapshot, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
+        StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_CANISTER_STATUS_HISTORY))));
+
     static MONITOR_STORE: RefCell<StableBTreeMap<u64, MonitorData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
         StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_MONITOR))));
 
+    // legacy stores
     static SNS_STORE: RefCell<StableBTreeMap<u64, SnsData, VirtualMemory<DefaultMemoryImpl>>> = RefCell::new(
         StableBTreeMap::init(MEMORY_MANAGER.with(|mm| mm.borrow().get(MEM_ID_SNS_CANISTERS))));
 
@@ -59,8 +68,9 @@ thread_local! {
 * Unit structs for stable stores
 */
 pub struct Logs;
-
+pub struct CanisterStatusStore;
 pub struct MonitorStore;
+
 pub struct SnsStore;
 pub struct ChildStore;
 pub struct FrontendStore;
@@ -121,6 +131,41 @@ impl Logs {
             l.borrow()
                 .range(start..=end)
                 .map(|(_, log)| format!("{} {}", format_time(log.timestamp), log.msg.clone()))
+                .collect()
+        })
+    }
+}
+
+impl CanisterStatusStore {
+    pub fn size() -> u64 {
+        CANISTER_STATUS_HISTORY.with(|c| c.borrow().len())
+    }
+
+    pub fn new_index() -> u64 {
+        CANISTER_STATUS_HISTORY.with(|c| new_index(&c.borrow()))
+    }
+
+    pub fn insert(snapshot: Snapshot) {
+        let index = Self::new_index();
+
+        CANISTER_STATUS_HISTORY.with(|c| c.borrow_mut().insert(index, snapshot));
+    }
+
+    pub fn get_latest() -> Option<Snapshot> {
+        let (_, value) = CANISTER_STATUS_HISTORY
+            .with(|c| c.borrow().last_key_value().expect("No canister data"));
+        Some(value.clone())
+    }
+
+    pub fn get_latest_n(n: u64) -> Vec<Snapshot> {
+        let len = Self::size();
+
+        let (start, end) = range(n, len);
+
+        CANISTER_STATUS_HISTORY.with(|c| {
+            c.borrow()
+                .range(start..=end)
+                .map(|(_, snapshot)| snapshot.clone())
                 .collect()
         })
     }
