@@ -4,7 +4,7 @@ use time::{format_description::well_known::Rfc2822, OffsetDateTime};
 pub const EVENT_MONITOR_DATA: &str = "Fetched and stored monitor data";
 pub const EVENT_SNS_DATA: &str = "Fetched and stored SNS canisters summary";
 pub const EVENT_CATALYZE_CANISTER_DATA: &str = "Fetched and stored Catalyze canisters";
-pub const EVENT_COMPLETED_READ_OPERATION: &str = "Completed full snapshot";
+pub const EVENT_COMPLETED_ALL_OPERATION: &str = "Completed full snapshot";
 
 pub const EVENT_ICP_SENT: &str = "ICP sent";
 pub const EVENT_CYCLES_MINTED: &str = "Cycles minted";
