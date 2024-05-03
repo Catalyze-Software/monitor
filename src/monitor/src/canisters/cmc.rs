@@ -1,20 +1,7 @@
-use candid::{CandidType, Deserialize, Nat, Principal};
-use ic_cdk::id;
-use ic_cdk::{api::management_canister::main::canister_status, call};
+use candid::{CandidType, Principal};
+use ic_cdk::call;
 use ic_ledger_types::{BlockIndex, MAINNET_CYCLES_MINTING_CANISTER_ID};
-
-/*
-Query the management canister for the cycle balance this monitor canister
-*/
-pub async fn cycle_balance() -> Nat {
-    canister_status(
-        ic_cdk::api::management_canister::provisional::CanisterIdRecord { canister_id: id() },
-    )
-    .await
-    .expect("Failed to call canister_status")
-    .0
-    .cycles
-}
+use serde::Deserialize;
 
 /*
 Query the CMC canister for the ICP/XDR rate

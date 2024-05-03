@@ -21,7 +21,6 @@ type RewardData = record {
   timestamp : nat64;
 };
 service : {
-  all_cycle_balances : () -> (vec text) query;
   get_latest_logs : (nat64) -> (vec Log) query;
   get_latest_with_timestamp : (nat64) -> (vec text) query;
   icp_balance : () -> (text) query;
@@ -29,7 +28,6 @@ service : {
   latest_cycle_balances : (nat64) -> (vec CycleBalances) query;
   latest_icp_balances : (nat64) -> (vec record { nat64; float64 }) query;
   latest_proxy_logs : (nat64) -> (vec Logger);
-  new_user : () -> (opt principal) query;
   proxy_log_size : () -> (nat64);
   sorted_canister_cycles : () -> (vec CanisterCycles) query;
   store_stats : () -> (vec text) query;

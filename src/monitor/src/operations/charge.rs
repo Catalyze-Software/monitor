@@ -2,14 +2,16 @@ use candid::Principal;
 use ic_ledger_types::Tokens;
 
 use crate::{
-    queries::sort::sorted_canister_cycles,
-    stores::{stable_models::CanisterCycles, stable_store::Logs},
+    canisters::{
+        cmc::{icp_xdr_rate, notify_top_up},
+        ledger::transfer_icp_to_cmc_for_cycles_minting,
+    },
+    queries::sorted_canister_cycles,
+    stores::{
+        stable_store::Logs,
+        types::{CanisterCycles, Snapshot},
+    },
     utils::log::{EVENT_CYCLES_MINTED, EVENT_ICP_SENT},
-};
-
-use super::{
-    cmc::{icp_xdr_rate, notify_top_up},
-    ledger::transfer_icp_to_cmc_for_cycles_minting,
 };
 
 const CYCLES_BALANCE_THRESHOLD: u64 = 5_000_000_000_000; // 5T
@@ -18,8 +20,8 @@ const CYCLE_TOP_UP_AMOUNT: u64 = 10_000_000_000_000; // 10T
 /*
 * Iterate over all canister-cycles vector and top up canisters with low cycles
 */
-pub async fn top_up_canisters() {
-    let sorted_canister_cycles = sorted_canister_cycles();
+pub async fn top_up_canisters(snapshot: &Snapshot) {
+    let sorted_canister_cycles = sorted_canister_cycles(snapshot);
 
     for CanisterCycles {
         name,

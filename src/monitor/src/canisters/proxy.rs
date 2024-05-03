@@ -1,10 +1,10 @@
 use candid::{CandidType, Principal};
 use serde::Deserialize;
 
+use crate::stores::types::Timestamp;
+
 // proxy principal
 const PROXY_PRINCIPAL: &str = "bwm3m-wyaaa-aaaag-qdiua-cai";
-
-pub type Timestamp = u64;
 
 #[derive(Clone, CandidType, Deserialize, Debug)]
 pub struct Logger {

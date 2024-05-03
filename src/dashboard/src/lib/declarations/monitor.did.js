@@ -22,7 +22,6 @@ export const idlFactory = ({ IDL }) => {
     'timestamp' : IDL.Nat64,
   });
   return IDL.Service({
-    'all_cycle_balances' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'get_latest_logs' : IDL.Func([IDL.Nat64], [IDL.Vec(Log)], ['query']),
     'get_latest_with_timestamp' : IDL.Func(
         [IDL.Nat64],
@@ -42,7 +41,6 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'latest_proxy_logs' : IDL.Func([IDL.Nat64], [IDL.Vec(Logger)], []),
-    'new_user' : IDL.Func([], [IDL.Opt(IDL.Principal)], ['query']),
     'proxy_log_size' : IDL.Func([], [IDL.Nat64], []),
     'sorted_canister_cycles' : IDL.Func(
         [],

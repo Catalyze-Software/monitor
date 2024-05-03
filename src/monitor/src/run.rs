@@ -1,20 +1,18 @@
 use crate::{
-    operations::{charge::top_up_canisters, read::read_operations},
-    stores::stable_store::Logs,
+    operations::{charge::top_up_canisters, read::take_snapshot},
+    stores::stable_store::{CanisterStatusStore, Logs},
+    utils::log::EVENT_COMPLETED_ALL_OPERATION,
 };
 
 /*
 * Perform a full run of state update and charge operations
 */
 pub async fn run() {
-    read_operations().await;
-    Logs::log("Read operations successful".to_string());
+    let snapshot = take_snapshot().await;
 
-    top_up_canisters().await;
-    Logs::log("Top up canisters successful".to_string());
+    top_up_canisters(&snapshot).await;
 
-    read_operations().await;
-    Logs::log("Read operations successful".to_string());
+    CanisterStatusStore::insert(snapshot);
 
-    Logs::log("RUN COMPLETED SUCCESFULLY".to_string());
+    Logs::log(EVENT_COMPLETED_ALL_OPERATION.to_string());
 }

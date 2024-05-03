@@ -1,94 +1,190 @@
-use super::canisters::{
-    dashboard::get_dashboard_canister_summary, frontend::get_frontend_canister_summary,
-    siwe::get_siwe_canister_summary, siws::get_siws_canister_summary,
-};
+use super::sns::{CanisterStatusResultV2, CanisterStatusType as SNSCanisterStatusType};
 use crate::{
-    operations::canisters::child::get_child_canister_summary,
     stores::{
-        stable_models::{ChildData, DashboardData, FrontendData, MonitorData, SiweData, SiwsData},
-        stable_store::{
-            ChildStore, DashboardStore, FrontendStore, Logs, MonitorStore, SiweStore, SiwsStore,
-            SnsStore,
-        },
+        stable_store::{Logs, MonitorStore},
+        types::MonitorICPBalance,
+        types::{CanisterSnapshot, CatalyzeCanisterStatus, Snapshot},
     },
-    utils::log::{
-        EVENT_CHILD_SUMMARY, EVENT_DASHBOARD_SUMMARY, EVENT_FRONTEND_SUMMARY, EVENT_MONITOR_DATA,
-        EVENT_SIWE_SUMMARY, EVENT_SIWS_SUMMARY, EVENT_SNS_DATA,
+    utils::{
+        canister_status::get_canister_status,
+        log::{EVENT_CATALYZE_CANISTER_DATA, EVENT_MONITOR_DATA, EVENT_SNS_DATA},
     },
+    CANISTER_IDS, CANISTER_NAMES,
 };
-use ic_cdk::api::time;
+use candid::{Nat, Principal};
+use ic_cdk::api::{
+    management_canister::main::{
+        CanisterStatusResponse, CanisterStatusType, DefiniteCanisterSettings, QueryStats,
+    },
+    time,
+};
 
 /*
 * Perform canister status query routine
 */
-pub async fn read_operations() {
-    // Monitor read, store and log operations
-    let icp_balance = crate::operations::ledger::icp_balance().await;
-    let cycle_balance = crate::operations::cmc::cycle_balance().await;
+pub async fn take_snapshot() -> Snapshot {
+    // Monitor data read, store and log operations
+    // Monitor canister is only canister for which we store icp balance
+    let icp_balance = crate::canisters::ledger::icp_balance().await;
 
-    let monitor_data = MonitorData {
+    let monitor_data = MonitorICPBalance {
         timestamp: time(),
         icp_balance,
-        cycle_balance,
     };
 
     MonitorStore::insert(monitor_data);
     Logs::log(format!("{}", EVENT_MONITOR_DATA.to_string()));
 
-    // SNS read, store and log operations
-    let summary = crate::operations::canisters::sns::get_sns_canisters_summary().await;
+    // Start global snapshot (SNS + Catalyze canisters)
+    let mut snapshot = Snapshot {
+        timestamp: time(),
+        canisters: Vec::new(),
+    };
 
-    SnsStore::insert(summary);
+    // SNS read, store and log operations
+    let summary = crate::operations::sns::get_sns_canisters_summary().await;
+
+    let root_canister_snapshot = CanisterSnapshot {
+        canister_name: "SNS Root".to_string(),
+        canister_id: summary.root.as_ref().unwrap().canister_id.unwrap().clone(),
+        status: summary.root.unwrap().status.unwrap().into(),
+    };
+
+    snapshot.canisters.push(root_canister_snapshot);
+
+    let swap_canister_snapshot = CanisterSnapshot {
+        canister_name: "SNS Swap".to_string(),
+        canister_id: summary.swap.as_ref().unwrap().canister_id.unwrap().clone(),
+        status: summary.swap.unwrap().status.unwrap().into(),
+    };
+
+    snapshot.canisters.push(swap_canister_snapshot);
+
+    let ledger_canister_snapshot = CanisterSnapshot {
+        canister_name: "SNS Ledger".to_string(),
+        canister_id: summary
+            .ledger
+            .as_ref()
+            .unwrap()
+            .canister_id
+            .unwrap()
+            .clone(),
+        status: summary.ledger.unwrap().status.unwrap().into(),
+    };
+
+    snapshot.canisters.push(ledger_canister_snapshot);
+
+    let index_canister_snapshot = CanisterSnapshot {
+        canister_name: "SNS Index".to_string(),
+        canister_id: summary.index.as_ref().unwrap().canister_id.unwrap().clone(),
+        status: summary.index.unwrap().status.unwrap().into(),
+    };
+
+    snapshot.canisters.push(index_canister_snapshot);
+
+    let governance_canister_snapshot = CanisterSnapshot {
+        canister_name: "SNS Governance".to_string(),
+        canister_id: summary
+            .governance
+            .as_ref()
+            .unwrap()
+            .canister_id
+            .unwrap()
+            .clone(),
+        status: summary.governance.unwrap().status.unwrap().into(),
+    };
+
+    snapshot.canisters.push(governance_canister_snapshot);
+
+    // iter over dapps and archives
+    for (i, dapp) in summary.dapps.iter().enumerate() {
+        let dapp_canister_snapshot = CanisterSnapshot {
+            canister_name: format!("Dapps {}", i),
+            canister_id: dapp.canister_id.unwrap().clone(),
+            status: CatalyzeCanisterStatus::from(dapp.status.clone().unwrap()),
+        };
+
+        snapshot.canisters.push(dapp_canister_snapshot);
+    }
+
+    for (i, archive) in summary.archives.iter().enumerate() {
+        let archive_canister_snapshot = CanisterSnapshot {
+            canister_name: format!("Archives {}", i),
+            canister_id: archive.canister_id.unwrap().clone(),
+            status: CatalyzeCanisterStatus::from(archive.status.clone().unwrap()),
+        };
+
+        snapshot.canisters.push(archive_canister_snapshot);
+    }
+
     Logs::log(format!("{}", EVENT_SNS_DATA.to_string()));
 
-    // Child read, store and log operations
-    let childs = get_child_canister_summary().await;
-    let child_data = ChildData {
-        timestamp: time(),
-        members: childs[0].clone(),
-        groups: childs[1].clone(),
-        profiles: childs[2].clone(),
-        events: childs[3].clone(),
-        event_attendees: childs[4].clone(),
-        reports: childs[5].clone(),
-    };
+    // iter over catalyze canisters
+    for (i, name) in CANISTER_NAMES.iter().enumerate() {
+        let canister_status = get_canister_status(CANISTER_IDS[i]).await;
 
-    ChildStore::insert(child_data);
-    Logs::log(format!("{}", EVENT_CHILD_SUMMARY.to_string()));
+        let canister_snapshot = CanisterSnapshot {
+            canister_name: name.to_string(),
+            canister_id: Principal::from_text(CANISTER_IDS[i]).unwrap(),
+            status: CatalyzeCanisterStatus::from(canister_status),
+        };
 
-    // Frontend canister
-    let frontend = get_frontend_canister_summary().await;
-    let frontend_data = FrontendData {
-        timestamp: time(),
-        frontend,
-    };
-    FrontendStore::insert(frontend_data);
-    Logs::log(format!("{}", EVENT_FRONTEND_SUMMARY.to_string()));
+        snapshot.canisters.push(canister_snapshot);
+    }
 
-    // Siwe canister
-    let siwe = get_siwe_canister_summary().await;
-    let siwe_data = SiweData {
-        timestamp: time(),
-        siwe,
-    };
-    SiweStore::insert(siwe_data);
-    Logs::log(format!("{}", EVENT_SIWE_SUMMARY.to_string()));
+    Logs::log(format!("{}", EVENT_CATALYZE_CANISTER_DATA.to_string()));
 
-    // Siws canister
-    let siws = get_siws_canister_summary().await;
-    let siws_data = SiwsData {
-        timestamp: time(),
-        siws,
-    };
-    SiwsStore::insert(siws_data);
-    Logs::log(format!("{}", EVENT_SIWS_SUMMARY.to_string()));
+    snapshot
+}
 
-    // Dashboard canister
-    let dashboard = get_dashboard_canister_summary().await;
-    let dashboard_data = DashboardData {
-        timestamp: time(),
-        dashboard,
-    };
-    DashboardStore::insert(dashboard_data);
-    Logs::log(format!("{}", EVENT_DASHBOARD_SUMMARY.to_string()));
+impl From<CanisterStatusResultV2> for CatalyzeCanisterStatus {
+    fn from(value: CanisterStatusResultV2) -> Self {
+        let status = match value.status {
+            SNSCanisterStatusType::Stopped => CanisterStatusType::Stopped,
+            SNSCanisterStatusType::Stopping => CanisterStatusType::Stopping,
+            SNSCanisterStatusType::Running => CanisterStatusType::Running,
+        };
+
+        let memory_size = Nat::from(value.memory_size);
+
+        let cycles = value.cycles;
+
+        let settings = DefiniteCanisterSettings {
+            freezing_threshold: value.settings.freezing_threshold,
+            controllers: value.settings.controllers,
+            memory_allocation: value.settings.memory_allocation,
+            compute_allocation: value.settings.compute_allocation,
+        };
+
+        let idle_cycles_burned_per_day = value.idle_cycles_burned_per_day;
+
+        // map Option<ByteBuf> to Option<Vec<u8>>
+        let module_hash = value.module_hash.map(|byte_buf| byte_buf.to_vec());
+
+        let query_stats: Option<QueryStats> = None;
+
+        CatalyzeCanisterStatus {
+            status: Some(status),
+            memory_size: Some(memory_size),
+            cycles: Some(cycles),
+            settings: Some(settings),
+            idle_cycles_burned_per_day: Some(idle_cycles_burned_per_day),
+            module_hash,
+            query_stats,
+        }
+    }
+}
+
+impl From<CanisterStatusResponse> for CatalyzeCanisterStatus {
+    fn from(value: CanisterStatusResponse) -> Self {
+        CatalyzeCanisterStatus {
+            status: Some(value.status),
+            settings: Some(value.settings),
+            module_hash: value.module_hash,
+            memory_size: Some(value.memory_size),
+            cycles: Some(value.cycles),
+            idle_cycles_burned_per_day: Some(value.idle_cycles_burned_per_day),
+            query_stats: Some(value.query_stats),
+        }
+    }
 }
