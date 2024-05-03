@@ -6,13 +6,13 @@ import {
   idlFactory as monitor_idl,
   type _SERVICE,
   type CanisterCycles,
+  type CanisterMemorySize,
   type CycleBalances,
   type Log,
   type Logger,
   type RewardData,
 } from "$lib/declarations/monitor.did.js"
 import { createAgent } from "@dfinity/utils"
-import { toastsStore } from "@dfinity/gix-components"
 
 const monitorCanisterId: Principal = Principal.fromText(
   "6or45-oyaaa-aaaap-absua-cai"
@@ -23,11 +23,17 @@ const monitorActor = async () => {
   const agent = await createAgent({
     identity,
     fetchRootKey: false,
+    host: "https://icp-api.io",
   })
   return Actor.createActor<_SERVICE>(monitor_idl, {
     canisterId: monitorCanisterId,
     agent,
   })
+}
+
+export const icpBalance = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], string>(monitor.icp_balance)
 }
 
 export const latestIcpBalances = async (n: bigint) => {
@@ -41,6 +47,13 @@ export const latestIcpBalances = async (n: bigint) => {
 export const sortedCanisterCycles = async () => {
   const monitor = await monitorActor()
   return await tryCall<[], CanisterCycles[]>(monitor.sorted_canister_cycles)
+}
+
+export const sortedMemorySizes = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], CanisterMemorySize[]>(
+    monitor.sorted_memory_sizes
+  )
 }
 
 export const latestCycleBalances = async (n: bigint) => {
@@ -74,29 +87,4 @@ export const latestTokenRewards = async (n: bigint) => {
 export const tokenLogSize = async () => {
   const monitor = await monitorActor()
   return await tryCall<[], bigint>(monitor.token_log_size)
-}
-
-export const newUser = async () => {
-  const monitor = await monitorActor()
-  const response = await tryCall<[], [] | [Principal]>(monitor.new_user)
-
-  // If None is returned, then user is registered
-  if (response.length === 0) return false
-
-  return true
-}
-
-// only call when new user
-export const newUserPrincipal = async (): Promise<Principal> => {
-  const monitor = await monitorActor()
-  const response = await tryCall<[], [] | [Principal]>(monitor.new_user)
-
-  if (response[0]) return response[0]
-
-  toastsStore.show({
-    text: "Failed to obtain Principal",
-    level: "error",
-  })
-
-  throw new Error("Failed to obtain Principal")
 }

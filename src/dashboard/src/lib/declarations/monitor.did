@@ -3,6 +3,11 @@ type CanisterCycles = record {
   canister_id : principal;
   cycles : nat;
 };
+type CanisterMemorySize = record {
+  name : text;
+  size : nat;
+  canister_id : principal;
+};
 type CycleBalances = record {
   timestamp : nat64;
   balances : vec record { text; float64 };
@@ -30,6 +35,7 @@ service : {
   latest_proxy_logs : (nat64) -> (vec Logger);
   proxy_log_size : () -> (nat64);
   sorted_canister_cycles : () -> (vec CanisterCycles) query;
+  sorted_memory_sizes : () -> (vec CanisterMemorySize) query;
   store_stats : () -> (vec text) query;
   timer_set : () -> (bool) query;
   token_latest_rewards : (nat64) -> (vec RewardData);

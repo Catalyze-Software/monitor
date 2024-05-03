@@ -1,6 +1,6 @@
 use crate::stores::{
     stable_store::{CanisterStatusStore, MonitorStore},
-    types::{CanisterCycles, CycleBalances, Snapshot, Timestamp},
+    types::{CanisterCycles, CanisterMemorySize, CycleBalances, Snapshot, Timestamp},
 };
 use candid::Nat;
 use ic_ledger_types::Tokens;
@@ -19,6 +19,21 @@ pub fn sorted_canister_cycles(snapshot: &Snapshot) -> Vec<CanisterCycles> {
     canister_cycles.sort_by(|a, b| a.cycles.cmp(&b.cycles));
 
     canister_cycles
+}
+
+/*
+* Sort memory sizes in snapshot
+*/
+pub fn sorted_memory_sizes(snapshot: &Snapshot) -> Vec<CanisterMemorySize> {
+    let mut memory_sizes: Vec<CanisterMemorySize> = snapshot
+        .canisters
+        .iter()
+        .map(|canister_snapshot| CanisterMemorySize::from(canister_snapshot.clone()))
+        .collect();
+
+    memory_sizes.sort_by(|a, b| a.size.cmp(&b.size));
+
+    memory_sizes
 }
 
 /*

@@ -70,6 +70,23 @@ impl From<CanisterSnapshot> for CanisterCycles {
     }
 }
 
+#[derive(CandidType, Deserialize, Clone)]
+pub struct CanisterMemorySize {
+    pub name: String,
+    pub canister_id: Principal,
+    pub size: Nat,
+}
+
+impl From<CanisterSnapshot> for CanisterMemorySize {
+    fn from(value: CanisterSnapshot) -> Self {
+        Self {
+            name: value.canister_name,
+            canister_id: value.canister_id,
+            size: value.status.memory_size.expect("No memory size"),
+        }
+    }
+}
+
 impl Storable for Log {
     const BOUND: Bound = Bound::Unbounded;
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { latestIcpBalances } from "$lib/api/monitor.api"
+  import { icpBalance, latestIcpBalances } from "$lib/api/monitor.api"
   import { convertTimestamp } from "$lib/utils/date.utils"
   import { onMount } from "svelte"
   import type { ChartData, Point } from "chart.js"
@@ -28,6 +28,8 @@
 
   let ready = false
 
+  let balance = ""
+
   let data: ChartData<"line", (number | Point)[], unknown> = {
     labels: [],
     datasets: [
@@ -46,6 +48,9 @@
   }
 
   onMount(async () => {
+    balance = await icpBalance()
+    balance = balance.slice(0, 6)
+
     // fetch last 30 days of ICP balances
     const response = await latestIcpBalances(30n)
 
@@ -66,6 +71,7 @@
 </script>
 
 <h3>Monitor ICP balance history</h3>
+<p>Current balance: {balance} ICP</p>
 {#if ready}
   <Line {data} />
 {:else}

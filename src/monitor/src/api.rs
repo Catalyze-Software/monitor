@@ -1,7 +1,7 @@
 use crate::canisters::proxy::Logger;
 use crate::queries::{get_latest_cycle_balances, get_latest_icp_balances};
 use crate::stores::stable_store::{CanisterStatusStore, MonitorStore};
-use crate::stores::types::{CanisterCycles, CycleBalances, Log, Timestamp};
+use crate::stores::types::{CanisterCycles, CanisterMemorySize, CycleBalances, Log, Timestamp};
 use crate::system::TIMER;
 use crate::token_canister::RewardData;
 use crate::utils::auth::is_registered;
@@ -28,6 +28,12 @@ fn latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
 fn sorted_canister_cycles() -> Vec<CanisterCycles> {
     let latest_snapshot = CanisterStatusStore::get_latest().expect("No latest snapshot");
     crate::queries::sorted_canister_cycles(&latest_snapshot)
+}
+
+#[query(guard = "is_registered")]
+fn sorted_memory_sizes() -> Vec<CanisterMemorySize> {
+    let latest_snapshot = CanisterStatusStore::get_latest().expect("No latest snapshot");
+    crate::queries::sorted_memory_sizes(&latest_snapshot)
 }
 
 #[update(guard = "is_registered")]

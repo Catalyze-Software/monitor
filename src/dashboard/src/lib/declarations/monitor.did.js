@@ -16,6 +16,11 @@ export const idlFactory = ({ IDL }) => {
     'canister_id' : IDL.Principal,
     'cycles' : IDL.Nat,
   });
+  const CanisterMemorySize = IDL.Record({
+    'name' : IDL.Text,
+    'size' : IDL.Nat,
+    'canister_id' : IDL.Principal,
+  });
   const RewardData = IDL.Record({
     'principal' : IDL.Principal,
     'description' : IDL.Text,
@@ -45,6 +50,11 @@ export const idlFactory = ({ IDL }) => {
     'sorted_canister_cycles' : IDL.Func(
         [],
         [IDL.Vec(CanisterCycles)],
+        ['query'],
+      ),
+    'sorted_memory_sizes' : IDL.Func(
+        [],
+        [IDL.Vec(CanisterMemorySize)],
         ['query'],
       ),
     'store_stats' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),

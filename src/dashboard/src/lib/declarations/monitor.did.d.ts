@@ -7,6 +7,11 @@ export interface CanisterCycles {
   'canister_id' : Principal,
   'cycles' : bigint,
 }
+export interface CanisterMemorySize {
+  'name' : string,
+  'size' : bigint,
+  'canister_id' : Principal,
+}
 export interface CycleBalances {
   'timestamp' : bigint,
   'balances' : Array<[string, number]>,
@@ -34,6 +39,7 @@ export interface _SERVICE {
   'latest_proxy_logs' : ActorMethod<[bigint], Array<Logger>>,
   'proxy_log_size' : ActorMethod<[], bigint>,
   'sorted_canister_cycles' : ActorMethod<[], Array<CanisterCycles>>,
+  'sorted_memory_sizes' : ActorMethod<[], Array<CanisterMemorySize>>,
   'store_stats' : ActorMethod<[], Array<string>>,
   'timer_set' : ActorMethod<[], boolean>,
   'token_latest_rewards' : ActorMethod<[bigint], Array<RewardData>>,
