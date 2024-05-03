@@ -1,8 +1,7 @@
-use crate::proxy::Logger;
-use crate::queries::cycle_history::{get_latest_cycle_balances, CycleBalances};
-use crate::queries::icp_history::get_latest_icp_balances;
+use crate::canisters::proxy::Logger;
+use crate::queries::{get_latest_cycle_balances, get_latest_icp_balances};
 use crate::stores::stable_store::{CanisterStatusStore, MonitorStore};
-use crate::stores::types::{CanisterCycles, Log, Timestamp};
+use crate::stores::types::{CanisterCycles, CycleBalances, Log, Timestamp};
 use crate::system::TIMER;
 use crate::token_canister::RewardData;
 use crate::utils::auth::is_registered;
@@ -28,7 +27,8 @@ fn latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
 
 #[query(guard = "is_registered")]
 fn sorted_canister_cycles() -> Vec<CanisterCycles> {
-    crate::queries::sortv2::sorted_canister_cycles()
+    let latest_snapshot = CanisterStatusStore::get_latest().expect("No latest snapshot");
+    crate::queries::sorted_canister_cycles(&latest_snapshot)
 }
 
 #[update(guard = "is_registered")]
@@ -43,12 +43,12 @@ fn get_latest_logs(n: u64) -> Vec<Log> {
 
 #[update(guard = "is_registered")]
 async fn latest_proxy_logs(amount: u64) -> Vec<Logger> {
-    crate::proxy::get_latest_proxy_logs(amount).await
+    crate::canisters::proxy::get_latest_proxy_logs(amount).await
 }
 
 #[update(guard = "is_registered")]
 async fn proxy_log_size() -> u64 {
-    crate::proxy::log_size().await
+    crate::canisters::proxy::log_size().await
 }
 
 #[update(guard = "is_registered")]

@@ -1,16 +1,13 @@
 use super::sns::{CanisterStatusResultV2, CanisterStatusType as SNSCanisterStatusType};
 use crate::{
     stores::{
-        stable_store::{CanisterStatusStore, Logs, MonitorStore},
+        stable_store::{Logs, MonitorStore},
         types::MonitorICPBalance,
         types::{CanisterSnapshot, CatalyzeCanisterStatus, Snapshot},
     },
     utils::{
         canister_status::get_canister_status,
-        log::{
-            EVENT_CATALYZE_CANISTER_DATA, EVENT_COMPLETED_READ_OPERATION, EVENT_MONITOR_DATA,
-            EVENT_SNS_DATA,
-        },
+        log::{EVENT_CATALYZE_CANISTER_DATA, EVENT_MONITOR_DATA, EVENT_SNS_DATA},
     },
     CANISTER_IDS, CANISTER_NAMES,
 };
@@ -25,10 +22,10 @@ use ic_cdk::api::{
 /*
 * Perform canister status query routine
 */
-pub async fn read_operations() {
+pub async fn take_snapshot() -> Snapshot {
     // Monitor data read, store and log operations
     // Monitor canister is only canister for which we store icp balance
-    let icp_balance = crate::operations::ledger::icp_balance().await;
+    let icp_balance = crate::canisters::ledger::icp_balance().await;
 
     let monitor_data = MonitorICPBalance {
         timestamp: time(),
@@ -137,11 +134,7 @@ pub async fn read_operations() {
 
     Logs::log(format!("{}", EVENT_CATALYZE_CANISTER_DATA.to_string()));
 
-    // Store snapshot
-    CanisterStatusStore::insert(snapshot);
-
-    // Log snapshot
-    Logs::log(format!("{}", EVENT_COMPLETED_READ_OPERATION.to_string()));
+    snapshot
 }
 
 impl From<CanisterStatusResultV2> for CatalyzeCanisterStatus {

@@ -1,6 +1,6 @@
 mod api;
+mod canisters;
 mod operations;
-mod proxy;
 mod queries;
 mod run;
 mod stores;

@@ -6,9 +6,6 @@ use ic_ledger_types::Tokens;
 use ic_stable_structures::{storable::Bound, Storable};
 use std::borrow::Cow;
 
-/*
-* Models
-*/
 pub type Timestamp = u64;
 
 #[derive(CandidType, Deserialize, Clone, Default)]
@@ -47,9 +44,32 @@ pub struct MonitorICPBalance {
     pub icp_balance: Tokens,
 }
 
-/*
-* Impl Storable for Models
-*/
+type CanisterName = String;
+type TCycles = f64;
+
+#[derive(CandidType, Deserialize)]
+pub struct CycleBalances {
+    pub timestamp: Timestamp,
+    pub balances: Vec<(CanisterName, TCycles)>,
+}
+
+#[derive(CandidType, Deserialize, Clone)]
+pub struct CanisterCycles {
+    pub name: String,
+    pub canister_id: Principal,
+    pub cycles: Nat,
+}
+
+impl From<CanisterSnapshot> for CanisterCycles {
+    fn from(value: CanisterSnapshot) -> Self {
+        Self {
+            name: value.canister_name,
+            canister_id: value.canister_id,
+            cycles: value.status.cycles.unwrap_or(Nat::from(0)),
+        }
+    }
+}
+
 impl Storable for Log {
     const BOUND: Bound = Bound::Unbounded;
 
@@ -71,26 +91,6 @@ impl Storable for MonitorICPBalance {
 
     fn from_bytes(bytes: std::borrow::Cow<[u8]>) -> Self {
         Decode!(bytes.as_ref(), Self).expect("Failed to decode MonitorData")
-    }
-}
-
-/*
-* CanisterCycles model
-*/
-#[derive(CandidType, Deserialize, Clone)]
-pub struct CanisterCycles {
-    pub name: String,
-    pub canister_id: Principal,
-    pub cycles: Nat,
-}
-
-impl From<CanisterSnapshot> for CanisterCycles {
-    fn from(value: CanisterSnapshot) -> Self {
-        Self {
-            name: value.canister_name,
-            canister_id: value.canister_id,
-            cycles: value.status.cycles.unwrap_or(Nat::from(0)),
-        }
     }
 }
 
