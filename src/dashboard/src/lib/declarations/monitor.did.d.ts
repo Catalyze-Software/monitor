@@ -32,7 +32,6 @@ export interface _SERVICE {
   'latest_cycle_balances' : ActorMethod<[bigint], Array<CycleBalances>>,
   'latest_icp_balances' : ActorMethod<[bigint], Array<[bigint, number]>>,
   'latest_proxy_logs' : ActorMethod<[bigint], Array<Logger>>,
-  'new_user' : ActorMethod<[], [] | [Principal]>,
   'proxy_log_size' : ActorMethod<[], bigint>,
   'sorted_canister_cycles' : ActorMethod<[], Array<CanisterCycles>>,
   'store_stats' : ActorMethod<[], Array<string>>,

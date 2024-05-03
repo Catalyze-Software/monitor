@@ -6,7 +6,6 @@ use crate::system::TIMER;
 use crate::token_canister::RewardData;
 use crate::utils::auth::is_registered;
 use crate::{run::run, stores::stable_store::Logs};
-use candid::Principal;
 use ic_cdk_macros::{query, update};
 
 #[query(guard = "is_registered")]
@@ -83,14 +82,6 @@ fn store_stats() -> Vec<String> {
     ]
 }
 
-#[query]
-fn new_user() -> Option<Principal> {
-    match is_registered() {
-        Ok(_) => None,
-        _ => Some(ic_cdk::caller()),
-    }
-}
-
 #[query(guard = "is_registered")]
 fn timer_set() -> bool {
     match TIMER.with(|t| t.borrow().clone()) {
@@ -98,35 +89,6 @@ fn timer_set() -> bool {
         None => false,
     }
 }
-
-// #[update(guard = "is_registered")]
-// fn fill_new_stores() {
-//     let monitor_size = MonitorStore::size();
-//     let monitor_data = MonitorStore::get_latest_n(monitor_size);
-
-//     for data in monitor_data {
-//         let siws_data = SiwsData {
-//             timestamp: data.timestamp,
-//             siws: CanisterCycles {
-//                 canister_id: Principal::from_text(SIWS_CANISTER_ID).unwrap(),
-//                 name: "Siws".to_string(),
-//                 cycles: Nat::from(0),
-//             },
-//         };
-
-//         let dashboard_data = DashboardData {
-//             timestamp: data.timestamp,
-//             dashboard: CanisterCycles {
-//                 canister_id: Principal::from_text(DASHBOARD_CANISTER_ID).unwrap(),
-//                 name: "Dashboard".to_string(),
-//                 cycles: Nat::from(0),
-//             },
-//         };
-
-//         SiwsStore::insert(siws_data);
-//         DashboardStore::insert(dashboard_data);
-//     }
-// }
 
 #[test]
 fn generate_candid() {

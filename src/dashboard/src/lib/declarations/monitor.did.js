@@ -41,7 +41,6 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'latest_proxy_logs' : IDL.Func([IDL.Nat64], [IDL.Vec(Logger)], []),
-    'new_user' : IDL.Func([], [IDL.Opt(IDL.Principal)], ['query']),
     'proxy_log_size' : IDL.Func([], [IDL.Nat64], []),
     'sorted_canister_cycles' : IDL.Func(
         [],
