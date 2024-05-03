@@ -22,7 +22,6 @@ export const idlFactory = ({ IDL }) => {
     'timestamp' : IDL.Nat64,
   });
   return IDL.Service({
-    'all_cycle_balances' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'get_latest_logs' : IDL.Func([IDL.Nat64], [IDL.Vec(Log)], ['query']),
     'get_latest_with_timestamp' : IDL.Func(
         [IDL.Nat64],

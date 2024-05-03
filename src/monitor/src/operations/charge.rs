@@ -2,8 +2,8 @@ use candid::Principal;
 use ic_ledger_types::Tokens;
 
 use crate::{
-    queries::sort::sorted_canister_cycles,
-    stores::{stable_models::CanisterCycles, stable_store::Logs},
+    queries::sortv2::sorted_canister_cycles,
+    stores::{stable_store::Logs, types::CanisterCycles},
     utils::log::{EVENT_CYCLES_MINTED, EVENT_ICP_SENT},
 };
 

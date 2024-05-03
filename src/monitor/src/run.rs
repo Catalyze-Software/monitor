@@ -1,5 +1,5 @@
 use crate::{
-    operations::{charge::top_up_canisters, read::read_operations},
+    operations::{charge::top_up_canisters, readv2::read_operations},
     stores::stable_store::Logs,
 };
 

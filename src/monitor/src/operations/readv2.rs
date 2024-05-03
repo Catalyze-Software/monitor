@@ -1,9 +1,9 @@
-use super::canisters::sns::{CanisterStatusResultV2, CanisterStatusType as SNSCanisterStatusType};
+use super::sns::{CanisterStatusResultV2, CanisterStatusType as SNSCanisterStatusType};
 use crate::{
     stores::{
-        stable_models::MonitorData,
-        stable_models_v2::{CanisterSnapshot, CatalyzeCanisterStatus, Snapshot},
         stable_store::{CanisterStatusStore, Logs, MonitorStore},
+        types::MonitorICPBalance,
+        types::{CanisterSnapshot, CatalyzeCanisterStatus, Snapshot},
     },
     utils::{
         canister_status::get_canister_status,
@@ -26,14 +26,13 @@ use ic_cdk::api::{
 * Perform canister status query routine
 */
 pub async fn read_operations() {
-    // Monitor read, store and log operations
+    // Monitor data read, store and log operations
+    // Monitor canister is only canister for which we store icp balance
     let icp_balance = crate::operations::ledger::icp_balance().await;
-    let cycle_balance = crate::operations::cmc::cycle_balance().await;
 
-    let monitor_data = MonitorData {
+    let monitor_data = MonitorICPBalance {
         timestamp: time(),
         icp_balance,
-        cycle_balance,
     };
 
     MonitorStore::insert(monitor_data);
@@ -46,7 +45,7 @@ pub async fn read_operations() {
     };
 
     // SNS read, store and log operations
-    let summary = crate::operations::canisters::sns::get_sns_canisters_summary().await;
+    let summary = crate::operations::sns::get_sns_canisters_summary().await;
 
     let root_canister_snapshot = CanisterSnapshot {
         canister_name: "SNS Root".to_string(),
@@ -172,11 +171,11 @@ impl From<CanisterStatusResultV2> for CatalyzeCanisterStatus {
         let query_stats: Option<QueryStats> = None;
 
         CatalyzeCanisterStatus {
-            status,
-            memory_size,
-            cycles,
-            settings,
-            idle_cycles_burned_per_day,
+            status: Some(status),
+            memory_size: Some(memory_size),
+            cycles: Some(cycles),
+            settings: Some(settings),
+            idle_cycles_burned_per_day: Some(idle_cycles_burned_per_day),
             module_hash,
             query_stats,
         }
@@ -186,12 +185,12 @@ impl From<CanisterStatusResultV2> for CatalyzeCanisterStatus {
 impl From<CanisterStatusResponse> for CatalyzeCanisterStatus {
     fn from(value: CanisterStatusResponse) -> Self {
         CatalyzeCanisterStatus {
-            status: value.status,
-            settings: value.settings,
+            status: Some(value.status),
+            settings: Some(value.settings),
             module_hash: value.module_hash,
-            memory_size: value.memory_size,
-            cycles: value.cycles,
-            idle_cycles_burned_per_day: value.idle_cycles_burned_per_day,
+            memory_size: Some(value.memory_size),
+            cycles: Some(value.cycles),
+            idle_cycles_burned_per_day: Some(value.idle_cycles_burned_per_day),
             query_stats: Some(value.query_stats),
         }
     }

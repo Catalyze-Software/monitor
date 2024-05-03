@@ -1,8 +1,8 @@
 use ic_ledger_types::Tokens;
 
-pub mod sort;
 pub mod cycle_history;
 pub mod icp_history;
+pub mod sortv2;
 
 pub fn range(n: u64, len: u64) -> (u64, u64) {
     // check length of tree to avoid underflow

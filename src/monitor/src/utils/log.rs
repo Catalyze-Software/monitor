@@ -6,13 +6,8 @@ pub const EVENT_SNS_DATA: &str = "Fetched and stored SNS canisters summary";
 pub const EVENT_CATALYZE_CANISTER_DATA: &str = "Fetched and stored Catalyze canisters";
 pub const EVENT_COMPLETED_READ_OPERATION: &str = "Completed full snapshot";
 
-pub const EVENT_CHILD_SUMMARY: &str = "Fetched and stored child canisters summary";
 pub const EVENT_ICP_SENT: &str = "ICP sent";
 pub const EVENT_CYCLES_MINTED: &str = "Cycles minted";
-pub const EVENT_FRONTEND_SUMMARY: &str = "Fetched and stored frontend canister summary";
-pub const EVENT_SIWE_SUMMARY: &str = "Fetched and stored Siwe canister summary";
-pub const EVENT_SIWS_SUMMARY: &str = "Fetched and stored Siws canister summary";
-pub const EVENT_DASHBOARD_SUMMARY: &str = "Fetched and stored dashboard summary";
 
 pub fn format_time(timestamp: u64) -> String {
     let datetime = OffsetDateTime::from_unix_timestamp_nanos(timestamp as i128)

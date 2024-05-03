@@ -21,7 +21,6 @@ type RewardData = record {
   timestamp : nat64;
 };
 service : {
-  all_cycle_balances : () -> (vec text) query;
   get_latest_logs : (nat64) -> (vec Log) query;
   get_latest_with_timestamp : (nat64) -> (vec text) query;
   icp_balance : () -> (text) query;
