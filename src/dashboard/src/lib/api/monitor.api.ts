@@ -51,9 +51,7 @@ export const sortedCanisterCycles = async () => {
 
 export const sortedMemorySizes = async () => {
   const monitor = await monitorActor()
-  return await tryCall<[], CanisterMemorySize[]>(
-    monitor.sorted_memory_sizes
-  )
+  return await tryCall<[], CanisterMemorySize[]>(monitor.sorted_memory_sizes)
 }
 
 export const latestCycleBalances = async (n: bigint) => {
@@ -82,6 +80,11 @@ export const proxyLogSize = async () => {
 export const latestTokenRewards = async (n: bigint) => {
   const monitor = await monitorActor()
   return await tryCall<[bigint], RewardData[]>(monitor.token_latest_rewards, n)
+}
+
+export const tokenBalances = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], [Principal, bigint][]>(monitor.token_balances)
 }
 
 export const tokenLogSize = async () => {

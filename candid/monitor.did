@@ -38,6 +38,7 @@ service : {
   sorted_memory_sizes : () -> (vec CanisterMemorySize) query;
   store_stats : () -> (vec text) query;
   timer_set : () -> (bool) query;
+  token_balances : () -> (vec record { principal; nat64 });
   token_latest_rewards : (nat64) -> (vec RewardData);
   token_log_size : () -> (nat64);
 }

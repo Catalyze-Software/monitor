@@ -59,6 +59,11 @@ export const idlFactory = ({ IDL }) => {
       ),
     'store_stats' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'timer_set' : IDL.Func([], [IDL.Bool], ['query']),
+    'token_balances' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Principal, IDL.Nat64))],
+        [],
+      ),
     'token_latest_rewards' : IDL.Func([IDL.Nat64], [IDL.Vec(RewardData)], []),
     'token_log_size' : IDL.Func([], [IDL.Nat64], []),
   });
