@@ -21,7 +21,7 @@
 <Toasts />
 
 <svelte:head>
-  <title>Catalyze Dahsboard</title>
+  <title>Catalyze Dashboard</title>
 </svelte:head>
 
 <Layout>

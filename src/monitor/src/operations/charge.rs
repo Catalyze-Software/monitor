@@ -19,9 +19,12 @@ const CYCLE_TOP_UP_AMOUNT: u64 = 10_000_000_000_000; // 10T
 
 /*
 * Iterate over all canister-cycles vector and top up canisters with low cycles
+* Return true if any canister was topped up
 */
-pub async fn top_up_canisters(snapshot: &Snapshot) {
+pub async fn top_up_canisters(snapshot: &Snapshot) -> bool {
     let sorted_canister_cycles = sorted_canister_cycles(snapshot);
+
+    let mut topped_up = false;
 
     for CanisterCycles {
         name,
@@ -30,12 +33,15 @@ pub async fn top_up_canisters(snapshot: &Snapshot) {
     } in sorted_canister_cycles
     {
         if cycles < CYCLES_BALANCE_THRESHOLD {
+            topped_up = true;
             top_up(name, canister_id).await;
         // since this vector is sorted in ascending cycle order, we can break early
         } else {
             break;
         }
     }
+
+    topped_up
 }
 
 /*
