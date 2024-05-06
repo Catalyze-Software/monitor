@@ -21,6 +21,17 @@ pub async fn latest_rewards(amount: u64) -> Vec<RewardData> {
     .0
 }
 
+pub async fn token_balances() -> Vec<(Principal, u64)> {
+    ic_cdk::call::<(), (Vec<(Principal, u64)>,)>(
+        Principal::from_text(TOKEN_CANISTER_PRINCIPAL).expect("Invalid principal"),
+        "token_balances",
+        (),
+    )
+    .await
+    .expect("Failed to call token_balances")
+    .0
+}
+
 pub async fn log_size() -> u64 {
     ic_cdk::call::<(), (u64,)>(
         Principal::from_text(TOKEN_CANISTER_PRINCIPAL).expect("Invalid principal"),

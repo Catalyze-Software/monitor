@@ -1,11 +1,12 @@
 use crate::canisters::proxy::Logger;
+use crate::canisters::token_canister::RewardData;
 use crate::queries::{get_latest_cycle_balances, get_latest_icp_balances};
 use crate::stores::stable_store::{CanisterStatusStore, MonitorStore};
 use crate::stores::types::{CanisterCycles, CanisterMemorySize, CycleBalances, Log, Timestamp};
 use crate::system::TIMER;
-use crate::token_canister::RewardData;
 use crate::utils::auth::is_registered;
 use crate::{run::run, stores::stable_store::Logs};
+use candid::Principal;
 use ic_cdk_macros::{query, update};
 
 #[query(guard = "is_registered")]
@@ -58,12 +59,17 @@ async fn proxy_log_size() -> u64 {
 
 #[update(guard = "is_registered")]
 async fn token_latest_rewards(amount: u64) -> Vec<RewardData> {
-    crate::token_canister::latest_rewards(amount).await
+    crate::canisters::token_canister::latest_rewards(amount).await
+}
+
+#[update(guard = "is_registered")]
+async fn token_balances() -> Vec<(Principal, u64)> {
+    crate::canisters::token_canister::token_balances().await
 }
 
 #[update(guard = "is_registered")]
 async fn token_log_size() -> u64 {
-    crate::token_canister::log_size().await
+    crate::canisters::token_canister::log_size().await
 }
 
 #[query(guard = "is_registered")]
