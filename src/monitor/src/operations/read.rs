@@ -1,13 +1,12 @@
 use super::sns::{CanisterStatusResultV2, CanisterStatusType as SNSCanisterStatusType};
 use crate::{
     stores::{
-        stable_store::{Logs, MonitorStore},
-        types::MonitorICPBalance,
+        stable_store::Logs,
         types::{CanisterSnapshot, CatalyzeCanisterStatus, Snapshot},
     },
     utils::{
         canister_status::get_canister_status,
-        log::{EVENT_CATALYZE_CANISTER_DATA, EVENT_MONITOR_DATA, EVENT_SNS_DATA},
+        log::{EVENT_CATALYZE_CANISTER_DATA, EVENT_SNS_DATA},
     },
     CANISTER_IDS, CANISTER_NAMES,
 };
@@ -23,18 +22,6 @@ use ic_cdk::api::{
 * Perform canister status query routine
 */
 pub async fn take_snapshot() -> Snapshot {
-    // Monitor data read, store and log operations
-    // Monitor canister is only canister for which we store icp balance
-    let icp_balance = crate::canisters::ledger::icp_balance().await;
-
-    let monitor_data = MonitorICPBalance {
-        timestamp: time(),
-        icp_balance,
-    };
-
-    MonitorStore::insert(monitor_data);
-    Logs::log(format!("{}", EVENT_MONITOR_DATA.to_string()));
-
     // Start global snapshot (SNS + Catalyze canisters)
     let mut snapshot = Snapshot {
         timestamp: time(),
