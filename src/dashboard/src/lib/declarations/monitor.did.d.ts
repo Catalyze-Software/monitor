@@ -32,6 +32,9 @@ export interface RewardData {
 export interface _SERVICE {
   'get_latest_logs' : ActorMethod<[bigint], Array<Log>>,
   'get_latest_with_timestamp' : ActorMethod<[bigint], Array<string>>,
+  'graph_event_attendee_rewards' : ActorMethod<[], Array<[bigint, bigint]>>,
+  'graph_member_activity_rewards' : ActorMethod<[], Array<[bigint, bigint]>>,
+  'graph_member_count_rewards' : ActorMethod<[], Array<[bigint, bigint]>>,
   'icp_balance' : ActorMethod<[], string>,
   'initiate_run' : ActorMethod<[], undefined>,
   'latest_cycle_balances' : ActorMethod<[bigint], Array<CycleBalances>>,

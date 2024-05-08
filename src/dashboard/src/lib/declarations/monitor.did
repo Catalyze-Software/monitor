@@ -28,6 +28,9 @@ type RewardData = record {
 service : {
   get_latest_logs : (nat64) -> (vec Log) query;
   get_latest_with_timestamp : (nat64) -> (vec text) query;
+  graph_event_attendee_rewards : () -> (vec record { nat64; nat64 });
+  graph_member_activity_rewards : () -> (vec record { nat64; nat64 });
+  graph_member_count_rewards : () -> (vec record { nat64; nat64 });
   icp_balance : () -> (text) query;
   initiate_run : () -> ();
   latest_cycle_balances : (nat64) -> (vec CycleBalances) query;
