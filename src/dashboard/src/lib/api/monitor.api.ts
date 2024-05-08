@@ -91,3 +91,24 @@ export const tokenLogSize = async () => {
   const monitor = await monitorActor()
   return await tryCall<[], bigint>(monitor.token_log_size)
 }
+
+export const graphMemberCountRewards = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], [bigint, bigint][]>(
+    monitor.graph_member_count_rewards
+  )
+}
+
+export const graphMemberActivityRewards = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], [bigint, bigint][]>(
+    monitor.graph_member_activity_rewards
+  )
+}
+
+export const graphEventAttendeeRewards = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], [bigint, bigint][]>(
+    monitor.graph_event_attendee_rewards
+  )
+}

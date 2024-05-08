@@ -36,3 +36,36 @@ pub async fn log_size() -> u64 {
     .expect("Failed to call log_size")
     .0
 }
+
+pub async fn graph_member_count_rewards() -> Vec<(u64, u64)> {
+    ic_cdk::call::<(), (Vec<(u64, u64)>,)>(
+        Principal::from_text(PROXY_PRINCIPAL).expect("Invalid principal"),
+        "graph_member_count_rewards",
+        (),
+    )
+    .await
+    .expect("Failed to call graph_member_count_rewards")
+    .0
+}
+
+pub async fn graph_member_activity_rewards() -> Vec<(u64, u64)> {
+    ic_cdk::call::<(), (Vec<(u64, u64)>,)>(
+        Principal::from_text(PROXY_PRINCIPAL).expect("Invalid principal"),
+        "graph_member_activity_rewards",
+        (),
+    )
+    .await
+    .expect("Failed to call graph_activity_rewards")
+    .0
+}
+
+pub async fn graph_event_attendee_rewards() -> Vec<(u64, u64)> {
+    ic_cdk::call::<(), (Vec<(u64, u64)>,)>(
+        Principal::from_text(PROXY_PRINCIPAL).expect("Invalid principal"),
+        "graph_event_attendee_rewards",
+        (),
+    )
+    .await
+    .expect("Failed to call graph_event_attendee_rewards")
+    .0
+}

@@ -77,6 +77,21 @@ fn get_latest_with_timestamp(n: u64) -> Vec<String> {
     Logs::get_latest_with_timestamps(n)
 }
 
+#[update(guard = "is_registered")]
+async fn graph_member_count_rewards() -> Vec<(u64, u64)> {
+    crate::canisters::proxy::graph_member_count_rewards().await
+}
+
+#[update(guard = "is_registered")]
+async fn graph_member_activity_rewards() -> Vec<(u64, u64)> {
+    crate::canisters::proxy::graph_member_activity_rewards().await
+}
+
+#[update(guard = "is_registered")]
+async fn graph_event_attendee_rewards() -> Vec<(u64, u64)> {
+    crate::canisters::proxy::graph_event_attendee_rewards().await
+}
+
 #[query(guard = "is_registered")]
 fn store_stats() -> Vec<String> {
     vec![

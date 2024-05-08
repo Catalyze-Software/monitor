@@ -33,6 +33,21 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Text)],
         ['query'],
       ),
+    'graph_event_attendee_rewards' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Nat64, IDL.Nat64))],
+        [],
+      ),
+    'graph_member_activity_rewards' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Nat64, IDL.Nat64))],
+        [],
+      ),
+    'graph_member_count_rewards' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Nat64, IDL.Nat64))],
+        [],
+      ),
     'icp_balance' : IDL.Func([], [IDL.Text], ['query']),
     'initiate_run' : IDL.Func([], [], []),
     'latest_cycle_balances' : IDL.Func(
