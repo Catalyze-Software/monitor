@@ -1,5 +1,5 @@
 // Allowed principals
-const ALLOWED_PRINCIPALS: [&str; 6] = [
+const ALLOWED_PRINCIPALS: [&str; 7] = [
     // Catalyze development principal
     "syzio-xu6ca-burmx-4afo2-ojpcw-e75j3-m67o5-s5bes-5vvsv-du3t4-wae",
     // Samer II at Candid UI (https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app)
@@ -12,6 +12,8 @@ const ALLOWED_PRINCIPALS: [&str; 6] = [
     "webky-2c2ee-24zok-g6qc4-twbcw-whjbd-co6e4-ypogf-picwf-ios24-xae",
     // Samer II at localhost:4173
     "xhigk-boo5e-vxlwr-hklcd-ccl57-ltnuh-mq4zy-knsny-fswqd-nad4l-tqe",
+    // Semen II at Dashboard (https://ca77u-aiaaa-aaaap-abxiq-cai.icp0.io)
+    "cdltk-yqixa-dzz2d-6vdyi-itotf-mj63p-6rfv7-rvm5r-3kxbo-ewseq-dae",
 ];
 
 pub fn is_registered() -> Result<(), String> {
