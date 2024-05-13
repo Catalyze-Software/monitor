@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="en" theme="light">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%sveltekit.assets%/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    %sveltekit.head%
-  </head>
-  <body data-sveltekit-preload-data="hover">
-    <div style="display: contents">%sveltekit.body%</div>
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="%sveltekit.assets%/favicon.svg" />
+  <meta name="viewport" content="width=device-width" />
+  %sveltekit.head%
+  <script>
+    if (global === undefined) {
+      var global = window;
+    }
+  </script>
+</head>
+
+<body data-sveltekit-preload-data="hover">
+  <div style="display: contents">%sveltekit.body%</div>
+</body>
+
 </html>
