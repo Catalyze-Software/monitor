@@ -1,6 +1,8 @@
+use std::collections::HashMap;
+
 use crate::stores::{
     stable_store::{CanisterStatusStore, MonitorStore},
-    types::{CanisterCycles, CanisterMemorySize, CycleBalances, Snapshot, Timestamp},
+    types::{CanisterCycles, CanisterMemorySize, CycleHistory, LineData, Snapshot, Timestamp},
 };
 use candid::Nat;
 use ic_ledger_types::Tokens;
@@ -38,39 +40,55 @@ pub fn sorted_memory_sizes(snapshot: &Snapshot) -> Vec<CanisterMemorySize> {
 
 /*
 * Cycle history data for all canisters
-* each data point (CycleBalances) contains the timestamp of the data point and the cycle balances of all canisters
 */
-pub fn get_latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
+pub fn canister_cycle_history(amount: u64) -> CycleHistory {
     let history_size = CanisterStatusStore::size();
 
     // ensure n is not greater than store size
-    let mut n = n;
-    if n > history_size {
-        n = history_size;
+    let mut amount = amount;
+    if amount > history_size {
+        amount = history_size;
     }
 
-    let history = CanisterStatusStore::get_latest_n(n);
+    let history = CanisterStatusStore::get_latest_n(amount);
 
-    let mut time_series = Vec::new();
+    let mut timestamps = Vec::new();
 
+    // collect timestamps
+    history
+        .iter()
+        .for_each(|snapshot| timestamps.push(snapshot.timestamp));
+
+    // collect cycles history for each canister
+    let mut line_data = HashMap::new();
+
+    //  quadratic time complexity, works for low canister count
     for snapshot in history {
-        let timestamp = snapshot.timestamp;
-        let mut balances = Vec::new();
-
         for canister in snapshot.canisters {
-            let cycles = canister.status.cycles.expect("No cycles");
-            let name = canister.canister_name;
+            let canister_name = canister.canister_name.clone();
+            let cycles = cycles_to_tcycles(canister.status.cycles.expect("No cycles"));
 
-            balances.push((name, cycles_to_tcycles(cycles)));
+            if line_data.contains_key(&canister_name) {
+                let cycles_data: &mut Vec<f64> = line_data.get_mut(&canister_name).unwrap();
+                cycles_data.push(cycles);
+            } else {
+                line_data.insert(canister_name, vec![cycles]);
+            }
         }
-
-        time_series.push(CycleBalances {
-            timestamp,
-            balances,
-        });
     }
 
-    time_series
+    let line_data = line_data
+        .into_iter()
+        .map(|(canister_name, cycles)| LineData {
+            canister_name,
+            cycles,
+        })
+        .collect();
+
+    CycleHistory {
+        timestamps,
+        line_data,
+    }
 }
 
 fn cycles_to_tcycles(cycles: Nat) -> f64 {

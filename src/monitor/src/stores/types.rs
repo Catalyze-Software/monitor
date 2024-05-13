@@ -48,9 +48,15 @@ type CanisterName = String;
 type TCycles = f64;
 
 #[derive(CandidType, Deserialize)]
-pub struct CycleBalances {
-    pub timestamp: Timestamp,
-    pub balances: Vec<(CanisterName, TCycles)>,
+pub struct CycleHistory {
+    pub timestamps: Vec<Timestamp>,
+    pub line_data: Vec<LineData>,
+}
+
+#[derive(CandidType, Deserialize)]
+pub struct LineData {
+    pub canister_name: CanisterName,
+    pub cycles: Vec<TCycles>,
 }
 
 #[derive(CandidType, Deserialize, Clone)]
