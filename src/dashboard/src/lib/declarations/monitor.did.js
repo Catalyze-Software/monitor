@@ -1,9 +1,13 @@
 export const idlFactory = ({ IDL }) => {
-  const Log = IDL.Record({ 'msg' : IDL.Text, 'timestamp' : IDL.Nat64 });
-  const CycleBalances = IDL.Record({
-    'timestamp' : IDL.Nat64,
-    'balances' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Float64)),
+  const LineData = IDL.Record({
+    'cycles' : IDL.Vec(IDL.Float64),
+    'canister_name' : IDL.Text,
   });
+  const CycleHistory = IDL.Record({
+    'timestamps' : IDL.Vec(IDL.Nat64),
+    'line_data' : IDL.Vec(LineData),
+  });
+  const Log = IDL.Record({ 'msg' : IDL.Text, 'timestamp' : IDL.Nat64 });
   const Logger = IDL.Record({
     'principal' : IDL.Opt(IDL.Principal),
     'source' : IDL.Opt(IDL.Text),
@@ -27,6 +31,7 @@ export const idlFactory = ({ IDL }) => {
     'timestamp' : IDL.Nat64,
   });
   return IDL.Service({
+    'canister_cycle_history' : IDL.Func([IDL.Nat64], [CycleHistory], ['query']),
     'get_latest_logs' : IDL.Func([IDL.Nat64], [IDL.Vec(Log)], ['query']),
     'get_latest_with_timestamp' : IDL.Func(
         [IDL.Nat64],
@@ -50,11 +55,6 @@ export const idlFactory = ({ IDL }) => {
       ),
     'icp_balance' : IDL.Func([], [IDL.Text], ['query']),
     'initiate_run' : IDL.Func([], [], []),
-    'latest_cycle_balances' : IDL.Func(
-        [IDL.Nat64],
-        [IDL.Vec(CycleBalances)],
-        ['query'],
-      ),
     'latest_icp_balances' : IDL.Func(
         [IDL.Nat64],
         [IDL.Vec(IDL.Tuple(IDL.Nat64, IDL.Float64))],

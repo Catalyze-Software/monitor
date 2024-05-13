@@ -8,10 +8,8 @@ type CanisterMemorySize = record {
   size : nat;
   canister_id : principal;
 };
-type CycleBalances = record {
-  timestamp : nat64;
-  balances : vec record { text; float64 };
-};
+type CycleHistory = record { timestamps : vec nat64; line_data : vec LineData };
+type LineData = record { cycles : vec float64; canister_name : text };
 type Log = record { msg : text; timestamp : nat64 };
 type Logger = record {
   "principal" : opt principal;
@@ -26,6 +24,7 @@ type RewardData = record {
   timestamp : nat64;
 };
 service : {
+  canister_cycle_history : (nat64) -> (CycleHistory) query;
   get_latest_logs : (nat64) -> (vec Log) query;
   get_latest_with_timestamp : (nat64) -> (vec text) query;
   graph_event_attendee_rewards : () -> (vec record { nat64; nat64 });
@@ -33,7 +32,6 @@ service : {
   graph_member_count_rewards : () -> (vec record { nat64; nat64 });
   icp_balance : () -> (text) query;
   initiate_run : () -> ();
-  latest_cycle_balances : (nat64) -> (vec CycleBalances) query;
   latest_icp_balances : (nat64) -> (vec record { nat64; float64 }) query;
   latest_proxy_logs : (nat64) -> (vec Logger);
   proxy_log_size : () -> (nat64);

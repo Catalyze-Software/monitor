@@ -7,7 +7,7 @@ import {
   type _SERVICE,
   type CanisterCycles,
   type CanisterMemorySize,
-  type CycleBalances,
+  type CycleHistory,
   type Log,
   type Logger,
   type RewardData,
@@ -54,10 +54,10 @@ export const sortedMemorySizes = async () => {
   return await tryCall<[], CanisterMemorySize[]>(monitor.sorted_memory_sizes)
 }
 
-export const latestCycleBalances = async (n: bigint) => {
+export const canisterCycleHistory = async (n: bigint) => {
   const monitor = await monitorActor()
-  return await tryCall<[bigint], CycleBalances[]>(
-    monitor.latest_cycle_balances,
+  return await tryCall<[bigint], CycleHistory>(
+    monitor.canister_cycle_history,
     n
   )
 }

@@ -12,10 +12,11 @@ export interface CanisterMemorySize {
   'size' : bigint,
   'canister_id' : Principal,
 }
-export interface CycleBalances {
-  'timestamp' : bigint,
-  'balances' : Array<[string, number]>,
+export interface CycleHistory {
+  'timestamps' : BigUint64Array | bigint[],
+  'line_data' : Array<LineData>,
 }
+export interface LineData { 'cycles' : Array<number>, 'canister_name' : string }
 export interface Log { 'msg' : string, 'timestamp' : bigint }
 export interface Logger {
   'principal' : [] | [Principal],
@@ -30,6 +31,7 @@ export interface RewardData {
   'timestamp' : bigint,
 }
 export interface _SERVICE {
+  'canister_cycle_history' : ActorMethod<[bigint], CycleHistory>,
   'get_latest_logs' : ActorMethod<[bigint], Array<Log>>,
   'get_latest_with_timestamp' : ActorMethod<[bigint], Array<string>>,
   'graph_event_attendee_rewards' : ActorMethod<[], Array<[bigint, bigint]>>,
@@ -37,7 +39,6 @@ export interface _SERVICE {
   'graph_member_count_rewards' : ActorMethod<[], Array<[bigint, bigint]>>,
   'icp_balance' : ActorMethod<[], string>,
   'initiate_run' : ActorMethod<[], undefined>,
-  'latest_cycle_balances' : ActorMethod<[bigint], Array<CycleBalances>>,
   'latest_icp_balances' : ActorMethod<[bigint], Array<[bigint, number]>>,
   'latest_proxy_logs' : ActorMethod<[bigint], Array<Logger>>,
   'proxy_log_size' : ActorMethod<[], bigint>,

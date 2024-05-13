@@ -15,7 +15,7 @@
   } from "chart.js"
 
   // Backend function that returns a cycles balance history for every canister
-  import { latestCycleBalances } from "$lib/api/monitor.api"
+  import { canisterCycleHistory } from "$lib/api/monitor.api"
 
   let ready = false
 
@@ -58,22 +58,18 @@
 
   onMount(async () => {
     // fetch last 30 days of cycle balances
-    const latest = await latestCycleBalances(30n)
+    const cycleHistory = await canisterCycleHistory(30n)
 
-    // iterate over the latest balances and populate the chart data
-    latest.forEach((instant, i) => {
-      data.labels?.push(convertTimestamp(instant.timestamp))
-      instant.balances.forEach((balance, index) => {
-        if (i === 0) {
-          data.datasets?.push({
-            label: balance[0],
-            data: [balance[1]],
-            borderColor: colors[index % colors.length],
-            backgroundColor: "rgba(0, 0, 0, 0)",
-          })
-          return
-        }
-        data.datasets[index].data?.push(balance[1])
+    cycleHistory.timestamps.forEach((timestamp) => {
+      data.labels?.push(convertTimestamp(timestamp))
+    })
+
+    cycleHistory.line_data.forEach((line_data, index) => {
+      data.datasets?.push({
+        label: line_data.canister_name,
+        data: line_data.cycles,
+        borderColor: colors[index % colors.length],
+        backgroundColor: "rgba(0, 0, 0, 0)",
       })
     })
 

@@ -1,8 +1,8 @@
 use crate::canisters::proxy::Logger;
 use crate::canisters::token_canister::RewardData;
-use crate::queries::{get_latest_cycle_balances, get_latest_icp_balances};
+use crate::queries::get_latest_icp_balances;
 use crate::stores::stable_store::{CanisterStatusStore, MonitorStore};
-use crate::stores::types::{CanisterCycles, CanisterMemorySize, CycleBalances, Log, Timestamp};
+use crate::stores::types::{CanisterCycles, CanisterMemorySize, CycleHistory, Log, Timestamp};
 use crate::system::TIMER;
 use crate::utils::auth::is_registered;
 use crate::{run::run, stores::stable_store::Logs};
@@ -21,8 +21,8 @@ fn latest_icp_balances(n: u64) -> Vec<(Timestamp, f64)> {
 }
 
 #[query(guard = "is_registered")]
-fn latest_cycle_balances(n: u64) -> Vec<CycleBalances> {
-    get_latest_cycle_balances(n)
+fn canister_cycle_history(amount: u64) -> CycleHistory {
+    crate::queries::canister_cycle_history(amount)
 }
 
 #[query(guard = "is_registered")]
