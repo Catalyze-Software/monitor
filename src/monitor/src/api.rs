@@ -1,5 +1,4 @@
 use crate::canisters::proxy::Logger;
-use crate::canisters::token_canister::RewardData;
 use crate::queries::get_latest_icp_balances;
 use crate::stores::stable_store::{CanisterStatusStore, MonitorStore};
 use crate::stores::types::{CanisterCycles, CanisterMemorySize, CycleHistory, Log, Timestamp};
@@ -57,19 +56,19 @@ async fn proxy_log_size() -> u64 {
     crate::canisters::proxy::log_size().await
 }
 
-#[update(guard = "is_registered")]
-async fn token_latest_rewards(amount: u64) -> Vec<RewardData> {
-    crate::canisters::token_canister::latest_rewards(amount).await
-}
+// #[update(guard = "is_registered")]
+// async fn token_latest_rewards(amount: u64) -> Vec<RewardData> {
+//     crate::canisters::rewards::latest_rewards(amount).await
+// }
 
 #[update(guard = "is_registered")]
 async fn token_balances() -> Vec<(Principal, u64)> {
-    crate::canisters::token_canister::token_balances().await
+    crate::canisters::rewards::token_balances().await
 }
 
 #[update(guard = "is_registered")]
 async fn token_log_size() -> u64 {
-    crate::canisters::token_canister::log_size().await
+    crate::canisters::rewards::log_size().await
 }
 
 #[query(guard = "is_registered")]
@@ -79,17 +78,17 @@ fn get_latest_with_timestamp(n: u64) -> Vec<String> {
 
 #[update(guard = "is_registered")]
 async fn graph_member_count_rewards() -> Vec<(u64, u64)> {
-    crate::canisters::proxy::graph_member_count_rewards().await
+    crate::canisters::rewards::graph_member_count_rewards().await
 }
 
 #[update(guard = "is_registered")]
 async fn graph_member_activity_rewards() -> Vec<(u64, u64)> {
-    crate::canisters::proxy::graph_member_activity_rewards().await
+    crate::canisters::rewards::graph_member_activity_rewards().await
 }
 
 #[update(guard = "is_registered")]
 async fn graph_event_attendee_rewards() -> Vec<(u64, u64)> {
-    crate::canisters::proxy::graph_event_attendee_rewards().await
+    crate::canisters::rewards::graph_event_attendee_rewards().await
 }
 
 #[query(guard = "is_registered")]

@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import { latestTokenRewards, tokenLogSize } from "$lib/api/monitor.api"
   import type { RewardData } from "$lib/declarations/monitor.did"
   import { convertTimestampToDateTime } from "$lib/utils/date.utils"
@@ -30,4 +30,4 @@
       <p>{reward.principal.toText()}</p>
     </Card>
   {/each}
-{/if}
+{/if} -->
