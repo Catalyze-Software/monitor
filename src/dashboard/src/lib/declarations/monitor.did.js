@@ -25,11 +25,6 @@ export const idlFactory = ({ IDL }) => {
     'size' : IDL.Nat,
     'canister_id' : IDL.Principal,
   });
-  const RewardData = IDL.Record({
-    'principal' : IDL.Principal,
-    'description' : IDL.Text,
-    'timestamp' : IDL.Nat64,
-  });
   return IDL.Service({
     'canister_cycle_history' : IDL.Func([IDL.Nat64], [CycleHistory], ['query']),
     'get_latest_logs' : IDL.Func([IDL.Nat64], [IDL.Vec(Log)], ['query']),
@@ -79,7 +74,6 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Principal, IDL.Nat64))],
         [],
       ),
-    'token_latest_rewards' : IDL.Func([IDL.Nat64], [IDL.Vec(RewardData)], []),
     'token_log_size' : IDL.Func([], [IDL.Nat64], []),
   });
 };

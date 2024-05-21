@@ -10,7 +10,7 @@ import {
   type CycleHistory,
   type Log,
   type Logger,
-  type RewardData,
+  // type RewardData,
 } from "$lib/declarations/monitor.did.js"
 import { createAgent } from "@dfinity/utils"
 
@@ -77,10 +77,10 @@ export const proxyLogSize = async () => {
   return await tryCall<[], bigint>(monitor.proxy_log_size)
 }
 
-export const latestTokenRewards = async (n: bigint) => {
-  const monitor = await monitorActor()
-  return await tryCall<[bigint], RewardData[]>(monitor.token_latest_rewards, n)
-}
+// export const latestTokenRewards = async (n: bigint) => {
+//   const monitor = await monitorActor()
+//   return await tryCall<[bigint], RewardData[]>(monitor.token_latest_rewards, n)
+// }
 
 export const tokenBalances = async () => {
   const monitor = await monitorActor()

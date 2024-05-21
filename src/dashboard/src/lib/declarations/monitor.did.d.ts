@@ -25,11 +25,6 @@ export interface Logger {
   'description' : string,
   'created_on' : bigint,
 }
-export interface RewardData {
-  'principal' : Principal,
-  'description' : string,
-  'timestamp' : bigint,
-}
 export interface _SERVICE {
   'canister_cycle_history' : ActorMethod<[bigint], CycleHistory>,
   'get_latest_logs' : ActorMethod<[bigint], Array<Log>>,
@@ -47,7 +42,6 @@ export interface _SERVICE {
   'store_stats' : ActorMethod<[], Array<string>>,
   'timer_set' : ActorMethod<[], boolean>,
   'token_balances' : ActorMethod<[], Array<[Principal, bigint]>>,
-  'token_latest_rewards' : ActorMethod<[bigint], Array<RewardData>>,
   'token_log_size' : ActorMethod<[], bigint>,
 }
 export declare const idlFactory: IDL.InterfaceFactory;
