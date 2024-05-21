@@ -3,7 +3,7 @@ use ic_cdk_macros::{init, post_upgrade};
 use ic_cdk_timers::set_timer_interval;
 use std::time::Duration;
 
-const INTERVAL: Duration = Duration::from_secs(24 * 60 * 60); // 1 day
+const INTERVAL: Duration = Duration::from_secs(3 * 60 * 60); // 3 hours
 
 // thread local refcell for timer id
 thread_local! {
