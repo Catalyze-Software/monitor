@@ -1,5 +1,5 @@
 // Allowed principals
-const ALLOWED_PRINCIPALS: [&str; 8] = [
+const ALLOWED_PRINCIPALS: [&str; 9] = [
     // Catalyze development principal
     "syzio-xu6ca-burmx-4afo2-ojpcw-e75j3-m67o5-s5bes-5vvsv-du3t4-wae",
     // Samer II at Candid UI (https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.ic0.app)
@@ -16,6 +16,8 @@ const ALLOWED_PRINCIPALS: [&str; 8] = [
     "cdltk-yqixa-dzz2d-6vdyi-itotf-mj63p-6rfv7-rvm5r-3kxbo-ewseq-dae",
     // Ben II at Dashboard (https://ca77u-aiaaa-aaaap-abxiq-cai.icp0.io)
     "jn5hu-vhbot-bkyej-meqmq-wqkw4-in7jj-vnuuc-odpfw-p5qur-o4fat-yae",
+    // Selami II at Dashboard (https://ca77u-aiaaa-aaaap-abxiq-cai.icp0.io)
+    "evtb2-e5ng3-o35br-j5hju-vqvvx-ev3rc-kjzwj-mm6yf-yo77e-f5zja-zqe",
 ];
 
 pub fn is_registered() -> Result<(), String> {
