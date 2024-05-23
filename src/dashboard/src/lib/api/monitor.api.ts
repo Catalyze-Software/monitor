@@ -8,6 +8,8 @@ import {
   type CanisterCycles,
   type CanisterMemorySize,
   type CycleHistory,
+  type EventInfo,
+  type GroupInfo,
   type Log,
   type Logger,
   // type RewardData,
@@ -77,10 +79,15 @@ export const proxyLogSize = async () => {
   return await tryCall<[], bigint>(monitor.proxy_log_size)
 }
 
-// export const latestTokenRewards = async (n: bigint) => {
-//   const monitor = await monitorActor()
-//   return await tryCall<[bigint], RewardData[]>(monitor.token_latest_rewards, n)
-// }
+export const groupInfo = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], GroupInfo[]>(monitor.group_info)
+}
+
+export const eventInfo = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], EventInfo[]>(monitor.event_info)
+}
 
 export const tokenBalances = async () => {
   const monitor = await monitorActor()

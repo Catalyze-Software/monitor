@@ -1,4 +1,5 @@
 use crate::canisters::proxy::Logger;
+use crate::canisters::rewards::{EventInfo, GroupInfo};
 use crate::queries::get_latest_icp_balances;
 use crate::stores::stable_store::{CanisterStatusStore, MonitorStore};
 use crate::stores::types::{CanisterCycles, CanisterMemorySize, CycleHistory, Log, Timestamp};
@@ -56,10 +57,15 @@ async fn proxy_log_size() -> u64 {
     crate::canisters::proxy::log_size().await
 }
 
-// #[update(guard = "is_registered")]
-// async fn token_latest_rewards(amount: u64) -> Vec<RewardData> {
-//     crate::canisters::rewards::latest_rewards(amount).await
-// }
+#[update(guard = "is_registered")]
+async fn group_info() -> Vec<GroupInfo> {
+    crate::canisters::rewards::group_info().await
+}
+
+#[update(guard = "is_registered")]
+async fn event_info() -> Vec<EventInfo> {
+    crate::canisters::rewards::event_info().await
+}
 
 #[update(guard = "is_registered")]
 async fn token_balances() -> Vec<(Principal, u64)> {

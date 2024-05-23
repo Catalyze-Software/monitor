@@ -35,6 +35,7 @@
     <MenuItem href="/proxy_logs" on:click>Proxy logs</MenuItem>
     <MenuItem href="/rewards_schedule" on:click>Rewards schedule</MenuItem>
     <MenuItem href="/token_balances" on:click>Token balances</MenuItem>
+    <MenuItem href="/reward_milestones" on:click>Reward milestones</MenuItem>
   </svelte:fragment>
 
   <Content>

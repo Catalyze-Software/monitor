@@ -7,7 +7,16 @@ export const idlFactory = ({ IDL }) => {
     'timestamps' : IDL.Vec(IDL.Nat64),
     'line_data' : IDL.Vec(LineData),
   });
+  const EventInfo = IDL.Record({
+    'owner' : IDL.Principal,
+    'attendance_milestone' : IDL.Nat64,
+  });
   const Log = IDL.Record({ 'msg' : IDL.Text, 'timestamp' : IDL.Nat64 });
+  const GroupInfo = IDL.Record({
+    'activity_milestone' : IDL.Nat64,
+    'owner' : IDL.Principal,
+    'count_milestone' : IDL.Nat64,
+  });
   const Logger = IDL.Record({
     'principal' : IDL.Opt(IDL.Principal),
     'source' : IDL.Opt(IDL.Text),
@@ -27,6 +36,7 @@ export const idlFactory = ({ IDL }) => {
   });
   return IDL.Service({
     'canister_cycle_history' : IDL.Func([IDL.Nat64], [CycleHistory], ['query']),
+    'event_info' : IDL.Func([], [IDL.Vec(EventInfo)], []),
     'get_latest_logs' : IDL.Func([IDL.Nat64], [IDL.Vec(Log)], ['query']),
     'get_latest_with_timestamp' : IDL.Func(
         [IDL.Nat64],
@@ -48,6 +58,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Vec(IDL.Tuple(IDL.Nat64, IDL.Nat64))],
         [],
       ),
+    'group_info' : IDL.Func([], [IDL.Vec(GroupInfo)], []),
     'icp_balance' : IDL.Func([], [IDL.Text], ['query']),
     'initiate_run' : IDL.Func([], [], []),
     'latest_icp_balances' : IDL.Func(

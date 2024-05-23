@@ -10,16 +10,40 @@ pub struct RewardData {
     pub description: String,
 }
 
-// pub async fn latest_rewards(amount: u64) -> Vec<RewardData> {
-//     ic_cdk::call::<(u64,), (Vec<RewardData>,)>(
-//         Principal::from_text(REWARDS_CANISTER_PRINCIPAL).expect("Invalid principal"),
-//         "latest_rewards",
-//         (amount,),
-//     )
-//     .await
-//     .expect("Failed to call get_latest_logs")
-//     .0
-// }
+#[derive(Deserialize, CandidType, Clone)]
+pub struct GroupInfo {
+    owner: Principal,
+    count_milestone: u64,
+    activity_milestone: u64,
+}
+
+#[derive(Deserialize, CandidType, Clone)]
+pub struct EventInfo {
+    owner: Principal,
+    attendance_milestone: u64,
+}
+
+pub async fn group_info() -> Vec<GroupInfo> {
+    ic_cdk::call::<(), (Vec<GroupInfo>,)>(
+        Principal::from_text(REWARDS_CANISTER_PRINCIPAL).expect("Invalid principal"),
+        "group_info",
+        (),
+    )
+    .await
+    .expect("Failed to call group_info")
+    .0
+}
+
+pub async fn event_info() -> Vec<EventInfo> {
+    ic_cdk::call::<(), (Vec<EventInfo>,)>(
+        Principal::from_text(REWARDS_CANISTER_PRINCIPAL).expect("Invalid principal"),
+        "event_info",
+        (),
+    )
+    .await
+    .expect("Failed to call event_info")
+    .0
+}
 
 pub async fn token_balances() -> Vec<(Principal, u64)> {
     ic_cdk::call::<(), (Vec<(Principal, u64)>,)>(
