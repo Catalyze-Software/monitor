@@ -34,6 +34,11 @@ export interface Logger {
   'description' : string,
   'created_on' : bigint,
 }
+export interface RewardableActivity {
+  'id' : bigint,
+  'timestamp' : bigint,
+  'activity' : string,
+}
 export interface _SERVICE {
   'canister_cycle_history' : ActorMethod<[bigint], CycleHistory>,
   'event_info' : ActorMethod<[], Array<EventInfo>>,
@@ -48,6 +53,8 @@ export interface _SERVICE {
   'latest_icp_balances' : ActorMethod<[bigint], Array<[bigint, number]>>,
   'latest_proxy_logs' : ActorMethod<[bigint], Array<Logger>>,
   'proxy_log_size' : ActorMethod<[], bigint>,
+  'read_reward_buffer' : ActorMethod<[], Array<RewardableActivity>>,
+  'reward_timer_next_trigger' : ActorMethod<[], [] | [bigint]>,
   'sorted_canister_cycles' : ActorMethod<[], Array<CanisterCycles>>,
   'sorted_memory_sizes' : ActorMethod<[], Array<CanisterMemorySize>>,
   'store_stats' : ActorMethod<[], Array<string>>,

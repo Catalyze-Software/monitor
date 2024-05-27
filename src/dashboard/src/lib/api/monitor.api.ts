@@ -12,7 +12,7 @@ import {
   type GroupInfo,
   type Log,
   type Logger,
-  // type RewardData,
+  type RewardableActivity,
 } from "$lib/declarations/monitor.did.js"
 import { createAgent } from "@dfinity/utils"
 
@@ -77,6 +77,16 @@ export const latestProxyLogs = async (n: bigint) => {
 export const proxyLogSize = async () => {
   const monitor = await monitorActor()
   return await tryCall<[], bigint>(monitor.proxy_log_size)
+}
+
+export const readProxyRewardBuffer = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], RewardableActivity[]>(monitor.read_reward_buffer)
+}
+
+export const rewardTimerNextTrigger = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], [] | [bigint]>(monitor.reward_timer_next_trigger)
 }
 
 export const groupInfo = async () => {

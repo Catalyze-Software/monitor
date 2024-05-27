@@ -1,4 +1,4 @@
-use crate::canisters::proxy::Logger;
+use crate::canisters::proxy::{Logger, RewardableActivity};
 use crate::canisters::rewards::{EventInfo, GroupInfo};
 use crate::queries::get_latest_icp_balances;
 use crate::stores::stable_store::{CanisterStatusStore, MonitorStore};
@@ -47,6 +47,11 @@ fn get_latest_logs(n: u64) -> Vec<Log> {
     Logs::get_latest(n)
 }
 
+#[query(guard = "is_registered")]
+fn get_latest_with_timestamp(n: u64) -> Vec<String> {
+    Logs::get_latest_with_timestamps(n)
+}
+
 #[update(guard = "is_registered")]
 async fn latest_proxy_logs(amount: u64) -> Vec<Logger> {
     crate::canisters::proxy::get_latest_proxy_logs(amount).await
@@ -55,6 +60,16 @@ async fn latest_proxy_logs(amount: u64) -> Vec<Logger> {
 #[update(guard = "is_registered")]
 async fn proxy_log_size() -> u64 {
     crate::canisters::proxy::log_size().await
+}
+
+#[update(guard = "is_registered")]
+async fn read_reward_buffer() -> Vec<RewardableActivity> {
+    crate::canisters::proxy::read_reward_buffer().await
+}
+
+#[update(guard = "is_registered")]
+async fn reward_timer_next_trigger() -> Option<u64> {
+    crate::canisters::proxy::reward_timer_next_trigger().await
 }
 
 #[update(guard = "is_registered")]
@@ -75,11 +90,6 @@ async fn token_balances() -> Vec<(Principal, u64)> {
 #[update(guard = "is_registered")]
 async fn token_log_size() -> u64 {
     crate::canisters::rewards::log_size().await
-}
-
-#[query(guard = "is_registered")]
-fn get_latest_with_timestamp(n: u64) -> Vec<String> {
-    Logs::get_latest_with_timestamps(n)
 }
 
 #[update(guard = "is_registered")]

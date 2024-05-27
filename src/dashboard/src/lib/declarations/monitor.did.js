@@ -24,6 +24,11 @@ export const idlFactory = ({ IDL }) => {
     'description' : IDL.Text,
     'created_on' : IDL.Nat64,
   });
+  const RewardableActivity = IDL.Record({
+    'id' : IDL.Nat64,
+    'timestamp' : IDL.Nat64,
+    'activity' : IDL.Text,
+  });
   const CanisterCycles = IDL.Record({
     'name' : IDL.Text,
     'canister_id' : IDL.Principal,
@@ -68,6 +73,8 @@ export const idlFactory = ({ IDL }) => {
       ),
     'latest_proxy_logs' : IDL.Func([IDL.Nat64], [IDL.Vec(Logger)], []),
     'proxy_log_size' : IDL.Func([], [IDL.Nat64], []),
+    'read_reward_buffer' : IDL.Func([], [IDL.Vec(RewardableActivity)], []),
+    'reward_timer_next_trigger' : IDL.Func([], [IDL.Opt(IDL.Nat64)], []),
     'sorted_canister_cycles' : IDL.Func(
         [],
         [IDL.Vec(CanisterCycles)],

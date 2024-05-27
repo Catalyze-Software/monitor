@@ -1,11 +1,11 @@
+use crate::stores::types::Timestamp;
 use candid::{CandidType, Principal};
 use serde::Deserialize;
-
-use crate::stores::types::Timestamp;
 
 // proxy principal
 const PROXY_PRINCIPAL: &str = "bwm3m-wyaaa-aaaag-qdiua-cai";
 
+// proxy logs
 #[derive(Clone, CandidType, Deserialize, Debug)]
 pub struct Logger {
     pub description: String,
@@ -34,5 +34,36 @@ pub async fn log_size() -> u64 {
     )
     .await
     .expect("Failed to call log_size")
+    .0
+}
+
+// proxy reward buffer
+#[derive(CandidType, Deserialize, Clone)]
+pub struct RewardableActivity {
+    pub timestamp: u64,
+    // group or event id
+    pub id: u64,
+    pub activity: String,
+}
+
+pub async fn read_reward_buffer() -> Vec<RewardableActivity> {
+    ic_cdk::call::<(), (Vec<RewardableActivity>,)>(
+        Principal::from_text(PROXY_PRINCIPAL).expect("Invalid principal"),
+        "read_reward_buffer",
+        (),
+    )
+    .await
+    .expect("Failed to call read_reward_buffer")
+    .0
+}
+
+pub async fn reward_timer_next_trigger() -> Option<u64> {
+    ic_cdk::call::<(), (Option<u64>,)>(
+        Principal::from_text(PROXY_PRINCIPAL).expect("Invalid principal"),
+        "reward_timer_next_trigger",
+        (),
+    )
+    .await
+    .expect("Failed to call reward_timer_next_trigger")
     .0
 }
