@@ -32,10 +32,19 @@
     <MenuItem href="/cycles-history" on:click>Cycles history</MenuItem>
     <MenuItem href="/canisters" on:click>Canisters</MenuItem>
     <MenuItem href="/monitor_logs" on:click>Monitor logs</MenuItem>
+
+    <div class="menu-spacer">
+      <span>Proxy canister</span>
+    </div>
     <MenuItem href="/proxy_logs" on:click>Proxy logs</MenuItem>
+    <MenuItem href="/proxy_reward_buffer" on:click>Rewards buffer</MenuItem>
+
+    <div class="menu-spacer">
+      <span>Rewards canister</span>
+    </div>
     <MenuItem href="/rewards_schedule" on:click>Rewards schedule</MenuItem>
-    <MenuItem href="/token_balances" on:click>Token balances</MenuItem>
-    <MenuItem href="/reward_milestones" on:click>Reward milestones</MenuItem>
+    <MenuItem href="/rewards_token_balances" on:click>Token balances</MenuItem>
+    <MenuItem href="/rewards_milestones" on:click>Reward milestones</MenuItem>
   </svelte:fragment>
 
   <Content>
@@ -52,4 +61,10 @@
 
 <style lang="scss" global>
   @import "../../node_modules/@dfinity/gix-components/dist/styles/global.scss";
+
+  .menu-spacer {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-muted);
+  }
 </style>

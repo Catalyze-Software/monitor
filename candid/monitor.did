@@ -24,6 +24,11 @@ type Logger = record {
   description : text;
   created_on : nat64;
 };
+type RewardableActivity = record {
+  id : nat64;
+  timestamp : nat64;
+  activity : text;
+};
 service : {
   canister_cycle_history : (nat64) -> (CycleHistory) query;
   event_info : () -> (vec EventInfo);
@@ -38,6 +43,8 @@ service : {
   latest_icp_balances : (nat64) -> (vec record { nat64; float64 }) query;
   latest_proxy_logs : (nat64) -> (vec Logger);
   proxy_log_size : () -> (nat64);
+  read_reward_buffer : () -> (vec RewardableActivity);
+  reward_timer_next_trigger : () -> (opt nat64);
   sorted_canister_cycles : () -> (vec CanisterCycles) query;
   sorted_memory_sizes : () -> (vec CanisterMemorySize) query;
   store_stats : () -> (vec text) query;
