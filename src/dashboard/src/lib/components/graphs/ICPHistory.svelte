@@ -51,8 +51,8 @@
     balance = await icpBalance()
     balance = balance.slice(0, 6)
 
-    // fetch last 30 days of ICP balances
-    const response = await latestIcpBalances(30n)
+    const n = 30n * (24n / 3n) // 30 days * 8 readings per day
+    const response = await latestIcpBalances(n)
 
     let labels: string[] = []
     let balances: number[] = []

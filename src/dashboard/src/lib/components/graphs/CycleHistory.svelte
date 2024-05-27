@@ -57,8 +57,8 @@
   ]
 
   onMount(async () => {
-    // fetch last 30 days of cycle balances
-    const cycleHistory = await canisterCycleHistory(30n)
+    const n = 30n * (24n / 3n) // 30 days * 8 readings per day
+    const cycleHistory = await canisterCycleHistory(n)
 
     cycleHistory.timestamps.forEach((timestamp) => {
       data.labels?.push(convertTimestamp(timestamp))
