@@ -36,6 +36,7 @@
     <div class="menu-spacer">
       <span>Proxy canister</span>
     </div>
+    <MenuItem href="/proxy_stats" on:click>Proxy stats</MenuItem>
     <MenuItem href="/proxy_logs" on:click>Proxy logs</MenuItem>
     <MenuItem href="/proxy_reward_buffer" on:click>Rewards buffer</MenuItem>
 

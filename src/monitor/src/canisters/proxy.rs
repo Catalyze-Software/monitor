@@ -67,3 +67,15 @@ pub async fn reward_timer_next_trigger() -> Option<u64> {
     .expect("Failed to call reward_timer_next_trigger")
     .0
 }
+
+// proxy stats
+pub async fn proxy_store_stats() -> Vec<String> {
+    ic_cdk::call::<(), (Vec<String>,)>(
+        Principal::from_text(PROXY_PRINCIPAL).expect("Invalid principal"),
+        "store_stats",
+        (),
+    )
+    .await
+    .expect("Failed to call store_stats")
+    .0
+}
