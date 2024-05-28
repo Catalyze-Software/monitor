@@ -53,6 +53,7 @@ export interface _SERVICE {
   'latest_icp_balances' : ActorMethod<[bigint], Array<[bigint, number]>>,
   'latest_proxy_logs' : ActorMethod<[bigint], Array<Logger>>,
   'proxy_log_size' : ActorMethod<[], bigint>,
+  'proxy_store_stats' : ActorMethod<[], Array<string>>,
   'read_reward_buffer' : ActorMethod<[], Array<RewardableActivity>>,
   'reward_timer_next_trigger' : ActorMethod<[], [] | [bigint]>,
   'sorted_canister_cycles' : ActorMethod<[], Array<CanisterCycles>>,

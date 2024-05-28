@@ -73,6 +73,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'latest_proxy_logs' : IDL.Func([IDL.Nat64], [IDL.Vec(Logger)], []),
     'proxy_log_size' : IDL.Func([], [IDL.Nat64], []),
+    'proxy_store_stats' : IDL.Func([], [IDL.Vec(IDL.Text)], []),
     'read_reward_buffer' : IDL.Func([], [IDL.Vec(RewardableActivity)], []),
     'reward_timer_next_trigger' : IDL.Func([], [IDL.Opt(IDL.Nat64)], []),
     'sorted_canister_cycles' : IDL.Func(

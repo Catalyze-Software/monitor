@@ -33,6 +33,7 @@ const monitorActor = async () => {
   })
 }
 
+// Monitor interface
 export const icpBalance = async () => {
   const monitor = await monitorActor()
   return await tryCall<[], string>(monitor.icp_balance)
@@ -69,6 +70,7 @@ export const latestLogs = async (n: bigint) => {
   return await tryCall<[bigint], Log[]>(monitor.get_latest_logs, n)
 }
 
+// Proxy interface
 export const latestProxyLogs = async (n: bigint) => {
   const monitor = await monitorActor()
   return await tryCall<[bigint], Logger[]>(monitor.latest_proxy_logs, n)
@@ -89,6 +91,12 @@ export const rewardTimerNextTrigger = async () => {
   return await tryCall<[], [] | [bigint]>(monitor.reward_timer_next_trigger)
 }
 
+export const proxyStoreStats = async () => {
+  const monitor = await monitorActor()
+  return await tryCall<[], string[]>(monitor.proxy_store_stats)
+}
+
+// Rewards interface
 export const groupInfo = async () => {
   const monitor = await monitorActor()
   return await tryCall<[], GroupInfo[]>(monitor.group_info)

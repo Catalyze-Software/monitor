@@ -9,6 +9,7 @@ use crate::{run::run, stores::stable_store::Logs};
 use candid::Principal;
 use ic_cdk_macros::{query, update};
 
+// Monitor interface
 #[query(guard = "is_registered")]
 fn icp_balance() -> String {
     let monitor_state = MonitorStore::get_latest().expect("No monitor state");
@@ -52,6 +53,7 @@ fn get_latest_with_timestamp(n: u64) -> Vec<String> {
     Logs::get_latest_with_timestamps(n)
 }
 
+// Proxy interface
 #[update(guard = "is_registered")]
 async fn latest_proxy_logs(amount: u64) -> Vec<Logger> {
     crate::canisters::proxy::get_latest_proxy_logs(amount).await
@@ -72,6 +74,12 @@ async fn reward_timer_next_trigger() -> Option<u64> {
     crate::canisters::proxy::reward_timer_next_trigger().await
 }
 
+#[update(guard = "is_registered")]
+async fn proxy_store_stats() -> Vec<String> {
+    crate::canisters::proxy::proxy_store_stats().await
+}
+
+// Rewards interface
 #[update(guard = "is_registered")]
 async fn group_info() -> Vec<GroupInfo> {
     crate::canisters::rewards::group_info().await
@@ -107,6 +115,7 @@ async fn graph_event_attendee_rewards() -> Vec<(u64, u64)> {
     crate::canisters::rewards::graph_event_attendee_rewards().await
 }
 
+// Monitor system interface
 #[query(guard = "is_registered")]
 fn store_stats() -> Vec<String> {
     vec![

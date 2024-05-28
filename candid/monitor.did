@@ -43,6 +43,7 @@ service : {
   latest_icp_balances : (nat64) -> (vec record { nat64; float64 }) query;
   latest_proxy_logs : (nat64) -> (vec Logger);
   proxy_log_size : () -> (nat64);
+  proxy_store_stats : () -> (vec text);
   read_reward_buffer : () -> (vec RewardableActivity);
   reward_timer_next_trigger : () -> (opt nat64);
   sorted_canister_cycles : () -> (vec CanisterCycles) query;
