@@ -35,9 +35,8 @@ export interface Logger {
   'created_on' : bigint,
 }
 export interface RewardableActivity {
-  'id' : bigint,
   'timestamp' : bigint,
-  'activity' : string,
+  'activity' : Uint8Array | number[],
 }
 export interface _SERVICE {
   'canister_cycle_history' : ActorMethod<[bigint], CycleHistory>,

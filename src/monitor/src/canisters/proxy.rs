@@ -41,9 +41,7 @@ pub async fn log_size() -> u64 {
 #[derive(CandidType, Deserialize, Clone)]
 pub struct RewardableActivity {
     pub timestamp: u64,
-    // group or event id
-    pub id: u64,
-    pub activity: String,
+    pub activity: Vec<u8>,
 }
 
 pub async fn read_reward_buffer() -> Vec<RewardableActivity> {

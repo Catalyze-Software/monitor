@@ -25,9 +25,8 @@ export const idlFactory = ({ IDL }) => {
     'created_on' : IDL.Nat64,
   });
   const RewardableActivity = IDL.Record({
-    'id' : IDL.Nat64,
     'timestamp' : IDL.Nat64,
-    'activity' : IDL.Text,
+    'activity' : IDL.Vec(IDL.Nat8),
   });
   const CanisterCycles = IDL.Record({
     'name' : IDL.Text,

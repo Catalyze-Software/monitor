@@ -24,11 +24,7 @@ type Logger = record {
   description : text;
   created_on : nat64;
 };
-type RewardableActivity = record {
-  id : nat64;
-  timestamp : nat64;
-  activity : text;
-};
+type RewardableActivity = record { timestamp : nat64; activity : vec nat8 };
 service : {
   canister_cycle_history : (nat64) -> (CycleHistory) query;
   event_info : () -> (vec EventInfo);
