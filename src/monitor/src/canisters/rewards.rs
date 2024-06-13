@@ -34,16 +34,16 @@ pub async fn group_info() -> Vec<GroupInfo> {
     .0
 }
 
-pub async fn event_info() -> Vec<EventInfo> {
-    ic_cdk::call::<(), (Vec<EventInfo>,)>(
-        Principal::from_text(REWARDS_CANISTER_PRINCIPAL).expect("Invalid principal"),
-        "event_info",
-        (),
-    )
-    .await
-    .expect("Failed to call event_info")
-    .0
-}
+// pub async fn event_info() -> Vec<EventInfo> {
+//     ic_cdk::call::<(), (Vec<EventInfo>,)>(
+//         Principal::from_text(REWARDS_CANISTER_PRINCIPAL).expect("Invalid principal"),
+//         "event_info",
+//         (),
+//     )
+//     .await
+//     .expect("Failed to call event_info")
+//     .0
+// }
 
 pub async fn token_balances() -> Vec<(Principal, u64)> {
     ic_cdk::call::<(), (Vec<(Principal, u64)>,)>(

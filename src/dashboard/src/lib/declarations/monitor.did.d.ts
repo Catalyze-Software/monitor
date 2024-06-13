@@ -16,10 +16,6 @@ export interface CycleHistory {
   'timestamps' : BigUint64Array | bigint[],
   'line_data' : Array<LineData>,
 }
-export interface EventInfo {
-  'owner' : Principal,
-  'attendance_milestone' : bigint,
-}
 export interface GroupInfo {
   'activity_milestone' : bigint,
   'owner' : Principal,
@@ -40,7 +36,6 @@ export interface RewardableActivity {
 }
 export interface _SERVICE {
   'canister_cycle_history' : ActorMethod<[bigint], CycleHistory>,
-  'event_info' : ActorMethod<[], Array<EventInfo>>,
   'get_latest_logs' : ActorMethod<[bigint], Array<Log>>,
   'get_latest_with_timestamp' : ActorMethod<[bigint], Array<string>>,
   'graph_event_attendee_rewards' : ActorMethod<[], Array<[bigint, bigint]>>,

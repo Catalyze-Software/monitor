@@ -8,17 +8,18 @@ import {
   type CanisterCycles,
   type CanisterMemorySize,
   type CycleHistory,
-  type EventInfo,
   type GroupInfo,
   type Log,
   type Logger,
   type RewardableActivity,
 } from "$lib/declarations/monitor.did.js";
 import { createAgent } from "@dfinity/utils";
-import { _SERVICE as _REWARD_SERVICE, idlFactory } from "$lib/declarations/reward.declaration";
+import { _SERVICE as _REWARD_SERVICE, idlFactory as rewardIdl } from "$lib/api/reward.declaration";
+import { _SERVICE as _PROXY_SERVICE, idlFactory as proxyIdl } from "./proxy.declaration";
 
 const rewardCanisterId = "zgfl7-pqaaa-aaaap-accpa-cai";
 const monitorCanisterId = "6or45-oyaaa-aaaap-absua-cai";
+const proxyCanisterId = "bwm3m-wyaaa-aaaag-qdiua-cai";
 
 const rewardCanister = async () => {
   const identity = await authStore.identity();
@@ -26,8 +27,20 @@ const rewardCanister = async () => {
     identity,
     host: "https://icp-api.io",
   });
-  return Actor.createActor<_REWARD_SERVICE>(idlFactory, {
+  return Actor.createActor<_REWARD_SERVICE>(rewardIdl, {
     canisterId: rewardCanisterId,
+    agent,
+  });
+};
+
+const proxyActor = async () => {
+  const identity = await authStore.identity();
+  const agent = await createAgent({
+    identity,
+    host: "https://icp-api.io",
+  });
+  return Actor.createActor<_PROXY_SERVICE>(proxyIdl, {
+    canisterId: proxyCanisterId,
     agent,
   });
 };
@@ -87,13 +100,23 @@ export const proxyLogSize = async () => {
 };
 
 export const readProxyRewardBuffer = async () => {
-  const monitor = await monitorActor();
-  return await tryCall<[], RewardableActivity[]>(monitor.read_reward_buffer);
+  const actor = await proxyActor();
+  const response = await actor.read_reward_buffer();
+  return response.map((r) => {
+    if ("UserActivity" in r.activity) {
+      return { activity: "UserActivity", id: r.activity.UserActivity.toString(), timestamp: r.timestamp };
+    }
+    if ("GroupMemberCount" in r.activity) {
+      return { activity: "GroupMemberCount", id: r.activity.GroupMemberCount.toString(), timestamp: r.timestamp };
+    }
+
+    return { activity: "unknown", id: "", timestamp: r.timestamp };
+  });
 };
 
 export const rewardTimerNextTrigger = async () => {
-  const monitor = await monitorActor();
-  return await tryCall<[], [] | [bigint]>(monitor.reward_timer_next_trigger);
+  const actor = await proxyActor();
+  return await actor.reward_timer_next_trigger();
 };
 
 export const proxyStoreStats = async () => {
@@ -108,8 +131,9 @@ export const groupInfo = async () => {
 };
 
 export const eventInfo = async () => {
-  const monitor = await monitorActor();
-  return await tryCall<[], EventInfo[]>(monitor.event_info);
+  return [];
+  // const monitor = await monitorActor();
+  // return await tryCall<[], EventInfo[]>(monitor.event_info);
 };
 
 export const tokenBalances = async () => {

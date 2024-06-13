@@ -1,5 +1,5 @@
 use crate::canisters::proxy::{Logger, RewardableActivity};
-use crate::canisters::rewards::{EventInfo, GroupInfo};
+use crate::canisters::rewards::GroupInfo;
 use crate::queries::get_latest_icp_balances;
 use crate::stores::stable_store::{CanisterStatusStore, MonitorStore};
 use crate::stores::types::{CanisterCycles, CanisterMemorySize, CycleHistory, Log, Timestamp};
@@ -85,10 +85,10 @@ async fn group_info() -> Vec<GroupInfo> {
     crate::canisters::rewards::group_info().await
 }
 
-#[update(guard = "is_registered")]
-async fn event_info() -> Vec<EventInfo> {
-    crate::canisters::rewards::event_info().await
-}
+// #[update(guard = "is_registered")]
+// async fn event_info() -> Vec<EventInfo> {
+//     crate::canisters::rewards::event_info().await
+// }
 
 #[update(guard = "is_registered")]
 async fn token_balances() -> Vec<(Principal, u64)> {
@@ -135,10 +135,7 @@ fn store_stats() -> Vec<String> {
 
 #[query(guard = "is_registered")]
 fn timer_set() -> bool {
-    match TIMER.with(|t| t.borrow().clone()) {
-        Some(_) => true,
-        None => false,
-    }
+    TIMER.with(|t| *t.borrow()).is_some()
 }
 
 #[test]

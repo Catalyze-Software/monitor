@@ -9,7 +9,6 @@ type CanisterMemorySize = record {
   canister_id : principal;
 };
 type CycleHistory = record { timestamps : vec nat64; line_data : vec LineData };
-type EventInfo = record { owner : principal; attendance_milestone : nat64 };
 type GroupInfo = record {
   activity_milestone : nat64;
   owner : principal;
@@ -27,7 +26,6 @@ type Logger = record {
 type RewardableActivity = record { timestamp : nat64; activity : vec nat8 };
 service : {
   canister_cycle_history : (nat64) -> (CycleHistory) query;
-  event_info : () -> (vec EventInfo);
   get_latest_logs : (nat64) -> (vec Log) query;
   get_latest_with_timestamp : (nat64) -> (vec text) query;
   graph_event_attendee_rewards : () -> (vec record { nat64; nat64 });
