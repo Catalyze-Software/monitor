@@ -1,8 +1,7 @@
 <script lang="ts">
-  import EventAttendeeRewards from "$lib/components/graphs/EventAttendeeRewards.svelte"
-  import MemberActivityRewards from "$lib/components/graphs/MemberActivityRewards.svelte"
-  import MemberCountRewards from "$lib/components/graphs/MemberCountRewards.svelte"
-  import { Card } from "@dfinity/gix-components"
+  import MemberActivityRewards from "$lib/components/graphs/MemberActivityRewards.svelte";
+  import MemberCountRewards from "$lib/components/graphs/MemberCountRewards.svelte";
+  import { Card } from "@dfinity/gix-components";
 </script>
 
 <div class="card-container">
@@ -14,11 +13,6 @@
   <div class="card">
     <Card>
       <MemberActivityRewards />
-    </Card>
-  </div>
-  <div class="card">
-    <Card>
-      <EventAttendeeRewards />
     </Card>
   </div>
 </div>

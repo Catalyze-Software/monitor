@@ -34,7 +34,7 @@ pub async fn run() {
         icp_balance,
     };
     MonitorStore::insert(monitor_data);
-    Logs::log(format!("{}", EVENT_MONITOR_DATA.to_string()));
+    Logs::log(EVENT_MONITOR_DATA.to_string());
 
     // Log completion of all operations
     Logs::log(EVENT_COMPLETED_ALL_OPERATION.to_string());

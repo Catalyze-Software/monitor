@@ -40,7 +40,7 @@ fn sorted_memory_sizes() -> Vec<CanisterMemorySize> {
 
 #[update(guard = "is_registered")]
 async fn initiate_run() {
-    ic_cdk::spawn(run())
+    run().await;
 }
 
 #[query(guard = "is_registered")]
@@ -113,6 +113,11 @@ async fn graph_member_activity_rewards() -> Vec<(u64, u64)> {
 #[update(guard = "is_registered")]
 async fn graph_event_attendee_rewards() -> Vec<(u64, u64)> {
     crate::canisters::rewards::graph_event_attendee_rewards().await
+}
+
+#[update]
+fn test_log(log: String) {
+    Logs::log(log)
 }
 
 // Monitor system interface

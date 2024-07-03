@@ -14,36 +14,18 @@ mod utils;
  */
 
 // Canister names
-pub const CANISTER_NAMES: [&str; 11] = [
+pub const CANISTER_NAMES: [&str; 3] = [
     // monitor and dashboard
     "Monitor",
     "Dashboard",
     // catalyze canisters
     "Frontend",
-    "SIWE",
-    "SIWS",
-    // child production names
-    "Members",
-    "Groups",
-    "Profiles",
-    "Events",
-    "Event attendees",
-    "Reports",
 ];
 // Canister list
-pub const CANISTER_IDS: [&str; 11] = [
+pub const CANISTER_IDS: [&str; 3] = [
     // monitor and dashboard
     "6or45-oyaaa-aaaap-absua-cai", // monitor
     "ca77u-aiaaa-aaaap-abxiq-cai", // dashboard
     // catalyze canisters
-    "aqs24-xaaaa-aaaal-qbbea-cai", // catalyze frontend
-    "e3q3a-7yaaa-aaaap-ab3qq-cai", // SIWE
-    "mtcuh-kiaaa-aaaap-ahasa-cai", // SIWS
-    // child production IDs
-    "5nrjv-iaaaa-aaaap-aa4la-cai", // members
-    "5rvte-7aaaa-aaaap-aa4ja-cai", // groups
-    "4vy4w-gaaaa-aaaap-aa4pa-cai", // profiles
-    "zocah-aqaaa-aaaap-aa4qa-cai", // events
-    "zaanp-3aaaa-aaaap-aa4ra-cai", // event attendees
-    "zsg2w-xqaaa-aaaap-aa4sa-cai", // reports
+    "h4xrq-fiaaa-aaaal-ajecq-cai", // catalyze frontend
 ];

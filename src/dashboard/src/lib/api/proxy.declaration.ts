@@ -1,6 +1,5 @@
 import type { Principal } from "@dfinity/principal";
 import type { ActorMethod } from "@dfinity/agent";
-import type { IDL } from "@dfinity/candid";
 
 export type Activity = { UserActivity: Principal } | { GroupMemberCount: bigint };
 export interface Address {
@@ -586,17 +585,17 @@ export type ReportSort =
   | { Subject: SortDirection };
 export type Result = { Ok: Principal } | { Err: string };
 export type Result_1 = { Ok: Principal } | { Err: ApiError };
-export type Result_10 = { Ok: ReportResponse } | { Err: ApiError };
-export type Result_11 = { Ok: Role } | { Err: ApiError };
-export type Result_12 = { Ok: Topic } | { Err: ApiError };
-export type Result_13 = { Ok: null } | { Err: ApiError };
+export type Result_10 = { Ok: ProfileResponse } | { Err: ApiError };
+export type Result_11 = { Ok: ReportResponse } | { Err: ApiError };
+export type Result_12 = { Ok: Role } | { Err: ApiError };
+export type Result_13 = { Ok: Topic } | { Err: ApiError };
 export type Result_14 = { Ok: bigint } | { Err: ApiError };
 export type Result_15 = { Ok: [boolean, boolean, boolean] } | { Err: ApiError };
 export type Result_16 = { Ok: Array<Topic> } | { Err: ApiError };
 export type Result_17 = { Ok: Array<JoinedAttendeeResponse> } | { Err: ApiError };
 export type Result_18 = { Ok: Array<Principal> } | { Err: ApiError };
 export type Result_19 = { Ok: Array<[ProfileResponse, Array<string>]> } | { Err: ApiError };
-export type Result_2 = { Ok: boolean } | { Err: ApiError };
+export type Result_2 = { Ok: null } | { Err: ApiError };
 export type Result_20 = { Ok: Array<InviteAttendeeResponse> } | { Err: ApiError };
 export type Result_21 =
   | {
@@ -619,7 +618,7 @@ export type Result_28 =
     }
   | { Err: ApiError };
 export type Result_29 = { Ok: Array<Role> } | { Err: ApiError };
-export type Result_3 = { Ok: Attendee } | { Err: ApiError };
+export type Result_3 = { Ok: boolean } | { Err: ApiError };
 export type Result_30 = { Ok: PagedResponse_1 } | { Err: ApiError };
 export type Result_31 = { Ok: Array<string> } | { Err: ApiError };
 export type Result_32 = { Ok: PagedResponse_2 } | { Err: ApiError };
@@ -628,12 +627,12 @@ export type Result_34 = { Ok: [bigint, Logger] } | { Err: ApiError };
 export type Result_35 = { Ok: Array<[bigint, UserNotificationData]> } | { Err: ApiError };
 export type Result_36 = { Ok: null } | { Err: string };
 export type Result_37 = { Ok: CanisterOutputCertifiedMessages } | { Err: string };
-export type Result_4 = { Ok: Member } | { Err: ApiError };
-export type Result_5 = { Ok: JoinedAttendeeResponse } | { Err: ApiError };
-export type Result_6 = { Ok: EventResponse } | { Err: ApiError };
-export type Result_7 = { Ok: FriendRequestResponse } | { Err: ApiError };
-export type Result_8 = { Ok: GroupResponse } | { Err: ApiError };
-export type Result_9 = { Ok: ProfileResponse } | { Err: ApiError };
+export type Result_4 = { Ok: Attendee } | { Err: ApiError };
+export type Result_5 = { Ok: Member } | { Err: ApiError };
+export type Result_6 = { Ok: JoinedAttendeeResponse } | { Err: ApiError };
+export type Result_7 = { Ok: EventResponse } | { Err: ApiError };
+export type Result_8 = { Ok: FriendRequestResponse } | { Err: ApiError };
+export type Result_9 = { Ok: GroupResponse } | { Err: ApiError };
 export interface RewardableActivityResponse {
   timestamp: bigint;
   activity: Activity;
@@ -779,53 +778,55 @@ export interface _SERVICE {
   _dev_check_attendees_sync: ActorMethod<[Principal, bigint], [[string, boolean], [string, boolean]]>;
   _dev_check_events_sync: ActorMethod<[bigint, bigint], [[string, boolean], [string, boolean]]>;
   _dev_check_member_sync: ActorMethod<[Principal, bigint], [[string, boolean], [string, boolean]]>;
+  _dev_clear: ActorMethod<[], undefined>;
+  _dev_clear_notifications: ActorMethod<[], undefined>;
   _dev_create_canister: ActorMethod<[Array<Principal>], Result>;
+  _dev_get_all_ids: ActorMethod<[], Array<[string, bigint]>>;
   _dev_get_history_canister: ActorMethod<[], Result_1>;
   _dev_get_reward_canister: ActorMethod<[], Result_1>;
+  _dev_prod_init: ActorMethod<[], Result_2>;
   _dev_send_reward_data: ActorMethod<[], undefined>;
   _dev_set_history_canister: ActorMethod<[Principal], Result_1>;
   _dev_set_reward_canister: ActorMethod<[Principal], Result_1>;
-  _expose: ActorMethod<[], [] | [WSMessage]>;
-  accept_friend_request: ActorMethod<[bigint], Result_2>;
-  accept_owner_request_event_invite: ActorMethod<[bigint], Result_3>;
-  accept_owner_request_group_invite: ActorMethod<[bigint], Result_4>;
-  accept_user_request_event_invite: ActorMethod<[bigint, bigint, Principal], Result_5>;
-  accept_user_request_group_invite: ActorMethod<[bigint, Principal], Result_4>;
-  add_event: ActorMethod<[PostEvent], Result_6>;
-  add_friend_request: ActorMethod<[Principal, string], Result_7>;
-  add_group: ActorMethod<[PostGroup, [] | [string]], Result_8>;
-  add_pinned: ActorMethod<[Subject], Result_9>;
-  add_profile: ActorMethod<[PostProfile], Result_9>;
-  add_report: ActorMethod<[PostReport], Result_10>;
-  add_role_to_group: ActorMethod<[bigint, string, string, bigint], Result_11>;
-  add_starred: ActorMethod<[Subject], Result_9>;
-  add_topic: ActorMethod<[TopicKind, string], Result_12>;
-  add_topics: ActorMethod<[TopicKind, Array<string>], Array<Result_12>>;
+  accept_friend_request: ActorMethod<[bigint], Result_3>;
+  accept_owner_request_event_invite: ActorMethod<[bigint], Result_4>;
+  accept_owner_request_group_invite: ActorMethod<[bigint], Result_5>;
+  accept_user_request_event_invite: ActorMethod<[bigint, bigint, Principal], Result_6>;
+  accept_user_request_group_invite: ActorMethod<[bigint, Principal], Result_5>;
+  add_event: ActorMethod<[PostEvent], Result_7>;
+  add_friend_request: ActorMethod<[Principal, string], Result_8>;
+  add_group: ActorMethod<[PostGroup, [] | [string]], Result_9>;
+  add_pinned: ActorMethod<[Subject], Result_10>;
+  add_profile: ActorMethod<[PostProfile], Result_10>;
+  add_report: ActorMethod<[PostReport], Result_11>;
+  add_role_to_group: ActorMethod<[bigint, string, string, bigint], Result_12>;
+  add_starred: ActorMethod<[Subject], Result_10>;
+  add_topic: ActorMethod<[TopicKind, string], Result_13>;
+  add_topics: ActorMethod<[TopicKind, Array<string>], Array<Result_13>>;
   add_transaction_notification: ActorMethod<[TransactionData], boolean>;
   add_transactions_complete_notification: ActorMethod<[TransactionCompleteData], boolean>;
-  add_wallet_to_group: ActorMethod<[bigint, Principal, string], Result_8>;
-  add_wallet_to_profile: ActorMethod<[PostWallet], Result_9>;
-  approve_code_of_conduct: ActorMethod<[bigint], Result_2>;
-  approve_privacy_policy: ActorMethod<[bigint], Result_2>;
-  approve_terms_of_service: ActorMethod<[bigint], Result_2>;
-  assign_role: ActorMethod<[bigint, string, Principal], Result_4>;
-  ban_group_member: ActorMethod<[bigint, Principal], Result_13>;
-  block_user: ActorMethod<[Principal], Result_9>;
+  add_wallet_to_group: ActorMethod<[bigint, Principal, string], Result_9>;
+  add_wallet_to_profile: ActorMethod<[PostWallet], Result_10>;
+  approve_code_of_conduct: ActorMethod<[bigint], Result_3>;
+  approve_privacy_policy: ActorMethod<[bigint], Result_3>;
+  approve_terms_of_service: ActorMethod<[bigint], Result_3>;
+  assign_role: ActorMethod<[bigint, string, Principal], Result_5>;
+  ban_group_member: ActorMethod<[bigint, Principal], Result_2>;
+  block_user: ActorMethod<[Principal], Result_10>;
   boost: ActorMethod<[Subject, bigint], Result_14>;
-  cancel_event: ActorMethod<[bigint, bigint, string], Result_13>;
+  cancel_event: ActorMethod<[bigint, bigint, string], Result_2>;
   check_new_stores: ActorMethod<[], Array<string>>;
-  decline_friend_request: ActorMethod<[bigint], Result_2>;
-  decline_owner_request_event_invite: ActorMethod<[bigint], Result_3>;
-  decline_owner_request_group_invite: ActorMethod<[bigint], Result_4>;
-  decline_user_request_event_invite: ActorMethod<[bigint, bigint, Principal], Result_5>;
-  decline_user_request_group_invite: ActorMethod<[bigint, Principal], Result_4>;
-  delete_event: ActorMethod<[bigint, bigint], Result_13>;
+  decline_friend_request: ActorMethod<[bigint], Result_3>;
+  decline_owner_request_event_invite: ActorMethod<[bigint], Result_4>;
+  decline_owner_request_group_invite: ActorMethod<[bigint], Result_5>;
+  decline_user_request_event_invite: ActorMethod<[bigint, bigint, Principal], Result_6>;
+  decline_user_request_group_invite: ActorMethod<[bigint, Principal], Result_5>;
+  delete_event: ActorMethod<[bigint, bigint], Result_2>;
   delete_group: ActorMethod<[bigint], Result_15>;
-  edit_event: ActorMethod<[bigint, bigint, UpdateEvent], Result_6>;
-  edit_group: ActorMethod<[bigint, UpdateGroup], Result_8>;
-  edit_profile: ActorMethod<[UpdateProfile], Result_9>;
-  edit_role_permissions: ActorMethod<[bigint, string, Array<PostPermission>], Result_2>;
-  fill_buffer: ActorMethod<[], undefined>;
+  edit_event: ActorMethod<[bigint, bigint, UpdateEvent], Result_7>;
+  edit_group: ActorMethod<[bigint, UpdateGroup], Result_9>;
+  edit_profile: ActorMethod<[UpdateProfile], Result_10>;
+  edit_role_permissions: ActorMethod<[bigint, string, Array<PostPermission>], Result_3>;
   get_all_topics: ActorMethod<[TopicKind], Result_16>;
   get_attending_from_principal: ActorMethod<[Principal], Result_17>;
   get_banned_group_members: ActorMethod<[bigint], Result_18>;
@@ -833,15 +834,15 @@ export interface _SERVICE {
   get_boosted_groups: ActorMethod<[], Array<GroupResponse>>;
   get_connected_clients: ActorMethod<[], Array<Principal>>;
   get_e8s_per_day_boost_cost: ActorMethod<[], bigint>;
-  get_event: ActorMethod<[bigint], Result_6>;
+  get_event: ActorMethod<[bigint], Result_7>;
   get_event_attendees: ActorMethod<[bigint], Result_17>;
   get_event_attendees_profiles_and_roles: ActorMethod<[bigint], Result_19>;
   get_event_count: ActorMethod<[[] | [BigUint64Array | bigint[]], [] | [string]], EventsCount>;
   get_event_invites: ActorMethod<[bigint, bigint], Result_20>;
   get_event_invites_with_profiles: ActorMethod<[bigint], Result_21>;
   get_events: ActorMethod<[bigint, bigint, EventSort, Array<EventFilter>], Result_22>;
-  get_group: ActorMethod<[bigint], Result_8>;
-  get_group_by_name: ActorMethod<[string], Result_8>;
+  get_group: ActorMethod<[bigint], Result_9>;
+  get_group_by_name: ActorMethod<[string], Result_9>;
   get_group_invites: ActorMethod<[bigint], Result_23>;
   get_group_invites_with_profiles: ActorMethod<[bigint], Result_24>;
   get_group_member: ActorMethod<[bigint, Principal], Result_25>;
@@ -862,29 +863,33 @@ export interface _SERVICE {
   get_outgoing_friend_requests: ActorMethod<[], Array<FriendRequestResponse>>;
   get_outgoing_friend_requests_with_profile: ActorMethod<[], Array<[FriendRequestResponse, ProfileResponse]>>;
   get_pinned_by_subject_type: ActorMethod<[SubjectType], Array<SubjectResponse>>;
-  get_profile: ActorMethod<[Principal], Result_9>;
+  get_profile: ActorMethod<[Principal], Result_10>;
   get_profiles: ActorMethod<[Array<Principal>], Array<ProfileResponse>>;
   get_relations: ActorMethod<[RelationType], Array<Principal>>;
   get_relations_count: ActorMethod<[RelationType], bigint>;
   get_relations_with_profiles: ActorMethod<[RelationType], Array<ProfileResponse>>;
   get_remaining_boost_time_in_seconds: ActorMethod<[Subject], Result_14>;
-  get_report: ActorMethod<[bigint, bigint], Result_10>;
+  get_report: ActorMethod<[bigint, bigint], Result_11>;
   get_reports: ActorMethod<[bigint, bigint, ReportSort, Array<ReportFilter>, bigint], Result_32>;
-  get_self_attendee: ActorMethod<[], Result_3>;
+  get_self_attendee: ActorMethod<[], Result_4>;
   get_self_events: ActorMethod<[], Array<EventResponse>>;
   get_self_groups: ActorMethod<[], Array<GroupResponse>>;
-  get_self_member: ActorMethod<[], Result_4>;
+  get_self_member: ActorMethod<[], Result_5>;
   get_starred_by_subject_type: ActorMethod<[SubjectType], BigUint64Array | bigint[]>;
-  get_topic: ActorMethod<[TopicKind, bigint], Result_12>;
+  get_topic: ActorMethod<[TopicKind, bigint], Result_13>;
   get_topics: ActorMethod<[TopicKind, BigUint64Array | bigint[]], Result_16>;
   get_unread_notifications: ActorMethod<[], Array<NotificationResponse>>;
+  get_ws_errors: ActorMethod<[], Array<[bigint, string]>>;
+  get_ws_url: ActorMethod<[], string>;
   http_request: ActorMethod<[HttpRequest], HttpResponse>;
+  icts_name: ActorMethod<[], string>;
+  icts_version: ActorMethod<[], string>;
   invite_to_event: ActorMethod<[bigint, bigint, Principal], Result_33>;
-  invite_to_group: ActorMethod<[bigint, Principal], Result_4>;
-  join_event: ActorMethod<[bigint], Result_5>;
+  invite_to_group: ActorMethod<[bigint, Principal], Result_5>;
+  join_event: ActorMethod<[bigint], Result_6>;
   join_group: ActorMethod<[bigint, [] | [string]], Result_25>;
-  leave_event: ActorMethod<[bigint], Result_13>;
-  leave_group: ActorMethod<[bigint], Result_13>;
+  leave_event: ActorMethod<[bigint], Result_2>;
+  leave_group: ActorMethod<[bigint], Result_2>;
   log: ActorMethod<[PostLog], Result_34>;
   log_login: ActorMethod<[], Result_34>;
   log_size: ActorMethod<[], bigint>;
@@ -898,28 +903,29 @@ export interface _SERVICE {
   multisig_whitelist_notice_notification: ActorMethod<[Array<Principal>, Principal, bigint], boolean>;
   read_reward_buffer: ActorMethod<[], Array<RewardableActivityResponse>>;
   remove_all_notifications: ActorMethod<[], Array<[bigint, UserNotificationData]>>;
-  remove_attendee_from_event: ActorMethod<[bigint, bigint, Principal], Result_13>;
-  remove_attendee_invite_from_event: ActorMethod<[bigint, bigint, Principal], Result_13>;
-  remove_ban_from_group_member: ActorMethod<[bigint, Principal], Result_13>;
-  remove_event_invite: ActorMethod<[bigint], Result_13>;
-  remove_friend: ActorMethod<[Principal], Result_9>;
-  remove_friend_request: ActorMethod<[bigint], Result_2>;
-  remove_group_role: ActorMethod<[bigint, string], Result_2>;
-  remove_invite: ActorMethod<[bigint], Result_13>;
-  remove_member_from_group: ActorMethod<[bigint, Principal], Result_13>;
-  remove_member_invite_from_group: ActorMethod<[bigint, Principal], Result_13>;
-  remove_member_role: ActorMethod<[bigint, string, Principal], Result_4>;
+  remove_attendee_from_event: ActorMethod<[bigint, bigint, Principal], Result_2>;
+  remove_attendee_invite_from_event: ActorMethod<[bigint, bigint, Principal], Result_2>;
+  remove_ban_from_group_member: ActorMethod<[bigint, Principal], Result_2>;
+  remove_event_invite: ActorMethod<[bigint], Result_2>;
+  remove_friend: ActorMethod<[Principal], Result_10>;
+  remove_friend_request: ActorMethod<[bigint], Result_3>;
+  remove_group_role: ActorMethod<[bigint, string], Result_3>;
+  remove_invite: ActorMethod<[bigint], Result_2>;
+  remove_member_from_group: ActorMethod<[bigint, Principal], Result_2>;
+  remove_member_invite_from_group: ActorMethod<[bigint, Principal], Result_2>;
+  remove_member_role: ActorMethod<[bigint, string, Principal], Result_5>;
   remove_notifications: ActorMethod<[BigUint64Array | bigint[]], Array<[bigint, UserNotificationData]>>;
-  remove_pinned: ActorMethod<[Subject], Result_9>;
-  remove_starred: ActorMethod<[Subject], Result_9>;
+  remove_pinned: ActorMethod<[Subject], Result_10>;
+  remove_starred: ActorMethod<[Subject], Result_10>;
   remove_topic: ActorMethod<[TopicKind, bigint], boolean>;
-  remove_wallet_from_group: ActorMethod<[bigint, Principal], Result_8>;
-  remove_wallet_from_profile: ActorMethod<[Principal], Result_9>;
+  remove_wallet_from_group: ActorMethod<[bigint, Principal], Result_9>;
+  remove_wallet_from_profile: ActorMethod<[Principal], Result_10>;
   reward_timer_next_trigger: ActorMethod<[], [] | [bigint]>;
-  set_wallet_as_primary: ActorMethod<[Principal], Result_9>;
+  set_wallet_as_primary: ActorMethod<[Principal], Result_10>;
+  set_ws_url: ActorMethod<[string], undefined>;
   store_stats: ActorMethod<[], Array<string>>;
   test_log: ActorMethod<[], undefined>;
-  unblock_user: ActorMethod<[Principal], Result_9>;
+  unblock_user: ActorMethod<[Principal], Result_10>;
   ws_close: ActorMethod<[CanisterWsCloseArguments], Result_36>;
   ws_get_messages: ActorMethod<[CanisterWsGetMessagesArguments], Result_37>;
   ws_message: ActorMethod<[CanisterWsMessageArguments, [] | [WSMessage]], Result_36>;
@@ -953,148 +959,12 @@ export const idlFactory = ({ IDL }: any) => {
     error_type: ApiErrorType,
   });
   const Result_1 = IDL.Variant({ Ok: IDL.Principal, Err: ApiError });
-  const UserNotificationData = IDL.Record({
-    is_read: IDL.Bool,
-    is_sender: IDL.Bool,
-  });
+  const Result_2 = IDL.Variant({ Ok: IDL.Null, Err: ApiError });
+  const Result_3 = IDL.Variant({ Ok: IDL.Bool, Err: ApiError });
   const InviteType = IDL.Variant({
     OwnerRequest: IDL.Null,
     UserRequest: IDL.Null,
   });
-  const InviteAttendeeResponse = IDL.Record({
-    principal: IDL.Principal,
-    invite_type: InviteType,
-    group_id: IDL.Nat64,
-    event_id: IDL.Nat64,
-  });
-  const JoinedAttendeeResponse = IDL.Record({
-    principal: IDL.Principal,
-    group_id: IDL.Nat64,
-    event_id: IDL.Nat64,
-  });
-  const EventNotificationType = IDL.Variant({
-    UserJoinEvent: IDL.Tuple(IDL.Nat64, IDL.Nat64),
-    JoinEventOwnerRequestDecline: InviteAttendeeResponse,
-    RemoveAttendeeByOwner: JoinedAttendeeResponse,
-    EventReminder: IDL.Nat64,
-    JoinEventUserRequestAccept: InviteAttendeeResponse,
-    RoleAssignByOwner: JoinedAttendeeResponse,
-    JoinEventOwnerRequestAccept: InviteAttendeeResponse,
-    JoinEventOwnerRequest: InviteAttendeeResponse,
-    JoinEventUserRequest: InviteAttendeeResponse,
-    JoinEventUserRequestDecline: InviteAttendeeResponse,
-    UserLeaveEvent: IDL.Tuple(IDL.Nat64, IDL.Nat64),
-    RemoveInviteByOwner: InviteAttendeeResponse,
-  });
-  const FriendRequestResponse = IDL.Record({
-    id: IDL.Nat64,
-    to: IDL.Principal,
-    created_at: IDL.Nat64,
-    requested_by: IDL.Principal,
-    message: IDL.Text,
-  });
-  const RelationNotificationType = IDL.Variant({
-    FriendRequest: FriendRequestResponse,
-    FriendRequestDecline: FriendRequestResponse,
-    FriendRemove: IDL.Principal,
-    FriendRequestReminder: IDL.Nat64,
-    BlockUser: IDL.Principal,
-    FriendRequestRemove: IDL.Nat64,
-    FriendRequestAccept: FriendRequestResponse,
-  });
-  const MemberInvite = IDL.Record({
-    updated_at: IDL.Nat64,
-    invite_type: InviteType,
-    created_at: IDL.Nat64,
-    notification_id: IDL.Opt(IDL.Nat64),
-  });
-  const InviteMemberResponse = IDL.Record({
-    principal: IDL.Principal,
-    group_id: IDL.Nat64,
-    invite: IDL.Opt(MemberInvite),
-  });
-  const JoinedMemberResponse = IDL.Record({
-    principal: IDL.Principal,
-    group_id: IDL.Nat64,
-    roles: IDL.Vec(IDL.Text),
-  });
-  const GroupNotificationType = IDL.Variant({
-    UserLeaveGroup: IDL.Nat64,
-    UserJoinGroup: IDL.Nat64,
-    JoinGroupUserRequest: InviteMemberResponse,
-    JoinGroupUserRequestDecline: InviteMemberResponse,
-    RoleAssignByOwner: JoinedMemberResponse,
-    JoinGroupOwnerRequest: InviteMemberResponse,
-    RemoveMemberByOwner: JoinedMemberResponse,
-    GroupReminder: IDL.Nat64,
-    JoinGroupOwnerRequestDecline: InviteMemberResponse,
-    JoinGroupUserRequestAccept: InviteMemberResponse,
-    RemoveInviteByOwner: InviteMemberResponse,
-    JoinGroupOwnerRequestAccept: InviteMemberResponse,
-  });
-  const MetadataValue = IDL.Variant({
-    Int: IDL.Int,
-    Nat: IDL.Nat,
-    Blob: IDL.Vec(IDL.Nat8),
-    Text: IDL.Text,
-  });
-  const TransactionData = IDL.Record({
-    fee: IDL.Nat,
-    metadata: IDL.Vec(IDL.Tuple(IDL.Text, MetadataValue)),
-    memo: IDL.Opt(IDL.Vec(IDL.Nat8)),
-    sender: IDL.Principal,
-    canister: IDL.Principal,
-    amount: IDL.Nat,
-    block_height: IDL.Nat,
-    receiver: IDL.Principal,
-  });
-  const TransactionCompleteData = IDL.Record({
-    metadata: IDL.Vec(IDL.Tuple(IDL.Text, MetadataValue)),
-    sender: IDL.Principal,
-    total_amount_distributed: IDL.Nat,
-    canister: IDL.Principal,
-    receiver_count: IDL.Nat64,
-  });
-  const TransactionNotificationType = IDL.Variant({
-    SingleTransaction: TransactionData,
-    TransactionsComplete: TransactionCompleteData,
-  });
-  const MultisigNotificationType = IDL.Variant({
-    ProposalDecline: IDL.Tuple(IDL.Principal, IDL.Nat64, IDL.Nat64),
-    ProposalAccept: IDL.Tuple(IDL.Principal, IDL.Nat64, IDL.Nat64),
-    WhitelistNotice: IDL.Tuple(IDL.Principal, IDL.Nat64),
-    ProposalStatusUpdate: IDL.Tuple(IDL.Principal, IDL.Nat64, IDL.Nat64),
-    NewProposal: IDL.Tuple(IDL.Principal, IDL.Nat64, IDL.Nat64),
-  });
-  const NotificationType = IDL.Variant({
-    Event: EventNotificationType,
-    Relation: RelationNotificationType,
-    Group: GroupNotificationType,
-    Transaction: TransactionNotificationType,
-    Multisig: MultisigNotificationType,
-  });
-  const Notification = IDL.Record({
-    updated_at: IDL.Nat64,
-    metadata: IDL.Opt(IDL.Text),
-    is_accepted: IDL.Opt(IDL.Bool),
-    is_actionable: IDL.Bool,
-    created_at: IDL.Nat64,
-    sender: IDL.Principal,
-    notification_type: NotificationType,
-    processed_by: IDL.Opt(IDL.Principal),
-  });
-  const NotificationResponse = IDL.Record({
-    id: IDL.Opt(IDL.Nat64),
-    user_data: IDL.Opt(UserNotificationData),
-    notification: Notification,
-  });
-  const WSMessage = IDL.Variant({
-    Error: ApiError,
-    Notification: NotificationResponse,
-    SendNotification: IDL.Tuple(IDL.Principal, NotificationResponse),
-    UnreadCount: IDL.Nat64,
-  });
-  const Result_2 = IDL.Variant({ Ok: IDL.Bool, Err: ApiError });
   const AttendeeInvite = IDL.Record({
     updated_at: IDL.Nat64,
     invite_type: InviteType,
@@ -1111,7 +981,13 @@ export const idlFactory = ({ IDL }: any) => {
     invites: IDL.Vec(IDL.Tuple(IDL.Nat64, AttendeeInvite)),
     joined: IDL.Vec(IDL.Tuple(IDL.Nat64, AttendeeJoin)),
   });
-  const Result_3 = IDL.Variant({ Ok: Attendee, Err: ApiError });
+  const Result_4 = IDL.Variant({ Ok: Attendee, Err: ApiError });
+  const MemberInvite = IDL.Record({
+    updated_at: IDL.Nat64,
+    invite_type: InviteType,
+    created_at: IDL.Nat64,
+    notification_id: IDL.Opt(IDL.Nat64),
+  });
   const Join = IDL.Record({
     updated_at: IDL.Nat64,
     created_at: IDL.Nat64,
@@ -1121,8 +997,13 @@ export const idlFactory = ({ IDL }: any) => {
     invites: IDL.Vec(IDL.Tuple(IDL.Nat64, MemberInvite)),
     joined: IDL.Vec(IDL.Tuple(IDL.Nat64, Join)),
   });
-  const Result_4 = IDL.Variant({ Ok: Member, Err: ApiError });
-  const Result_5 = IDL.Variant({
+  const Result_5 = IDL.Variant({ Ok: Member, Err: ApiError });
+  const JoinedAttendeeResponse = IDL.Record({
+    principal: IDL.Principal,
+    group_id: IDL.Nat64,
+    event_id: IDL.Nat64,
+  });
+  const Result_6 = IDL.Variant({
     Ok: JoinedAttendeeResponse,
     Err: ApiError,
   });
@@ -1231,6 +1112,12 @@ export const idlFactory = ({ IDL }: any) => {
     blockheight: IDL.Nat64,
     notification_id: IDL.Opt(IDL.Nat64),
   });
+  const InviteAttendeeResponse = IDL.Record({
+    principal: IDL.Principal,
+    invite_type: InviteType,
+    group_id: IDL.Nat64,
+    event_id: IDL.Nat64,
+  });
   const EventCallerData = IDL.Record({
     is_starred: IDL.Bool,
     joined: IDL.Opt(JoinedAttendeeResponse),
@@ -1259,8 +1146,15 @@ export const idlFactory = ({ IDL }: any) => {
     location: Location,
     is_deleted: IDL.Bool,
   });
-  const Result_6 = IDL.Variant({ Ok: EventResponse, Err: ApiError });
-  const Result_7 = IDL.Variant({
+  const Result_7 = IDL.Variant({ Ok: EventResponse, Err: ApiError });
+  const FriendRequestResponse = IDL.Record({
+    id: IDL.Nat64,
+    to: IDL.Principal,
+    created_at: IDL.Nat64,
+    requested_by: IDL.Principal,
+    message: IDL.Text,
+  });
+  const Result_8 = IDL.Variant({
     Ok: FriendRequestResponse,
     Err: ApiError,
   });
@@ -1275,6 +1169,16 @@ export const idlFactory = ({ IDL }: any) => {
     image: Asset,
     privacy_gated_type_amount: IDL.Opt(IDL.Nat64),
     location: Location,
+  });
+  const JoinedMemberResponse = IDL.Record({
+    principal: IDL.Principal,
+    group_id: IDL.Nat64,
+    roles: IDL.Vec(IDL.Text),
+  });
+  const InviteMemberResponse = IDL.Record({
+    principal: IDL.Principal,
+    group_id: IDL.Nat64,
+    invite: IDL.Opt(MemberInvite),
   });
   const GroupCallerData = IDL.Record({
     is_starred: IDL.Bool,
@@ -1324,7 +1228,7 @@ export const idlFactory = ({ IDL }: any) => {
     roles: IDL.Vec(Role),
     is_deleted: IDL.Bool,
   });
-  const Result_8 = IDL.Variant({ Ok: GroupResponse, Err: ApiError });
+  const Result_9 = IDL.Variant({ Ok: GroupResponse, Err: ApiError });
   const DocumentDetails = IDL.Record({
     approved_date: IDL.Nat64,
     approved_version: IDL.Nat64,
@@ -1379,7 +1283,7 @@ export const idlFactory = ({ IDL }: any) => {
     skills: IDL.Vec(IDL.Nat32),
     application_role: ApplicationRole,
   });
-  const Result_9 = IDL.Variant({ Ok: ProfileResponse, Err: ApiError });
+  const Result_10 = IDL.Variant({ Ok: ProfileResponse, Err: ApiError });
   const PostProfile = IDL.Record({
     username: IDL.Text,
     display_name: IDL.Text,
@@ -1480,8 +1384,8 @@ export const idlFactory = ({ IDL }: any) => {
     message: IDL.Text,
     reported_by: IDL.Principal,
   });
-  const Result_10 = IDL.Variant({ Ok: ReportResponse, Err: ApiError });
-  const Result_11 = IDL.Variant({ Ok: Role, Err: ApiError });
+  const Result_11 = IDL.Variant({ Ok: ReportResponse, Err: ApiError });
+  const Result_12 = IDL.Variant({ Ok: Role, Err: ApiError });
   const TopicKind = IDL.Variant({
     Tag: IDL.Null,
     Skill: IDL.Null,
@@ -1492,12 +1396,34 @@ export const idlFactory = ({ IDL }: any) => {
     value: IDL.Text,
     kind: TopicKind,
   });
-  const Result_12 = IDL.Variant({ Ok: Topic, Err: ApiError });
+  const Result_13 = IDL.Variant({ Ok: Topic, Err: ApiError });
+  const MetadataValue = IDL.Variant({
+    Int: IDL.Int,
+    Nat: IDL.Nat,
+    Blob: IDL.Vec(IDL.Nat8),
+    Text: IDL.Text,
+  });
+  const TransactionData = IDL.Record({
+    fee: IDL.Nat,
+    metadata: IDL.Vec(IDL.Tuple(IDL.Text, MetadataValue)),
+    memo: IDL.Opt(IDL.Vec(IDL.Nat8)),
+    sender: IDL.Principal,
+    canister: IDL.Principal,
+    amount: IDL.Nat,
+    block_height: IDL.Nat,
+    receiver: IDL.Principal,
+  });
+  const TransactionCompleteData = IDL.Record({
+    metadata: IDL.Vec(IDL.Tuple(IDL.Text, MetadataValue)),
+    sender: IDL.Principal,
+    total_amount_distributed: IDL.Nat,
+    canister: IDL.Principal,
+    receiver_count: IDL.Nat64,
+  });
   const PostWallet = IDL.Record({
     principal: IDL.Principal,
     provider: IDL.Text,
   });
-  const Result_13 = IDL.Variant({ Ok: IDL.Null, Err: ApiError });
   const Result_14 = IDL.Variant({ Ok: IDL.Nat64, Err: ApiError });
   const Result_15 = IDL.Variant({
     Ok: IDL.Tuple(IDL.Bool, IDL.Bool, IDL.Bool),
@@ -1671,6 +1597,80 @@ export const idlFactory = ({ IDL }: any) => {
     created_on: IDL.Nat64,
   });
   const Result_31 = IDL.Variant({ Ok: IDL.Vec(IDL.Text), Err: ApiError });
+  const UserNotificationData = IDL.Record({
+    is_read: IDL.Bool,
+    is_sender: IDL.Bool,
+  });
+  const EventNotificationType = IDL.Variant({
+    UserJoinEvent: IDL.Tuple(IDL.Nat64, IDL.Nat64),
+    JoinEventOwnerRequestDecline: InviteAttendeeResponse,
+    RemoveAttendeeByOwner: JoinedAttendeeResponse,
+    EventReminder: IDL.Nat64,
+    JoinEventUserRequestAccept: InviteAttendeeResponse,
+    RoleAssignByOwner: JoinedAttendeeResponse,
+    JoinEventOwnerRequestAccept: InviteAttendeeResponse,
+    JoinEventOwnerRequest: InviteAttendeeResponse,
+    JoinEventUserRequest: InviteAttendeeResponse,
+    JoinEventUserRequestDecline: InviteAttendeeResponse,
+    UserLeaveEvent: IDL.Tuple(IDL.Nat64, IDL.Nat64),
+    RemoveInviteByOwner: InviteAttendeeResponse,
+  });
+  const RelationNotificationType = IDL.Variant({
+    FriendRequest: FriendRequestResponse,
+    FriendRequestDecline: FriendRequestResponse,
+    FriendRemove: IDL.Principal,
+    FriendRequestReminder: IDL.Nat64,
+    BlockUser: IDL.Principal,
+    FriendRequestRemove: IDL.Nat64,
+    FriendRequestAccept: FriendRequestResponse,
+  });
+  const GroupNotificationType = IDL.Variant({
+    UserLeaveGroup: IDL.Nat64,
+    UserJoinGroup: IDL.Nat64,
+    JoinGroupUserRequest: InviteMemberResponse,
+    JoinGroupUserRequestDecline: InviteMemberResponse,
+    RoleAssignByOwner: JoinedMemberResponse,
+    JoinGroupOwnerRequest: InviteMemberResponse,
+    RemoveMemberByOwner: JoinedMemberResponse,
+    GroupReminder: IDL.Nat64,
+    JoinGroupOwnerRequestDecline: InviteMemberResponse,
+    JoinGroupUserRequestAccept: InviteMemberResponse,
+    RemoveInviteByOwner: InviteMemberResponse,
+    JoinGroupOwnerRequestAccept: InviteMemberResponse,
+  });
+  const TransactionNotificationType = IDL.Variant({
+    SingleTransaction: TransactionData,
+    TransactionsComplete: TransactionCompleteData,
+  });
+  const MultisigNotificationType = IDL.Variant({
+    ProposalDecline: IDL.Tuple(IDL.Principal, IDL.Nat64, IDL.Nat64),
+    ProposalAccept: IDL.Tuple(IDL.Principal, IDL.Nat64, IDL.Nat64),
+    WhitelistNotice: IDL.Tuple(IDL.Principal, IDL.Nat64),
+    ProposalStatusUpdate: IDL.Tuple(IDL.Principal, IDL.Nat64, IDL.Nat64),
+    NewProposal: IDL.Tuple(IDL.Principal, IDL.Nat64, IDL.Nat64),
+  });
+  const NotificationType = IDL.Variant({
+    Event: EventNotificationType,
+    Relation: RelationNotificationType,
+    Group: GroupNotificationType,
+    Transaction: TransactionNotificationType,
+    Multisig: MultisigNotificationType,
+  });
+  const Notification = IDL.Record({
+    updated_at: IDL.Nat64,
+    metadata: IDL.Opt(IDL.Text),
+    is_accepted: IDL.Opt(IDL.Bool),
+    is_actionable: IDL.Bool,
+    created_at: IDL.Nat64,
+    sender: IDL.Principal,
+    notification_type: NotificationType,
+    processed_by: IDL.Opt(IDL.Principal),
+  });
+  const NotificationResponse = IDL.Record({
+    id: IDL.Opt(IDL.Nat64),
+    user_data: IDL.Opt(UserNotificationData),
+    notification: Notification,
+  });
   const SubjectType = IDL.Variant({
     Event: IDL.Null,
     Group: IDL.Null,
@@ -1778,6 +1778,12 @@ export const idlFactory = ({ IDL }: any) => {
     is_service_message: IDL.Bool,
   });
   const CanisterWsMessageArguments = IDL.Record({ msg: WebsocketMessage });
+  const WSMessage = IDL.Variant({
+    Error: ApiError,
+    Notification: NotificationResponse,
+    SendNotification: IDL.Tuple(IDL.Principal, NotificationResponse),
+    UnreadCount: IDL.Nat64,
+  });
   const CanisterWsOpenArguments = IDL.Record({
     gateway_principal: IDL.Principal,
     client_nonce: IDL.Nat64,
@@ -1799,53 +1805,55 @@ export const idlFactory = ({ IDL }: any) => {
       [IDL.Tuple(IDL.Text, IDL.Bool), IDL.Tuple(IDL.Text, IDL.Bool)],
       ["query"]
     ),
+    _dev_clear: IDL.Func([], [], []),
+    _dev_clear_notifications: IDL.Func([], [], []),
     _dev_create_canister: IDL.Func([IDL.Vec(IDL.Principal)], [Result], []),
+    _dev_get_all_ids: IDL.Func([], [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat64))], ["query"]),
     _dev_get_history_canister: IDL.Func([], [Result_1], ["query"]),
     _dev_get_reward_canister: IDL.Func([], [Result_1], ["query"]),
+    _dev_prod_init: IDL.Func([], [Result_2], []),
     _dev_send_reward_data: IDL.Func([], [], []),
     _dev_set_history_canister: IDL.Func([IDL.Principal], [Result_1], []),
     _dev_set_reward_canister: IDL.Func([IDL.Principal], [Result_1], []),
-    _expose: IDL.Func([], [IDL.Opt(WSMessage)], ["query"]),
-    accept_friend_request: IDL.Func([IDL.Nat64], [Result_2], []),
-    accept_owner_request_event_invite: IDL.Func([IDL.Nat64], [Result_3], []),
-    accept_owner_request_group_invite: IDL.Func([IDL.Nat64], [Result_4], []),
-    accept_user_request_event_invite: IDL.Func([IDL.Nat64, IDL.Nat64, IDL.Principal], [Result_5], []),
-    accept_user_request_group_invite: IDL.Func([IDL.Nat64, IDL.Principal], [Result_4], []),
-    add_event: IDL.Func([PostEvent], [Result_6], []),
-    add_friend_request: IDL.Func([IDL.Principal, IDL.Text], [Result_7], []),
-    add_group: IDL.Func([PostGroup, IDL.Opt(IDL.Text)], [Result_8], []),
-    add_pinned: IDL.Func([Subject], [Result_9], []),
-    add_profile: IDL.Func([PostProfile], [Result_9], []),
-    add_report: IDL.Func([PostReport], [Result_10], []),
-    add_role_to_group: IDL.Func([IDL.Nat64, IDL.Text, IDL.Text, IDL.Nat64], [Result_11], []),
-    add_starred: IDL.Func([Subject], [Result_9], []),
-    add_topic: IDL.Func([TopicKind, IDL.Text], [Result_12], []),
-    add_topics: IDL.Func([TopicKind, IDL.Vec(IDL.Text)], [IDL.Vec(Result_12)], []),
+    accept_friend_request: IDL.Func([IDL.Nat64], [Result_3], []),
+    accept_owner_request_event_invite: IDL.Func([IDL.Nat64], [Result_4], []),
+    accept_owner_request_group_invite: IDL.Func([IDL.Nat64], [Result_5], []),
+    accept_user_request_event_invite: IDL.Func([IDL.Nat64, IDL.Nat64, IDL.Principal], [Result_6], []),
+    accept_user_request_group_invite: IDL.Func([IDL.Nat64, IDL.Principal], [Result_5], []),
+    add_event: IDL.Func([PostEvent], [Result_7], []),
+    add_friend_request: IDL.Func([IDL.Principal, IDL.Text], [Result_8], []),
+    add_group: IDL.Func([PostGroup, IDL.Opt(IDL.Text)], [Result_9], []),
+    add_pinned: IDL.Func([Subject], [Result_10], []),
+    add_profile: IDL.Func([PostProfile], [Result_10], []),
+    add_report: IDL.Func([PostReport], [Result_11], []),
+    add_role_to_group: IDL.Func([IDL.Nat64, IDL.Text, IDL.Text, IDL.Nat64], [Result_12], []),
+    add_starred: IDL.Func([Subject], [Result_10], []),
+    add_topic: IDL.Func([TopicKind, IDL.Text], [Result_13], []),
+    add_topics: IDL.Func([TopicKind, IDL.Vec(IDL.Text)], [IDL.Vec(Result_13)], []),
     add_transaction_notification: IDL.Func([TransactionData], [IDL.Bool], []),
     add_transactions_complete_notification: IDL.Func([TransactionCompleteData], [IDL.Bool], []),
-    add_wallet_to_group: IDL.Func([IDL.Nat64, IDL.Principal, IDL.Text], [Result_8], []),
-    add_wallet_to_profile: IDL.Func([PostWallet], [Result_9], []),
-    approve_code_of_conduct: IDL.Func([IDL.Nat64], [Result_2], []),
-    approve_privacy_policy: IDL.Func([IDL.Nat64], [Result_2], []),
-    approve_terms_of_service: IDL.Func([IDL.Nat64], [Result_2], []),
-    assign_role: IDL.Func([IDL.Nat64, IDL.Text, IDL.Principal], [Result_4], []),
-    ban_group_member: IDL.Func([IDL.Nat64, IDL.Principal], [Result_13], []),
-    block_user: IDL.Func([IDL.Principal], [Result_9], []),
+    add_wallet_to_group: IDL.Func([IDL.Nat64, IDL.Principal, IDL.Text], [Result_9], []),
+    add_wallet_to_profile: IDL.Func([PostWallet], [Result_10], []),
+    approve_code_of_conduct: IDL.Func([IDL.Nat64], [Result_3], []),
+    approve_privacy_policy: IDL.Func([IDL.Nat64], [Result_3], []),
+    approve_terms_of_service: IDL.Func([IDL.Nat64], [Result_3], []),
+    assign_role: IDL.Func([IDL.Nat64, IDL.Text, IDL.Principal], [Result_5], []),
+    ban_group_member: IDL.Func([IDL.Nat64, IDL.Principal], [Result_2], []),
+    block_user: IDL.Func([IDL.Principal], [Result_10], []),
     boost: IDL.Func([Subject, IDL.Nat64], [Result_14], []),
-    cancel_event: IDL.Func([IDL.Nat64, IDL.Nat64, IDL.Text], [Result_13], []),
+    cancel_event: IDL.Func([IDL.Nat64, IDL.Nat64, IDL.Text], [Result_2], []),
     check_new_stores: IDL.Func([], [IDL.Vec(IDL.Text)], ["query"]),
-    decline_friend_request: IDL.Func([IDL.Nat64], [Result_2], []),
-    decline_owner_request_event_invite: IDL.Func([IDL.Nat64], [Result_3], []),
-    decline_owner_request_group_invite: IDL.Func([IDL.Nat64], [Result_4], []),
-    decline_user_request_event_invite: IDL.Func([IDL.Nat64, IDL.Nat64, IDL.Principal], [Result_5], []),
-    decline_user_request_group_invite: IDL.Func([IDL.Nat64, IDL.Principal], [Result_4], []),
-    delete_event: IDL.Func([IDL.Nat64, IDL.Nat64], [Result_13], []),
+    decline_friend_request: IDL.Func([IDL.Nat64], [Result_3], []),
+    decline_owner_request_event_invite: IDL.Func([IDL.Nat64], [Result_4], []),
+    decline_owner_request_group_invite: IDL.Func([IDL.Nat64], [Result_5], []),
+    decline_user_request_event_invite: IDL.Func([IDL.Nat64, IDL.Nat64, IDL.Principal], [Result_6], []),
+    decline_user_request_group_invite: IDL.Func([IDL.Nat64, IDL.Principal], [Result_5], []),
+    delete_event: IDL.Func([IDL.Nat64, IDL.Nat64], [Result_2], []),
     delete_group: IDL.Func([IDL.Nat64], [Result_15], []),
-    edit_event: IDL.Func([IDL.Nat64, IDL.Nat64, UpdateEvent], [Result_6], []),
-    edit_group: IDL.Func([IDL.Nat64, UpdateGroup], [Result_8], []),
-    edit_profile: IDL.Func([UpdateProfile], [Result_9], []),
-    edit_role_permissions: IDL.Func([IDL.Nat64, IDL.Text, IDL.Vec(PostPermission)], [Result_2], []),
-    fill_buffer: IDL.Func([], [], []),
+    edit_event: IDL.Func([IDL.Nat64, IDL.Nat64, UpdateEvent], [Result_7], []),
+    edit_group: IDL.Func([IDL.Nat64, UpdateGroup], [Result_9], []),
+    edit_profile: IDL.Func([UpdateProfile], [Result_10], []),
+    edit_role_permissions: IDL.Func([IDL.Nat64, IDL.Text, IDL.Vec(PostPermission)], [Result_3], []),
     get_all_topics: IDL.Func([TopicKind], [Result_16], ["query"]),
     get_attending_from_principal: IDL.Func([IDL.Principal], [Result_17], ["query"]),
     get_banned_group_members: IDL.Func([IDL.Nat64], [Result_18], ["query"]),
@@ -1853,15 +1861,15 @@ export const idlFactory = ({ IDL }: any) => {
     get_boosted_groups: IDL.Func([], [IDL.Vec(GroupResponse)], ["query"]),
     get_connected_clients: IDL.Func([], [IDL.Vec(IDL.Principal)], ["query"]),
     get_e8s_per_day_boost_cost: IDL.Func([], [IDL.Nat64], ["query"]),
-    get_event: IDL.Func([IDL.Nat64], [Result_6], ["query"]),
+    get_event: IDL.Func([IDL.Nat64], [Result_7], ["query"]),
     get_event_attendees: IDL.Func([IDL.Nat64], [Result_17], ["query"]),
     get_event_attendees_profiles_and_roles: IDL.Func([IDL.Nat64], [Result_19], ["query"]),
     get_event_count: IDL.Func([IDL.Opt(IDL.Vec(IDL.Nat64)), IDL.Opt(IDL.Text)], [EventsCount], ["query"]),
     get_event_invites: IDL.Func([IDL.Nat64, IDL.Nat64], [Result_20], ["query"]),
     get_event_invites_with_profiles: IDL.Func([IDL.Nat64], [Result_21], ["query"]),
     get_events: IDL.Func([IDL.Nat64, IDL.Nat64, EventSort, IDL.Vec(EventFilter)], [Result_22], ["query"]),
-    get_group: IDL.Func([IDL.Nat64], [Result_8], ["query"]),
-    get_group_by_name: IDL.Func([IDL.Text], [Result_8], ["query"]),
+    get_group: IDL.Func([IDL.Nat64], [Result_9], ["query"]),
+    get_group_by_name: IDL.Func([IDL.Text], [Result_9], ["query"]),
     get_group_invites: IDL.Func([IDL.Nat64], [Result_23], ["query"]),
     get_group_invites_with_profiles: IDL.Func([IDL.Nat64], [Result_24], ["query"]),
     get_group_member: IDL.Func([IDL.Nat64, IDL.Principal], [Result_25], ["query"]),
@@ -1890,29 +1898,33 @@ export const idlFactory = ({ IDL }: any) => {
       ["query"]
     ),
     get_pinned_by_subject_type: IDL.Func([SubjectType], [IDL.Vec(SubjectResponse)], ["query"]),
-    get_profile: IDL.Func([IDL.Principal], [Result_9], ["query"]),
+    get_profile: IDL.Func([IDL.Principal], [Result_10], ["query"]),
     get_profiles: IDL.Func([IDL.Vec(IDL.Principal)], [IDL.Vec(ProfileResponse)], ["query"]),
     get_relations: IDL.Func([RelationType], [IDL.Vec(IDL.Principal)], ["query"]),
     get_relations_count: IDL.Func([RelationType], [IDL.Nat64], ["query"]),
     get_relations_with_profiles: IDL.Func([RelationType], [IDL.Vec(ProfileResponse)], ["query"]),
     get_remaining_boost_time_in_seconds: IDL.Func([Subject], [Result_14], ["query"]),
-    get_report: IDL.Func([IDL.Nat64, IDL.Nat64], [Result_10], ["query"]),
+    get_report: IDL.Func([IDL.Nat64, IDL.Nat64], [Result_11], ["query"]),
     get_reports: IDL.Func([IDL.Nat64, IDL.Nat64, ReportSort, IDL.Vec(ReportFilter), IDL.Nat64], [Result_32], ["query"]),
-    get_self_attendee: IDL.Func([], [Result_3], ["query"]),
+    get_self_attendee: IDL.Func([], [Result_4], ["query"]),
     get_self_events: IDL.Func([], [IDL.Vec(EventResponse)], ["query"]),
     get_self_groups: IDL.Func([], [IDL.Vec(GroupResponse)], ["query"]),
-    get_self_member: IDL.Func([], [Result_4], ["query"]),
+    get_self_member: IDL.Func([], [Result_5], ["query"]),
     get_starred_by_subject_type: IDL.Func([SubjectType], [IDL.Vec(IDL.Nat64)], ["query"]),
-    get_topic: IDL.Func([TopicKind, IDL.Nat64], [Result_12], ["query"]),
+    get_topic: IDL.Func([TopicKind, IDL.Nat64], [Result_13], ["query"]),
     get_topics: IDL.Func([TopicKind, IDL.Vec(IDL.Nat64)], [Result_16], ["query"]),
     get_unread_notifications: IDL.Func([], [IDL.Vec(NotificationResponse)], ["query"]),
+    get_ws_errors: IDL.Func([], [IDL.Vec(IDL.Tuple(IDL.Nat64, IDL.Text))], ["query"]),
+    get_ws_url: IDL.Func([], [IDL.Text], ["query"]),
     http_request: IDL.Func([HttpRequest], [HttpResponse], ["query"]),
+    icts_name: IDL.Func([], [IDL.Text], ["query"]),
+    icts_version: IDL.Func([], [IDL.Text], ["query"]),
     invite_to_event: IDL.Func([IDL.Nat64, IDL.Nat64, IDL.Principal], [Result_33], []),
-    invite_to_group: IDL.Func([IDL.Nat64, IDL.Principal], [Result_4], []),
-    join_event: IDL.Func([IDL.Nat64], [Result_5], []),
+    invite_to_group: IDL.Func([IDL.Nat64, IDL.Principal], [Result_5], []),
+    join_event: IDL.Func([IDL.Nat64], [Result_6], []),
     join_group: IDL.Func([IDL.Nat64, IDL.Opt(IDL.Text)], [Result_25], []),
-    leave_event: IDL.Func([IDL.Nat64], [Result_13], []),
-    leave_group: IDL.Func([IDL.Nat64], [Result_13], []),
+    leave_event: IDL.Func([IDL.Nat64], [Result_2], []),
+    leave_group: IDL.Func([IDL.Nat64], [Result_2], []),
     log: IDL.Func([PostLog], [Result_34], []),
     log_login: IDL.Func([], [Result_34], []),
     log_size: IDL.Func([], [IDL.Nat64], ["query"]),
@@ -1946,28 +1958,29 @@ export const idlFactory = ({ IDL }: any) => {
     ),
     read_reward_buffer: IDL.Func([], [IDL.Vec(RewardableActivityResponse)], ["query"]),
     remove_all_notifications: IDL.Func([], [IDL.Vec(IDL.Tuple(IDL.Nat64, UserNotificationData))], []),
-    remove_attendee_from_event: IDL.Func([IDL.Nat64, IDL.Nat64, IDL.Principal], [Result_13], []),
-    remove_attendee_invite_from_event: IDL.Func([IDL.Nat64, IDL.Nat64, IDL.Principal], [Result_13], []),
-    remove_ban_from_group_member: IDL.Func([IDL.Nat64, IDL.Principal], [Result_13], []),
-    remove_event_invite: IDL.Func([IDL.Nat64], [Result_13], []),
-    remove_friend: IDL.Func([IDL.Principal], [Result_9], []),
-    remove_friend_request: IDL.Func([IDL.Nat64], [Result_2], []),
-    remove_group_role: IDL.Func([IDL.Nat64, IDL.Text], [Result_2], []),
-    remove_invite: IDL.Func([IDL.Nat64], [Result_13], []),
-    remove_member_from_group: IDL.Func([IDL.Nat64, IDL.Principal], [Result_13], []),
-    remove_member_invite_from_group: IDL.Func([IDL.Nat64, IDL.Principal], [Result_13], []),
-    remove_member_role: IDL.Func([IDL.Nat64, IDL.Text, IDL.Principal], [Result_4], []),
+    remove_attendee_from_event: IDL.Func([IDL.Nat64, IDL.Nat64, IDL.Principal], [Result_2], []),
+    remove_attendee_invite_from_event: IDL.Func([IDL.Nat64, IDL.Nat64, IDL.Principal], [Result_2], []),
+    remove_ban_from_group_member: IDL.Func([IDL.Nat64, IDL.Principal], [Result_2], []),
+    remove_event_invite: IDL.Func([IDL.Nat64], [Result_2], []),
+    remove_friend: IDL.Func([IDL.Principal], [Result_10], []),
+    remove_friend_request: IDL.Func([IDL.Nat64], [Result_3], []),
+    remove_group_role: IDL.Func([IDL.Nat64, IDL.Text], [Result_3], []),
+    remove_invite: IDL.Func([IDL.Nat64], [Result_2], []),
+    remove_member_from_group: IDL.Func([IDL.Nat64, IDL.Principal], [Result_2], []),
+    remove_member_invite_from_group: IDL.Func([IDL.Nat64, IDL.Principal], [Result_2], []),
+    remove_member_role: IDL.Func([IDL.Nat64, IDL.Text, IDL.Principal], [Result_5], []),
     remove_notifications: IDL.Func([IDL.Vec(IDL.Nat64)], [IDL.Vec(IDL.Tuple(IDL.Nat64, UserNotificationData))], []),
-    remove_pinned: IDL.Func([Subject], [Result_9], []),
-    remove_starred: IDL.Func([Subject], [Result_9], []),
+    remove_pinned: IDL.Func([Subject], [Result_10], []),
+    remove_starred: IDL.Func([Subject], [Result_10], []),
     remove_topic: IDL.Func([TopicKind, IDL.Nat64], [IDL.Bool], []),
-    remove_wallet_from_group: IDL.Func([IDL.Nat64, IDL.Principal], [Result_8], []),
-    remove_wallet_from_profile: IDL.Func([IDL.Principal], [Result_9], []),
+    remove_wallet_from_group: IDL.Func([IDL.Nat64, IDL.Principal], [Result_9], []),
+    remove_wallet_from_profile: IDL.Func([IDL.Principal], [Result_10], []),
     reward_timer_next_trigger: IDL.Func([], [IDL.Opt(IDL.Nat64)], ["query"]),
-    set_wallet_as_primary: IDL.Func([IDL.Principal], [Result_9], []),
+    set_wallet_as_primary: IDL.Func([IDL.Principal], [Result_10], []),
+    set_ws_url: IDL.Func([IDL.Text], [], []),
     store_stats: IDL.Func([], [IDL.Vec(IDL.Text)], ["query"]),
     test_log: IDL.Func([], [], []),
-    unblock_user: IDL.Func([IDL.Principal], [Result_9], []),
+    unblock_user: IDL.Func([IDL.Principal], [Result_10], []),
     ws_close: IDL.Func([CanisterWsCloseArguments], [Result_36], []),
     ws_get_messages: IDL.Func([CanisterWsGetMessagesArguments], [Result_37], ["query"]),
     ws_message: IDL.Func([CanisterWsMessageArguments, IDL.Opt(WSMessage)], [Result_36], []),

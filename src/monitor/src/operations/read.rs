@@ -10,7 +10,7 @@ use crate::{
     },
     CANISTER_IDS, CANISTER_NAMES,
 };
-use candid::{Nat, Principal};
+use candid::Principal;
 use ic_cdk::api::{
     management_canister::main::{
         CanisterStatusResponse, CanisterStatusType, DefiniteCanisterSettings, QueryStats,
@@ -33,7 +33,7 @@ pub async fn take_snapshot() -> Snapshot {
 
     let root_canister_snapshot = CanisterSnapshot {
         canister_name: "SNS Root".to_string(),
-        canister_id: summary.root.as_ref().unwrap().canister_id.unwrap().clone(),
+        canister_id: summary.root.as_ref().unwrap().canister_id.unwrap(),
         status: summary.root.unwrap().status.unwrap().into(),
     };
 
@@ -41,7 +41,7 @@ pub async fn take_snapshot() -> Snapshot {
 
     let swap_canister_snapshot = CanisterSnapshot {
         canister_name: "SNS Swap".to_string(),
-        canister_id: summary.swap.as_ref().unwrap().canister_id.unwrap().clone(),
+        canister_id: summary.swap.as_ref().unwrap().canister_id.unwrap(),
         status: summary.swap.unwrap().status.unwrap().into(),
     };
 
@@ -49,13 +49,7 @@ pub async fn take_snapshot() -> Snapshot {
 
     let ledger_canister_snapshot = CanisterSnapshot {
         canister_name: "SNS Ledger".to_string(),
-        canister_id: summary
-            .ledger
-            .as_ref()
-            .unwrap()
-            .canister_id
-            .unwrap()
-            .clone(),
+        canister_id: summary.ledger.as_ref().unwrap().canister_id.unwrap(),
         status: summary.ledger.unwrap().status.unwrap().into(),
     };
 
@@ -63,7 +57,7 @@ pub async fn take_snapshot() -> Snapshot {
 
     let index_canister_snapshot = CanisterSnapshot {
         canister_name: "SNS Index".to_string(),
-        canister_id: summary.index.as_ref().unwrap().canister_id.unwrap().clone(),
+        canister_id: summary.index.as_ref().unwrap().canister_id.unwrap(),
         status: summary.index.unwrap().status.unwrap().into(),
     };
 
@@ -71,13 +65,7 @@ pub async fn take_snapshot() -> Snapshot {
 
     let governance_canister_snapshot = CanisterSnapshot {
         canister_name: "SNS Governance".to_string(),
-        canister_id: summary
-            .governance
-            .as_ref()
-            .unwrap()
-            .canister_id
-            .unwrap()
-            .clone(),
+        canister_id: summary.governance.as_ref().unwrap().canister_id.unwrap(),
         status: summary.governance.unwrap().status.unwrap().into(),
     };
 
@@ -87,7 +75,7 @@ pub async fn take_snapshot() -> Snapshot {
     for (i, dapp) in summary.dapps.iter().enumerate() {
         let dapp_canister_snapshot = CanisterSnapshot {
             canister_name: format!("Dapps {}", i),
-            canister_id: dapp.canister_id.unwrap().clone(),
+            canister_id: dapp.canister_id.unwrap(),
             status: CatalyzeCanisterStatus::from(dapp.status.clone().unwrap()),
         };
 
@@ -97,14 +85,14 @@ pub async fn take_snapshot() -> Snapshot {
     for (i, archive) in summary.archives.iter().enumerate() {
         let archive_canister_snapshot = CanisterSnapshot {
             canister_name: format!("Archives {}", i),
-            canister_id: archive.canister_id.unwrap().clone(),
+            canister_id: archive.canister_id.unwrap(),
             status: CatalyzeCanisterStatus::from(archive.status.clone().unwrap()),
         };
 
         snapshot.canisters.push(archive_canister_snapshot);
     }
 
-    Logs::log(format!("{}", EVENT_SNS_DATA.to_string()));
+    Logs::log(EVENT_SNS_DATA.to_string());
 
     // iter over catalyze canisters
     for (i, name) in CANISTER_NAMES.iter().enumerate() {
@@ -119,7 +107,7 @@ pub async fn take_snapshot() -> Snapshot {
         snapshot.canisters.push(canister_snapshot);
     }
 
-    Logs::log(format!("{}", EVENT_CATALYZE_CANISTER_DATA.to_string()));
+    Logs::log(EVENT_CATALYZE_CANISTER_DATA.to_string());
 
     snapshot
 }
@@ -132,7 +120,7 @@ impl From<CanisterStatusResultV2> for CatalyzeCanisterStatus {
             SNSCanisterStatusType::Running => CanisterStatusType::Running,
         };
 
-        let memory_size = Nat::from(value.memory_size);
+        let memory_size = value.memory_size;
 
         let cycles = value.cycles;
 

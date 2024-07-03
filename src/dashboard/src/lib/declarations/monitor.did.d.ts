@@ -53,6 +53,7 @@ export interface _SERVICE {
   'sorted_canister_cycles' : ActorMethod<[], Array<CanisterCycles>>,
   'sorted_memory_sizes' : ActorMethod<[], Array<CanisterMemorySize>>,
   'store_stats' : ActorMethod<[], Array<string>>,
+  'test_log' : ActorMethod<[string], undefined>,
   'timer_set' : ActorMethod<[], boolean>,
   'token_balances' : ActorMethod<[], Array<[Principal, bigint]>>,
   'token_log_size' : ActorMethod<[], bigint>,

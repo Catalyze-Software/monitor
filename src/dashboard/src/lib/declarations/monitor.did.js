@@ -81,6 +81,7 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'store_stats' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
+    'test_log' : IDL.Func([IDL.Text], [], []),
     'timer_set' : IDL.Func([], [IDL.Bool], ['query']),
     'token_balances' : IDL.Func(
         [],

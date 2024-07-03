@@ -19,11 +19,9 @@ pub async fn icp_balance() -> Tokens {
         account: AccountIdentifier::new(&id(), &DEFAULT_SUBACCOUNT),
     };
 
-    let balance = account_balance(MAINNET_LEDGER_CANISTER_ID, arg)
+    account_balance(MAINNET_LEDGER_CANISTER_ID, arg)
         .await
-        .expect("Failed to query ledger canister for balance");
-
-    balance
+        .expect("Failed to query ledger canister for balance")
 }
 
 /*

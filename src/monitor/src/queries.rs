@@ -68,11 +68,13 @@ pub fn canister_cycle_history(amount: u64) -> CycleHistory {
             let canister_name = canister.canister_name.clone();
             let cycles = cycles_to_tcycles(canister.status.cycles.expect("No cycles"));
 
-            if line_data.contains_key(&canister_name) {
+            if let std::collections::hash_map::Entry::Vacant(e) =
+                line_data.entry(canister_name.clone())
+            {
+                e.insert(vec![cycles]);
+            } else {
                 let cycles_data: &mut Vec<f64> = line_data.get_mut(&canister_name).unwrap();
                 cycles_data.push(cycles);
-            } else {
-                line_data.insert(canister_name, vec![cycles]);
             }
         }
     }
@@ -111,12 +113,12 @@ pub fn get_latest_icp_balances(n: u64) -> Vec<(Timestamp, f64)> {
 
     let mut time_series = Vec::new();
 
-    for i in 0..n as usize {
+    (0..n as usize).for_each(|i| {
         let timestamp = history[i].timestamp;
         let icp_balance = tokens_to_icp(history[i].icp_balance);
 
         time_series.push((timestamp, icp_balance));
-    }
+    });
 
     time_series
 }

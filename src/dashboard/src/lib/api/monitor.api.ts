@@ -19,9 +19,9 @@ import { _SERVICE as _PROXY_SERVICE, idlFactory as proxyIdl } from "./proxy.decl
 
 const rewardCanisterId = "zgfl7-pqaaa-aaaap-accpa-cai";
 const monitorCanisterId = "6or45-oyaaa-aaaap-absua-cai";
-const proxyCanisterId = "bwm3m-wyaaa-aaaag-qdiua-cai";
+const proxyCanisterId = "2jvhk-5aaaa-aaaap-ahewa-cai";
 
-const rewardCanister = async () => {
+const rewardActor = async () => {
   const identity = await authStore.identity();
   const agent = await createAgent({
     identity,
@@ -102,6 +102,7 @@ export const proxyLogSize = async () => {
 export const readProxyRewardBuffer = async () => {
   const actor = await proxyActor();
   const response = await actor.read_reward_buffer();
+
   return response.map((r) => {
     if ("UserActivity" in r.activity) {
       return { activity: "UserActivity", id: r.activity.UserActivity.toString(), timestamp: r.timestamp };
@@ -121,24 +122,23 @@ export const rewardTimerNextTrigger = async () => {
 
 export const proxyStoreStats = async () => {
   const monitor = await monitorActor();
-  return await tryCall<[], string[]>(monitor.proxy_store_stats);
+  return await tryCall(monitor.proxy_store_stats);
 };
 
 // Rewards interface
 export const groupInfo = async () => {
-  const canister = await rewardCanister();
-  return canister.group_info();
+  const canister = await rewardActor();
+  return canister.all_group_info();
 };
 
-export const eventInfo = async () => {
-  return [];
-  // const monitor = await monitorActor();
-  // return await tryCall<[], EventInfo[]>(monitor.event_info);
+export const userInfo = async () => {
+  const canister = await rewardActor();
+  return canister.all_user_info();
 };
 
 export const tokenBalances = async () => {
-  const monitor = await monitorActor();
-  return await tryCall<[], [Principal, bigint][]>(monitor.token_balances);
+  const canister = await rewardActor();
+  return await canister.all_token_balances();
 };
 
 export const tokenLogSize = async () => {
@@ -147,16 +147,11 @@ export const tokenLogSize = async () => {
 };
 
 export const graphMemberCountRewards = async () => {
-  const monitor = await monitorActor();
-  return await tryCall<[], [bigint, bigint][]>(monitor.graph_member_count_rewards);
+  const canister = await rewardActor();
+  return await canister.graph_member_count_rewards();
 };
 
 export const graphMemberActivityRewards = async () => {
-  const monitor = await monitorActor();
-  return await tryCall<[], [bigint, bigint][]>(monitor.graph_member_activity_rewards);
-};
-
-export const graphEventAttendeeRewards = async () => {
-  const monitor = await monitorActor();
-  return await tryCall<[], [bigint, bigint][]>(monitor.graph_event_attendee_rewards);
+  const canister = await rewardActor();
+  return await canister.graph_member_activity_rewards();
 };
